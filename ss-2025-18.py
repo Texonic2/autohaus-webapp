@@ -15,9 +15,6 @@ from db.db_credentials import DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE
 app = Flask(__name__)
 
 
-@app.route
-
-
 @app.before_request
 def before_request():
     """ Verbindung zur Datenbank herstellen """
@@ -42,16 +39,14 @@ def index():
 def enes():
     return render_template('enes.html')
 
-@app.route('/sipanweb')
+@app.route('sipanweb')
 def index():
     """Startseite"""
     return render_template('sipanweb.html')
 
-@app.route('aliweb')
-def aliweb():
-    """Startseite"""
-    return render_template('aliweb.html')
-
+@app.route('/benniweb')
+def benniweb():
+    return render_template('benniweb.html')
 
 
 # Start der Flask-Anwendung
