@@ -39,6 +39,12 @@ def index():
 def enes():
     return render_template('enes.html')
 
+@app.route('sipanweb')
+def index():
+    """Startseite"""
+    return render_template('sipanweb.html')
+
+
 
 # Start der Flask-Anwendung
 if __name__ == '__main__':
