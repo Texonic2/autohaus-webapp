@@ -20,8 +20,18 @@ Meine eigene Seite
 <br>
 
 <img src="/static/benni.jpg" width="300"
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+    </tr>
+    {% for id,name in data %}
+    <tr>
+        <td>{{ id }}</td>
+        <td>{{ name }}</td>
+    </tr>
+    {% endfor %}
 
-
-
+</table>
 </body>
 </html>

@@ -64,17 +64,13 @@ def eingabeformular():
         passwort = request.form['passwort']
         return render_template('formular.html', name=name, password=passwort)
 
-@app.route('/')
-def index():
-    """Startseite"""
-    con=mysql.connector.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_DATABASE)
-    cursor = con.cursor(dictionary=True)
-    cursor.execute('SELECT id,name FROM bdavid ')
-    daten= cursor.fetchall()
+@app.route("/benniweb")
+def benniweb():
+    cursor = g.con.cursor()
+    cursor.execute("SELECT id,name FROM bdavid")
+    data= cursor.fetchall()
     cursor.close()
-    con.close()
-    return render_template('index.html', daten=daten)
-
+    return render_template("benniweb.html", data=data)
 
 
 # Start der Flask-Anwendung
