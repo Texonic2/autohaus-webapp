@@ -39,6 +39,9 @@ def index():
 def enes():
     return render_template('enes.html')
 
+@app.route('/benniweb')
+def benniweb():
+    return render_template('benniweb.html')
 
 # Start der Flask-Anwendung
 if __name__ == '__main__':
