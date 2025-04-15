@@ -15,6 +15,9 @@ from db.db_credentials import DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE
 app = Flask(__name__)
 
 
+@app.route
+
+
 @app.before_request
 def before_request():
     """ Verbindung zur Datenbank herstellen """
@@ -43,9 +46,10 @@ def enes():
 def sipanweb():
     return render_template('sipanweb.html')
 
-@app.route('/benniweb')
-def benniweb():
-    return render_template('benniweb.html')
+@app.route('/aliweb')
+def aliweb():
+    return render_template('aliweb.html')
+
 
 
 # Start der Flask-Anwendung
