@@ -55,24 +55,6 @@ def benniweb():
     return render_template('benniweb.html')
 
 
-@app.route('/eingabeformular', methods=['GET', 'POST'])
-def eingabeformular():
-    if request.method == 'GET':
-        return render_template('formular.html')
-    elif request.method == 'POST':
-        name = request.form['eingabe']
-        passwort = request.form['passwort']
-        return render_template('formular.html', name=name, password=passwort)
-
-@app.route("/benniweb")
-def benniweb():
-    cursor = g.con.cursor()
-    cursor.execute("SELECT id,name FROM bdavid")
-    data= cursor.fetchall()
-    cursor.close()
-    return render_template("benniweb.html", data=data)
-
-
 # Start der Flask-Anwendung
 if __name__ == '__main__':
     app.run(debug=True)

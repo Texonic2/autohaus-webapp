@@ -18,15 +18,7 @@ Dies ist die Startseite der Flask-Anwendung.
 <a href="/aliweb">Ali</a>
 <br>
 <a href="/sipanweb">Sipan</a>
-<br>
-<h2>Dtaen mit for-schleife durchlaufen</h2>
-{% for adresse in daten %}
-    <h3>Adresse {{ adresse['id'] }}</h3>
-    Name: {{ adresse['name'] }}<br>
-    Straße: {{ adresse['strasse'] }}<br>
-    Ort: {{ adresse['ort'] }}<br>
-    <a href="/adresseloeschen/{{ adresse['id'] }}">Adresse löschen</a>
-{% endfor %}
+
 
 
 </body>
