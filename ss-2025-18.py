@@ -43,15 +43,28 @@ def enes():
 
 @app.route('/sipanweb')
 def sipanweb():
-    return render_template('sipanweb.html')
+    cursor = g.con.cursor()
+    cursor.execute("SELECT ID, Name FROM sdoelek WHERE Name='Sipan'; ")
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template('sipanweb.html', data=data)
 
 @app.route('/aliweb')
 def aliweb():
-    return render_template('aliweb.html')
+    cursor = g.con.cursor()
+    cursor.execute("SELECT ID, Name FROM ayenil WHERE Name='Ali'; ")
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template('aliweb.html', data=data)
 
 @app.route('/benniweb')
 def benniweb():
-    return render_template('benniweb.html')
+    cursor = g.con.cursor()
+    cursor.execute("SELECT ID, Name FROM sdoelek WHERE Name='benni'; ")
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template('benniweb.html', data=data)
+
 
 
 @app.route('/')

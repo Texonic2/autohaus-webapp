@@ -1,18 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
     <title>Sipan</title>
 </head>
 <body>
+    <main>
+        <header>
+            <h1>Sipan</h1>
+        </header>
+        <section>
+            <img src="{{ url_for('static', filename='sipan - Kopie.jpg') }}" alt="Mein Bild" style="width: 300px;">
+            <br>
+            <a href="{{ url_for('index') }}"><button>Züruck zur Startseite</button></a>
+            {{ data }}
+        </section>
 
-<h1>Meine eigene Website</h1>
-Meine eigene Seite.
-<img src="/static/sipan%20-%20Kopie.jpg" width="200" >
-<br>
-<a href="/">Zur Startseite</a>
 
+    </main>
 
 </body>
 </html>

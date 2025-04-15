@@ -1,21 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Ali  Yenil</title>
+
+    <title>Ali</title>
 </head>
 <body>
+    <main>
+        <header>
+            <h1>Ali</h1>
+        </header>
+        <section>
+            <img src="{{ url_for('static', filename='ali.jpeg') }}" alt="Mein Bild" style="width: 300px;">
+            <br>
+            <a href="{{ url_for('index') }}"><button>Züruck zur Startseite</button></a>
+            {{ data }}
+        </section>
 
 
-<h1>Meine Persönliche Website</h1>
-
-
-<img src="{{ url_for('static', filename='ali.jpeg') }}" width="300">
-<br>
-Meine eigene Website
-<br>
-<a href="/">Zur Startseite</a>
+    </main>
 
 </body>
 </html>
