@@ -43,13 +43,16 @@ def enes():
     return render_template('enes.html')
 
 @app.route('/sipanweb')
-def index():
+def sipanweb():
     return render_template('sipanweb.html')
 
 @app.route('/aliweb')
 def aliweb():
     return render_template('aliweb.html')
 
+@app.route('/benniweb')
+def benniweb():
+    return render_template('benniweb.html')
 
 
 # Start der Flask-Anwendung
