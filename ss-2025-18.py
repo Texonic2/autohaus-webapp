@@ -43,7 +43,7 @@ def enes():
     return render_template('enes.html')
 
 @app.route('/sipanweb')
-def index():
+def sipanweb():
     return render_template('sipanweb.html')
 
 @app.route('/aliweb')
