@@ -40,8 +40,7 @@ def enes():
     return render_template('enes.html')
 
 @app.route('sipanweb')
-def index():
-    """Startseite"""
+def sipanweb():
     return render_template('sipanweb.html')
 
 @app.route('/benniweb')
