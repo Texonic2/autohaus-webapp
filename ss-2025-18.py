@@ -35,6 +35,10 @@ def index():
     """Startseite"""
     return render_template('index.html')
 
+@app.route('/enes')
+def enes():
+    return render_template('enes.html')
+
 
 # Start der Flask-Anwendung
 if __name__ == '__main__':
