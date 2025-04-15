@@ -50,7 +50,7 @@ def sipanweb():
 def aliweb():
     return render_template('aliweb.html')
 
-@app.route('benniweb')
+@app.route('/benniweb')
 def benniweb():
     return render_template('benniweb.html')
 
