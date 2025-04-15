@@ -44,9 +44,8 @@ def index():
     """Startseite"""
     return render_template('sipanweb.html')
 
-@app.route('benniweb')
-def index():
-    """Startseite"""
+@app.route('/benniweb')
+def benniweb():
     return render_template('benniweb.html')
 
 
