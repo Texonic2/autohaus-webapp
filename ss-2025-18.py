@@ -47,9 +47,8 @@ def index():
     """Startseite"""
     return render_template('sipanweb.html')
 
-@app.route('aliweb')
+@app.route('/aliweb')
 def aliweb():
-    """Startseite"""
     return render_template('aliweb.html')
 
 
