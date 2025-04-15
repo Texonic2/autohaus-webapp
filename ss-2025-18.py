@@ -42,12 +42,12 @@ def index():
 def enes():
     return render_template('enes.html')
 
-@app.route('sipanweb')
-def index():
+@app.route('/sipanweb')
+def sipanweb():
     """Startseite"""
     return render_template('sipanweb.html')
 
-@app.route('aliweb')
+@app.route('/aliweb')
 def aliweb():
     """Startseite"""
     return render_template('aliweb.html')
