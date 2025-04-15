@@ -1,7 +1,7 @@
 """Webbasierte Systeme - Gruppe 18
 """
 # Import benötigter Flask-Module
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, request
 # Import MySQL-Connector
 import mysql.connector
 
@@ -54,6 +54,15 @@ def aliweb():
 def benniweb():
     return render_template('benniweb.html')
 
+
+@app.route('/eingabeformular', methods=['GET', 'POST'])
+def eingabeformular():
+    if request.method == 'GET':
+        return render_template('formular.html')
+    elif request.method == 'POST':
+        name = request.form['eingabe']
+        passwort = request.form['passwort']
+        return render_template('formular.html', name=name, password=passwort)
 
 # Start der Flask-Anwendung
 if __name__ == '__main__':

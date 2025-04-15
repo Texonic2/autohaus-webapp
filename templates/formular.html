@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Eingabeformular</title>
+</head>
+<body>
+<h1>Eingabeformular</h1>
+
+<form method="post">
+
+    Name: <input type="text" name="eingabe">
+    <br>
+    Passwort: <input type="password" name="passwort">
+    <input type="submit">
+
+</form>
+
+{{ name }}
+{{ passwort }}
+
+
+</body>
+</html>
