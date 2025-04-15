@@ -15,7 +15,6 @@ from db.db_credentials import DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE
 app = Flask(__name__)
 
 
-@app.route
 
 
 @app.before_request
@@ -33,14 +32,14 @@ def teardown_request(exception):
         con.close()
 
 
-@app.route('/')
-def index():
-    """Startseite"""
-    return render_template('index.html')
 
 @app.route('/enes')
 def enes():
-    return render_template('enes.html')
+    cursor = g.con.cursor()
+    cursor.execute("SELECT ID, Name FROM ebuelkue WHERE Name='Enes'; ")
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template('enes.html', data=data)
 
 @app.route('/sipanweb')
 def sipanweb():
@@ -54,6 +53,10 @@ def aliweb():
 def benniweb():
     return render_template('benniweb.html')
 
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 # Start der Flask-Anwendung
 if __name__ == '__main__':

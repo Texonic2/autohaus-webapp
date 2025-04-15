@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
     <title>Enes</title>
 </head>
 <body>
+    <main>
+        <header>
+            <h1>Enes</h1>
+        </header>
+        <section>
+            <img src="{{ url_for('static', filename='enes.png') }}" alt="Mein Bild" style="width: 300px;">
+            <br>
+            <a href="{{ url_for('index') }}"><button>Züruck zur Startseite</button></a>
+            {{ data }}
+        </section>
 
-<h1>Meine Persönliche Seite</h1>
 
-Meine eigene Seite.
-<br>
-<a href="/">Zur Startseite</a>
-<br>
-<a href="/sipanweb">Zur Persölichen Website von Sipan</a>
-<br>
-<a href="/benniweb">Zur Persölichen Website von Benni</a>
-<br>
-<a href="/aliweb">Zur Persölichen Website von Ali</a>
-<br>
-<img src="/static/enes.png" width="250"
+    </main>
 
 </body>
 </html>
