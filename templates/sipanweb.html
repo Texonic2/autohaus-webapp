@@ -11,9 +11,11 @@
             <h1>Sipan</h1>
         </header>
         <section>
+            <a href="{{ url_for('index') }}"><button>Züruck zur Startseite</button></a>
+            <br><br>
             <img src="{{ url_for('static', filename='sipan - Kopie.jpg') }}" alt="Mein Bild" style="width: 300px;">
             <br>
-            <a href="{{ url_for('index') }}"><button>Züruck zur Startseite</button></a>
+
             {{ data }}
         </section>
 

@@ -11,9 +11,10 @@
             <h1>Ali</h1>
         </header>
         <section>
+            <a href="{{ url_for('index') }}"><button>Züruck zur Startseite</button></a>
+            <br><br>
             <img src="{{ url_for('static', filename='ali.jpeg') }}" alt="Mein Bild" style="width: 300px;">
             <br>
-            <a href="{{ url_for('index') }}"><button>Züruck zur Startseite</button></a>
             {{ data }}
         </section>
 
