@@ -67,6 +67,14 @@ def benniweb():
 
 
 
+@app.route('/neu')
+def neu():
+    return render_template('neu.html')
+
+@app.route('/fahrzeugkatalog')
+def fahrzeugkatalog():
+    return render_template('fahrzeugkatalog.html')
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -74,3 +82,4 @@ def index():
 # Start der Flask-Anwendung
 if __name__ == '__main__':
     app.run(debug=True)
+

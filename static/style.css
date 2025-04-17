@@ -2,3 +2,95 @@ h1 {
     color: darkblue;
     font-family: sans-serif;
 }
+/* Grundlayout des Body-Bereichs */
+body {
+    font-family: 'Open Sans', sans-serif;  /* Schriftart für die ganze Seite */
+    background-color: #F3F5F6;             /* Heller, leicht grauer Hintergrund */
+    padding-left: 100px;                  /* Abstand links vom Seitenrand */
+    padding-right: 100px;                 /* Abstand rechts vom Seitenrand */
+}
+
+/* Gestaltung des großen Titelbilds */
+.header-image {
+    width: 100%;                          /* Bild nimmt die komplette Breite ein */
+    height: 400px;                        /* Feste Höhe des Bilds */
+    object-fit: cover;                    /* Bild wird so beschnitten, dass es den Container vollständig füllt */
+    object-position: 50% 15%;             /* Bildposition: horizontal mittig, vertikal etwas weiter oben */
+    display: block;                       /* Verhindert unschöne Lücken unter dem Bild (kein Inline-Element) */
+}
+
+/* Gestaltung der Hauptüberschrift */
+.headline {
+    color: #831D17;                       /* Dunkles Rot für den Text */
+    flex: 1;                              /* Element wächst innerhalb eines Flexcontainers, um Platz zu füllen */
+}
+
+/* Container für das Bild und darunterliegende Inhalte */
+.image-container {
+    background-color: white;             /* Weißer Hintergrund für besseren Kontrast */
+    padding: 16px;                        /* Innenabstand rundherum */
+}
+
+/* Navigation oben: horizontales Menü */
+.navbar {
+    display: flex;                        /* Elemente in einer Zeile anzeigen */
+    justify-content: space-between;      /* Platz zwischen Logo links und Links rechts */
+    align-items: center;                 /* Vertikale Ausrichtung in der Mitte */
+}
+
+/* Gestaltung der Navigationslinks */
+a {
+    color: #831D17;                       /* Gleicher Rotton wie Überschrift */
+    text-decoration: none;               /* Keine Unterstreichung standardmäßig */
+    margin-left: 16px;                   /* Abstand zwischen den Links */
+    font-weight: 700;                    /* Fetter Text */
+}
+
+/* Hover-Zustand für Links */
+a:hover {
+    text-decoration: underline;          /* Unterstreichen beim Darüberfahren mit der Maus */
+}
+
+/* Text mit besonderer Formatierung (BERLIN-MITTE) */
+.text-highlight {
+    color: #484846;                      /* Dunkles Grau */
+    font-size: 47px;                     /* Große Schriftgröße */
+}
+
+/* Box mit Hintergrund für Texte wie "30 Minuten" oder rechts neben der Karte */
+.text-container {
+    background-color: #DEDEDE;           /* Hellgrauer Hintergrund */
+    padding: 8px;                        /* Innenabstand */
+    color: #484846;                      /* Dunkelgraue Schriftfarbe */
+    font-weight: 600;                    /* Halbfett */
+}
+
+/* Container für die Karte und den Infotext daneben */
+.maps-container {
+    margin-top: 16px;                    /* Abstand nach oben */
+    display: flex;                       /* Karte und Text nebeneinander */
+    justify-content: space-between;      /* Abstand zwischen Karte und Text */
+}
+
+/* Rechte Box neben der Karte */
+.maps-right {
+    margin-left: 16px;                   /* Abstand links zur Karte */
+    width: 30%;                          /* Nimmt 30% des Platzes ein */
+}
+
+/* Google Maps Frame */
+.maps-frame {
+    border: 0;                           /* Kein Rahmen */
+    height: 350px;                       /* Feste Höhe */
+    width: 70%;                          /* Nimmt 70% der Breite ein */
+}
+
+/* Bereich ganz unten mit Impressum etc. */
+.legal-content {
+    padding: 8px;                        /* Innenabstand */
+}
+
+/* Abstand für den Copyright-Text */
+.legal-text {
+    margin-right: 16px;                  /* Abstand nach rechts */
+}
