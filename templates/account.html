@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <!-- Der Kopfbereich: Hier kommen Infos für den Browser, nicht für den Nutzer -->
+    <meta charset="UTF-8">
+    <!-- Zeichensatz ist UTF-8 (für Sonderzeichen wie ä, ö, ü) -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Sorgt für Kompatibilität mit dem Internet Explorer -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Wichtig für responsive Design (Skalierung auf Smartphones/Tablets) -->
+    <title>Autohaus Heilbronn</title>
+    <!-- Titel, der im Tab vom Browser angezeigt wird -->
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <!-- Stellt früher Verbindung zu Google Fonts her (schnelleres Laden) -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <!-- Lädt die Schriftart "Open Sans" in verschiedenen Stärken von Google Fonts -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+    <!-- Hier beginnt der sichtbare Inhalt der Webseite -->
+
+    <div class="navbar">
+        <!-- Bereich für die Navigationsleiste (Menü) -->
+        <h1 class="headline">
+            <!-- Große Überschrift -->
+            NovaDrive<br> <span class="text-highlight">Account</span>
+            <!-- Die Stadt wird hervorgehoben durch die Klasse „text-highlight“ -->
+        </h1>
+
+        <div>
+            <!-- Ein weiterer Block für die Navigation-Links -->
+            <a href="{{ url_for('neu') }}">Homepage</a>
+            <!-- Link zu "Infos" (das # bedeutet: führt aktuell noch nirgendwo hin) -->
+            <a href="fahrzeugkatalog">Fahrzeugkatalog</a>
+            <!-- Link zu "Preise" -->
+            <a href="account">Account </a>
+            <!-- Link zu "Termin" -->
+            <a href="index">index</a>
+            <!-- Link zu "Standort" -->
+        </div>
+    </div>
+
+USer braucht eine datenbank mit namae nachname aresse nummer email termin finazierung jeweilge auto und so weiter
+    so dass er seine termine immer einsehehn kann
+
+    <br>
+
+
+    (Admin soll zugriffe auf alles haben neue Tabelle mit Kaufvertrag (Kaufvertrag muss verbunden sein finanzierungsanfrage auto und user und so weiter so dass man direkt einen kaufvertrag per button erstellen kann )
+    <br>
+
+admin sollte anfrage ablehnen könenn bei zu vielen monaten zb kredit anzahlung zu wenig zb bsp
+
+
+    alle DAtenbanken
+
+    <br>
+    <br>
+    <b>1. User (Benutzer)</b><br>
+<b>Beschreibung:</b> Enthält alle registrierten Nutzer – Kunden und Admins.<br>
+<b>Attribute:</b><br>
+- ID – eindeutige Identifikationsnummer<br>
+- Vorname – Vorname des Nutzers<br>
+- Nachname – Nachname des Nutzers<br>
+- E-Mail – wird als Login verwendet, eindeutig<br>
+- Passwort (verschlüsselt) – Passwort in gehashter Form<br>
+- Rolle – entweder "kunde" oder "admin"<br>
+- Beziehung: Ein Nutzer kann mehrere Finanzierungen anfragen<br><br>
+
+<b>2. Auto (Fahrzeugkatalog)</b><br>
+<b>Beschreibung:</b> Liste aller Fahrzeuge, die zum Verkauf angeboten werden.<br>
+<b>Attribute:</b><br>
+- ID – eindeutige Fahrzeugnummer<br>
+- Marke – z. B. BMW, Audi, Mercedes<br>
+- Modell – z. B. A3, C-Klasse<br>
+- Baujahr – Jahr der Herstellung<br>
+- Leistung – z. B. 150 PS<br>
+- Kraftstoffart – z. B. Benzin, Diesel, Elektro<br>
+- Preis – Verkaufspreis in Euro<br>
+- Bild – Pfad zum Bild oder Bild-URL<br>
+- Beziehung: Ein Auto kann in mehreren Finanzierungsanfragen vorkommen<br><br>
+
+<b>3. Finanzierungsanfrage</b><br>
+<b>Beschreibung:</b> Wenn ein Kunde eine Finanzierung anfragt, wird hier alles gespeichert.<br>
+<b>Attribute:</b><br>
+- ID – eindeutige Anfrage-ID<br>
+- Nutzer-ID – verweist auf den Kunden, der die Anfrage stellt<br>
+- Auto-ID – verweist auf das Auto, das finanziert werden soll<br>
+- Monate – wie viele Monate finanziert werden sollen<br>
+- Anzahlung – wie viel der Kunde anzahlen möchte<br>
+- Monatliche Rate – wird automatisch berechnet<br>
+- Terminwunsch – für Beratung oder Vertragsabschluss<br>
+- Status – z. B. "angefragt", "genehmigt", "abgelehnt"<br>
+- Erstellt am – Zeitstempel der Anfrage<br>
+- Beziehung: Eine Anfrage kann zu einem Kaufvertrag führen<br><br>
+
+<b>4. Kaufvertrag</b><br>
+<b>Beschreibung:</b> Sobald eine Finanzierung vom Admin angenommen wird, kann ein Kaufvertrag erstellt und als PDF gespeichert werden.<br>
+<b>Attribute:</b><br>
+- ID – eindeutige Vertragsnummer<br>
+- Finanzierungs-ID – verweist auf die dazugehörige Finanzierungsanfrage<br>
+- Datum der Erstellung – wann der Vertrag erstellt wurde<br>
+- Pfad zur PDF-Datei – wo der Vertrag auf dem Server gespeichert ist<br>
+
+
+    <div class="legal-content">
+        <!-- Footer-Bereich (unten auf der Seite) -->
+        <span class="legal-text">(c) 2023 - NOvA Drive GmbH</span>
+        <!-- Copyright-Hinweis -->
+
+        | <a href="#">Impressum</a>
+        <!-- Link zum Impressum -->
+        | <a href="#">Datenschutz</a>
+        <!-- Link zur Datenschutzerklärung -->
+
+
+    </div>
+
+</body>
+</html>

@@ -75,9 +75,18 @@ def neu():
 def fahrzeugkatalog():
     return render_template('fahrzeugkatalog.html')
 
+@app.route('/finanzierung')
+def finanzierung():
+    return render_template('finanzierung.html')
+
+@app.route('/account')
+def account():
+    return render_template('account.html')
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 # Start der Flask-Anwendung
 if __name__ == '__main__':
