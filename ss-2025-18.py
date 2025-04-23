@@ -33,44 +33,6 @@ def teardown_request(exception):
 
 
 
-@app.route('/enes')
-def enes():
-    cursor = g.con.cursor()
-    cursor.execute("SELECT ID, Name FROM ebuelkue WHERE Name='Enes'; ")
-    data = cursor.fetchall()
-    cursor.close()
-    return render_template('enes.html', data=data)
-
-@app.route('/sipanweb')
-def sipanweb():
-    cursor = g.con.cursor()
-    cursor.execute("SELECT ID, Name FROM sdoelek WHERE Name='Sipan'; ")
-    data = cursor.fetchall()
-    cursor.close()
-    return render_template('sipanweb.html', data=data)
-
-@app.route('/aliweb')
-def aliweb():
-    cursor = g.con.cursor()
-    cursor.execute("SELECT ID, Name FROM ayenil WHERE Name='Ali'; ")
-    data = cursor.fetchall()
-    cursor.close()
-    return render_template('aliweb.html', data=data)
-
-@app.route('/benniweb')
-def benniweb():
-    cursor = g.con.cursor()
-    cursor.execute("SELECT ID, Name FROM sdoelek WHERE Name='benni'; ")
-    data = cursor.fetchall()
-    cursor.close()
-    return render_template('benniweb.html', data=data)
-
-
-
-@app.route('/neu')
-def neu():
-    return render_template('neu.html')
-
 @app.route('/fahrzeugkatalog')
 def fahrzeugkatalog():
     return render_template('fahrzeugkatalog.html')
