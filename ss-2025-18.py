@@ -49,6 +49,15 @@ def account():
 def index():
     return render_template('index.html')
 
+@app.route('/Login')
+def Login():
+    return render_template('Login.html')
+
+@app.route('/registration')
+def registration():
+    return render_template('registration.html')
+
+
 
 # Start der Flask-Anwendung
 if __name__ == '__main__':

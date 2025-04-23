@@ -1,0 +1,87 @@
+/* Allgemeine Einstellungen */
+body {
+  font-family: Arial, sans-serif;
+  background: #f3f3f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
+/* Login Container */
+.login-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Überschrift */
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #ff6600;
+}
+
+/* Labels für Eingabefelder */
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+/* Eingabefelder für Text und E-Mail */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Eingabefelder - Fokus */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border: 1px solid #ff6600;
+  outline: none;
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 0.9rem;
+  background-color: #ff6600;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+/* Button - Hover-Effekt */
+button:hover {
+  background-color: #e55b00;
+}
+
+/* Button - Aktivzustand */
+button:active {
+  background-color: #cc5200;
+}
+
+/* Hinweis unterhalb des Formulars */
+.note {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #555;
+  text-align: center;
+}
