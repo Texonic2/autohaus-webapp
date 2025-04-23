@@ -1,7 +1,9 @@
 """Webbasierte Systeme - Gruppe 18
 """
+from calendar import error
+
 # Import benötigter Flask-Module
-from flask import Flask, render_template, g, request
+from flask import Flask, render_template, g, request, redirect, url_for
 # Import MySQL-Connector
 import mysql.connector
 
@@ -56,6 +58,7 @@ def Login():
 @app.route('/registration')
 def registration():
     return render_template('registration.html')
+
 
 
 
