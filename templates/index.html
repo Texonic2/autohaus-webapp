@@ -33,11 +33,11 @@
             <!-- Ein weiterer Block für die Navigation-Links -->
             <a href="{{ url_for('index') }}">Homepage</a>
             <!-- Link zu "Infos" (das # bedeutet: führt aktuell noch nirgendwo hin) -->
-            <a href="fahrzeugkatalog">Fahrzeugkatalog</a>
+            <a href="{{ url_for('fahrzeugkatalog') }}">Fahrzeugkatalog</a>
             <!-- Link zu "Preise" -->
-            <a href="#">Finanzierung & Leasing (link machen) </a>
+            <a href="{{ url_for('finanzierung') }}">Finanzierung & Leasing</a>
             <!-- Link zu "Termin" -->
-            <a href="index">index</a>
+            <a href="{{ url_for('index') }}">index</a>
             <!-- Link zu "Standort" -->
         </div>
     </div>
