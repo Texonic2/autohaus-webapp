@@ -43,7 +43,74 @@
     </div>
 
 
-<p>
+<form class="search-bar-horizontal" action="#" method="get">
+  <input type="text" value="Mercedes" readonly title="Marke">
+  <input type="text" name="modell" placeholder="Modell (z. B. C-Klasse)">
+  <input type="number" name="preis" placeholder="Maximalpreis (€)">
+  <input type="number" name="baujahr" placeholder="Baujahr ab">
+  <input type="number" name="ps" placeholder="Leistung ab (PS)">
+  <button type="submit">🔍 Suchen</button>
+</form>
+
+
+<div class="image-container">
+    <img src="{{ url_for('static', filename='s klasse 63.jpg') }}" class="header-image" alt="Header Bild">
+</div>
+<!-- Der gesamte Textcontainer bekommt ein flexibles Layout -->
+<div class="text-container" style="display: flex; align-items: center;">
+
+    <!-- Der Beschreibungstext bleibt ganz normal links -->
+    <span>    <div class="car-details">
+      <h3>Mercedes C-Klasse</h3>
+      <p><strong>Modell:</strong> C220d AMG Line</p>
+      <p><strong>Baujahr:</strong> 2021</p>
+      <p><strong>Leistung:</strong> 194 PS</p>
+      <p><strong>Preis:</strong> 34.990 €</p>
+    </div></span>
+
+    <!-- Der Button wird durch margin-left: auto ganz nach rechts geschoben -->
+    <!-- "margin-left: auto;" nutzt den freien Platz zwischen Text und Button -->
+    <a href="finanzierung" style="margin-left: auto;">
+
+        <button>Finanzieren</button>
+    <a href="#" style="margin-left: auto;">
+
+        <button>PDF</button>
+    </a>
+</div>
+    <div class="car-card">
+
+  <!-- Bild oben -->
+  <div class="image-container">
+    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
+  </div>
+
+  <!-- Fahrzeugdaten & Button -->
+  <div class="car-info">
+
+
+    <div class="pdf-button">
+      <a href="{{ url_for('static', filename='pdfs/mercedes-c-klasse.pdf') }}" target="_blank">
+        <button>📄 PDF</button>
+      </a>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<div class="image-container">
+    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
+</div>
+<div class="text-container" style="display: flex; align-items: center;">
+    <span>Auto eins – Daten, PDF, Button etc.</span>
+    <a href="#" style="margin-left: auto;">
+        <button>PDF</button>
+    </a>
+</div>
+    <p>
 Diese Seite dient als Vorlage, wie später alle Autos angezeigt werden sollen.<br>
 Aber aktuell sind die Autos hier <strong>manuell</strong> eingefügt – also jedes Auto mit HTML kopiert und eingefügt.<br><br>
 
@@ -71,125 +138,6 @@ Zusammengefasst:<br>
 ✔️ So wird jedes passende Auto automatisch angezeigt – je nach Filter<br>
 </p>
 
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<!-- Der gesamte Textcontainer bekommt ein flexibles Layout -->
-<div class="text-container" style="display: flex; align-items: center;">
-
-    <!-- Der Beschreibungstext bleibt ganz normal links -->
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-
-    <!-- Der Button wird durch margin-left: auto ganz nach rechts geschoben -->
-    <!-- "margin-left: auto;" nutzt den freien Platz zwischen Text und Button -->
-    <a href="finanzierung" style="margin-left: auto;">
-
-        <button>Finanzieren</button>
-    <a href="#" style="margin-left: auto;">
-
-        <button>PDF</button>
-    </a>
-</div>
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<div class="text-container" style="display: flex; align-items: center;">
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-    <a href="#" style="margin-left: auto;">
-        <button>PDF</button>
-    </a>
-</div>
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<div class="text-container" style="display: flex; align-items: center;">
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-    <a href="#" style="margin-left: auto;">
-        <button>PDF</button>
-    </a>
-</div>
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<div class="text-container" style="display: flex; align-items: center;">
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-    <a href="#" style="margin-left: auto;">
-        <button>PDF</button>
-    </a>
-</div>
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<div class="text-container" style="display: flex; align-items: center;">
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-    <a href="#" style="margin-left: auto;">
-        <button>PDF</button>
-    </a>
-</div>
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<div class="text-container" style="display: flex; align-items: center;">
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-    <a href="#" style="margin-left: auto;">
-        <button>PDF</button>
-    </a>
-</div>
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<div class="text-container" style="display: flex; align-items: center;">
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-    <a href="#" style="margin-left: auto;">
-        <button>PDF</button>
-    </a>
-</div>
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<div class="text-container" style="display: flex; align-items: center;">
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-    <a href="#" style="margin-left: auto;">
-        <button>PDF</button>
-    </a>
-</div>
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<div class="text-container" style="display: flex; align-items: center;">
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-    <a href="#" style="margin-left: auto;">
-        <button>PDF</button>
-    </a>
-</div>
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<div class="text-container" style="display: flex; align-items: center;">
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-    <a href="#" style="margin-left: auto;">
-        <button>PDF</button>
-    </a>
-</div>
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<div class="text-container" style="display: flex; align-items: center;">
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-    <a href="#" style="margin-left: auto;">
-        <button>PDF</button>
-    </a>
-</div>
 
 
 

@@ -33,15 +33,41 @@ def teardown_request(exception):
     if con is not None:
         con.close()
 
-
-
 @app.route('/fahrzeugkatalog')
 def fahrzeugkatalog():
     return render_template('fahrzeugkatalog.html')
 
-@app.route('/finanzierung')
+
+
+# Route für die Finanzierungsseite – erlaubt GET (anzeigen) und POST (berechnen)
+@app.route('/finanzierung', methods=['GET', 'POST'])
 def finanzierung():
-    return render_template('finanzierung.html')
+    rate = None  # Standard: Noch keine Rate berechnet
+
+    # Wenn das Formular abgeschickt wurde (POST-Methode)
+    if request.method == 'POST':
+        # Werte aus dem Formular auslesen und konvertieren
+        fahrzeugpreis = float(request.form['fahrzeugpreis'])  # z. B. 30.000 €
+        anzahlung = float(request.form['anzahlung'])          # z. B. 5.000 €
+        laufzeit = int(request.form['laufzeit'])              # z. B. 36 Monate
+        schlussrate = float(request.form.get('schlussrate', 0))  # z. B. 3.000 €, optional
+
+        # Finanzierungssumme berechnen
+        finanzierungsbetrag = fahrzeugpreis - anzahlung - schlussrate
+
+        # Fester Zinssatz: 2 % auf den Finanzierungsbetrag
+        zins = 0.02
+        gesamtbetrag = finanzierungsbetrag + (finanzierungsbetrag * zins)
+
+        # Monatliche Rate = Gesamtbetrag / Laufzeit
+        rate = round(gesamtbetrag / laufzeit, 2)
+
+    # HTML-Template anzeigen und ggf. berechnete Rate übergeben
+    return render_template('finanzierung.html', rate=rate)
+
+# Flask-Anwendung starten, nur wenn direkt ausgeführt
+if __name__ == '__main__':
+    app.run(debug=True)
 
 @app.route('/account')
 def account():
@@ -58,9 +84,6 @@ def Login():
 @app.route('/registration')
 def registration():
     return render_template('registration.html')
-
-
-
 
 # Start der Flask-Anwendung
 if __name__ == '__main__':

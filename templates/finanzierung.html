@@ -41,6 +41,38 @@
             <!-- Link zu "Standort" -->
         </div>
     </div>
+ <section class="finanz-section">
+    <div class="finanz-container">
+      <h1 class="finanz-title">💶 Finanzierung berechnen</h1>
+      <p class="finanz-sub">Effektiver Jahreszins: <strong>2 %</strong> – fair & transparent</p>
+
+      <form method="post" class="finanz-form">
+
+        <div class="finanz-row">
+          <input type="number" name="fahrzeugpreis" placeholder="Fahrzeugpreis (€)" required>
+          <input type="number" name="anzahlung" placeholder="Anzahlung (€)" required>
+        </div>
+
+        <div class="finanz-row">
+          <input type="number" name="laufzeit" placeholder="Laufzeit (Monate)" required>
+          <input type="number" name="schlussrate" placeholder="Schlussrate (€ – optional)" required>
+        </div>
+
+        <button type="submit" class="finanz-button">🧮 Monatsrate berechnen</button>
+
+        {% if rate %}
+          <div class="finanz-result">
+            <span class="finanz-label">Monatliche Rate:</span>
+            <span class="finanz-value">{{ rate }} €</span>
+          </div>
+        {% endif %}
+
+      </form>
+    </div>
+  </section>
+  </div>
+
+
 <b>Autodatenbank nötig.</b><br>
 Des Weiteren wird aus dem <b>Finanzierung Button</b> der Preis entnommen.<br>
 <b>Anzahlung</b> plus <b>Anzahl an Monaten</b> wird gegeben.<br>

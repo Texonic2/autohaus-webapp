@@ -94,3 +94,166 @@ a:hover {
 .legal-text {
     margin-right: 16px;                  /* Abstand nach rechts */
 }
+/* bereits bestehende Styles behalten */
+
+.search-bar-horizontal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-bar-horizontal input {
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  flex: 1;
+  min-width: 160px;
+  max-width: 200px;
+}
+
+.search-bar-horizontal input[readonly] {
+  background-color: #f0f0f0;
+  color: #555;
+}
+
+.search-bar-horizontal button {
+  padding: 10px 24px;
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+  background-color: #b84127;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-bar-horizontal button:hover {
+  background-color: #cc4c2e;
+}
+
+@media (max-width: 768px) {
+  .search-bar-horizontal {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-bar-horizontal input,
+  .search-bar-horizontal button {
+    width: 100%;
+  }
+}
+/* Container für den Finanzierungsrechner */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background-color: #f4f6f9;
+}
+
+.finanz-section {
+  padding: 60px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.finanz-container {
+  background: white;
+  padding: 40px;
+  max-width: 650px;
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e0e0e0;
+}
+
+.finanz-title {
+  font-size: 28px;
+  color: #b84127;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.finanz-sub {
+  text-align: center;
+  margin-bottom: 32px;
+  font-size: 15px;
+  color: #555;
+}
+
+.finanz-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.finanz-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.finanz-row input {
+  flex: 1;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s ease;
+}
+
+.finanz-row input:focus {
+  border-color: #b84127;
+  outline: none;
+  background-color: #fff;
+}
+
+.finanz-button {
+  padding: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  background-color: #b84127;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.finanz-button:hover {
+  background-color: #cc4c2e;
+}
+
+.finanz-result {
+  margin-top: 24px;
+  background-color: #f0f8ff;
+  border: 1px solid #a6c8ff;
+  padding: 16px 24px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.finanz-label {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 6px;
+  color: #444;
+}
+
+.finanz-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1e3a8a;
+}
