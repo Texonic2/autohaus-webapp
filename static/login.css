@@ -23,7 +23,7 @@ body {
 h2 {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #ff6600;
+  color: #831D17;
 }
 
 /* Labels für Eingabefelder */
@@ -50,7 +50,7 @@ input[type="password"] {
 input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus {
-  border: 1px solid #ff6600;
+  border: 1px solid #831D17;
   outline: none;
 }
 
@@ -58,7 +58,7 @@ input[type="password"]:focus {
 button {
   width: 100%;
   padding: 0.9rem;
-  background-color: #ff6600;
+  background-color: #831D17;
   border: none;
   color: white;
   font-weight: bold;
@@ -70,12 +70,12 @@ button {
 
 /* Button - Hover-Effekt */
 button:hover {
-  background-color: #e55b00;
+  background-color: #831D17;
 }
 
 /* Button - Aktivzustand */
 button:active {
-  background-color: #cc5200;
+  background-color: #831D17;
 }
 
 /* Hinweis unterhalb des Formulars */

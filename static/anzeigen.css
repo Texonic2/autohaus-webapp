@@ -20,7 +20,7 @@ body {
 h2 {
   text-align: center;
   margin-bottom: 1.5rem;
-  color: #ff6600;
+  color: #831D17;
 }
 
 label {
@@ -62,7 +62,7 @@ input[type="password"] {
 button {
   width: 100%;
   padding: 0.9rem;
-  background-color: #ff6600;
+  background-color: #831D17;
   border: none;
   color: white;
   font-weight: bold;
@@ -72,7 +72,7 @@ button {
 }
 
 button:hover {
-  background-color: #e55b00;
+  background-color: #831D17;
 }
 
 .note {
@@ -83,7 +83,7 @@ button:hover {
 }
 
 .note a {
-  color: #ff6600;
+  color: #831D17;
   text-decoration: none;
 }
 
