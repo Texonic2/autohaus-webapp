@@ -48,155 +48,83 @@
 
       <form method="post" class="finanz-form">
 
-        <div class="finanz-row">
-          <input type="number" name="fahrzeugpreis" placeholder="Fahrzeugpreis (€)" required>
-          <input type="number" name="anzahlung" placeholder="Anzahlung (€)" required>
-        </div>
-
-        <div class="finanz-row">
-          <input type="number" name="laufzeit" placeholder="Laufzeit (Monate)" required>
-          <input type="number" name="schlussrate" placeholder="Schlussrate (€ – optional)" required>
-        </div>
-
-        <button type="submit" class="finanz-button">🧮 Monatsrate berechnen</button>
-
-        {% if rate %}
-          <div class="finanz-result">
-            <span class="finanz-label">Monatliche Rate:</span>
-            <span class="finanz-value">{{ rate }} €</span>
-          </div>
-        {% endif %}
-
-      </form>
-    </div>
-  </section>
+  <div class="finanz-row">
+    <input type="number" name="fahrzeugpreis" placeholder="Fahrzeugpreis (€)" required>
+    <input type="number" name="anzahlung" placeholder="Anzahlung (€)" required>
   </div>
 
+  <div class="finanz-row">
+    <input type="number" name="laufzeit" placeholder="Laufzeit (Monate)" required>
+    <input type="number" name="schlussrate" placeholder="Schlussrate (€ – optional)">
+  </div>
 
-<b>Autodatenbank nötig.</b><br>
-Des Weiteren wird aus dem <b>Finanzierung Button</b> der Preis entnommen.<br>
-<b>Anzahlung</b> plus <b>Anzahl an Monaten</b> wird gegeben.<br>
-<b>Berechnung der Monatsrate</b> wird ausgegeben.<br><br>
-    <p>
-Sobald der Nutzer die Daten eingibt und auf „berechnen“ klickt:<br>
-• wird die monatliche Rate berechnet,<br>
-• die Eingaben und das Ergebnis werden darunter angezeigt,<br>
-• und du kannst diese Daten bei Bedarf in die Datenbank speichern.<br>
-<br>
-⸻<br><br>
-Willst du auch direkt danach den „Jetzt anfragen“ oder „Vertrag abschließen“-Button einbauen?<br>
-Dann kann ich dir zeigen, wie man die Daten speichert, sobald der Nutzer zufrieden ist ✅
-</p>
+  <button type="submit" class="finanz-button">🧮 Monatsrate berechnen</button>
 
-<b>Finanzierungsanfrage-Datenbank</b> muss erstellt werden, so dass der Admin die Finanzierungsanfrage <b>plus den Termin</b> sieht.<br><br>
+{% if rate %}
+  <div class="finanz-ergebnis-box">
+    <div class="finanz-result">
+      <span class="finanz-label">Monatliche Rate:</span>
+      <span class="finanz-value">{{ rate }} €</span>
+    </div>
 
-<b>Klasse für die Datenbank (Finanzierungsanfrage):</b><br>
-<code>
-class Finanzierungsanfrage(db.Model):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;id = db.Column(db.Integer, primary_key=True)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;auto_id = db.Column(db.Integer, db.ForeignKey('auto.id'))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;user_id = db.Column(db.Integer, db.ForeignKey('user.id'))<br>
-&nbsp;&nbsp;&nbsp;&nbsp;monate = db.Column(db.Integer)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;anzahlung = db.Column(db.Float)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;termin = db.Column(db.Date)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;monatliche_rate = db.Column(db.Float)<br>
-</code><br><br>
+    <div class="finanz-summary">
+      <h3>Zusammenfassung Ihrer Eingaben:</h3>
+      <ul>
+        <li><strong>Fahrzeugpreis:</strong> {{ fahrzeugpreis }} €</li>
+        <li><strong>Anzahlung:</strong> {{ anzahlung }} €</li>
+        <li><strong>Laufzeit:</strong> {{ laufzeit }} Monate</li>
+        {% if schlussrate %}
+        <li><strong>Schlussrate:</strong> {{ schlussrate }} €</li>
+        {% endif %}
+        <li>Bei einer Laufzeit von <strong>{{ laufzeit }}</strong> Monaten beträgt Ihre monatliche Rate <strong>{{ rate }} €</strong>.</li>
+      </ul>
 
-<b>Berechnungsfunktion für die monatliche Rate:</b><br>
-<code>
-def berechne_rate(preis, monate, anzahlung):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;darlehen = preis - anzahlung<br>
-&nbsp;&nbsp;&nbsp;&nbsp;zinsrate = 0.05  # Beispiel: 5% Zinssatz<br>
-&nbsp;&nbsp;&nbsp;&nbsp;raten = darlehen * (zinsrate * (1 + zinsrate) ** monate) / ((1 + zinsrate) ** monate - 1)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;return raten<br>
-</code><br>
-Hinweis: Der Zinssatz <b>sollte aus der Datenbank kommen</b>, damit der Admin ihn jederzeit ändern kann.<br><br>
+      <!-- Trick: Checkbox für Anzeigen/Verstecken -->
+      <input type="checkbox" id="termin-toggle" class="termin-toggle">
+      <label for="termin-toggle" class="finanz-button-secondary">Jetzt Termin vereinbaren</label>
 
-<b>Flask Route für Finanzierung:</b><br>
-<code>
-@app.route('/finanzierung/&lt;int:auto_id&gt;', methods=['GET', 'POST'])<br>
-def finanzierung(auto_id):<br>
-&nbsp;&nbsp;&nbsp;&nbsp;auto = Auto.query.get(auto_id)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;if request.method == 'POST':<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Daten aus dem Formular erhalten<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;monate = request.form['monate']<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;anzahlung = request.form['anzahlung']<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;termin = request.form['termin']<br><br>
+<div class="termin-box">
+  <h3>🗓️ Termin vereinbaren</h3>
+  <form method="post">
+    <div class="termin-row">
+      <label for="termin">Gewünschtes Datum:</label>
+      <input type="date" id="termin" name="termin" required>
+    </div>
+    <div class="termin-row">
+      <label for="uhrzeit">Gewünschte Uhrzeit:</label>
+      <input type="time" id="uhrzeit" name="uhrzeit" required>
+    </div>
+    <button type="submit" class="finanz-button">Termin anfragen</button>
+  </form>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Berechnung der monatlichen Rate<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gesamtpreis = auto.preis<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;monatliche_rate = berechne_rate(gesamtpreis, monate, anzahlung)<br><br>
+  <div class="oeffnungszeiten">
+    <h4>Unsere Öffnungszeiten:</h4>
+    <p>Montag - Freitag: 08:00 - 18:00</p>
+    <p>Samstag: 09:00 - 14:00</p>
+    <p>Sonntag: Geschlossen</p>
+  </div>
+</div>
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Speichern der Finanzierungsdaten in der DB<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;finanzierung = Finanzierungsanfrage(<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auto_id=auto.id,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user_id=session['user_id'],<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;monate=monate,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;anzahlung=anzahlung,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;termin=termin,<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;monatliche_rate=monatliche_rate<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;db.session.add(finanzierung)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;db.session.commit()<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return redirect(url_for('finanzierungsbestätigung'))<br><br>
+    </div>
+  </div>
+{% endif %}
 
-&nbsp;&nbsp;&nbsp;&nbsp;return render_template('finanzierung.html', auto=auto)<br>
-</code><br>
+{% if termin_datum and termin_uhrzeit %}
+  <div class="termin-bestaetigung">
+    <p>Ihr Wunschtermin für den <strong>{{ termin_datum }}</strong> um <strong>{{ termin_uhrzeit }}</strong> wurde erfolgreich angefragt.</p>
+    <p>Bitte beachten Sie, dass dies lediglich eine Anfrage ist und noch keine verbindliche Zusage darstellt.</p>
+    <p>Wir werden uns so schnell wie möglich mit Ihnen in Verbindung setzen, um den Termin zu bestätigen.</p>
+  </div>
+{% endif %}
 
-    Autodatenbank nötig. Des Weiteren wird aus dem Finanzierung Button der Preis entnommen.
-    Anzahlung plus Anzahl an Monaten wird gegeben. Berechnung der Monatsrate wird ausgegeben.
+</form>
 
 
-    Finanzierungsanfrage Datenbank muss erstellt werden, so dass Admin Finanzierungsanfrage plus den Termin sieht
 
 
-    class Finanzierungsanfrage(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    auto_id = db.Column(db.Integer, db.ForeignKey('auto.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    monate = db.Column(db.Integer)
-    anzahlung = db.Column(db.Float)
-    termin = db.Column(db.Date)
-    monatliche_rate = db.Column(db.Float)
-
-    Berechnung
-
-    def berechne_rate(preis, monate, anzahlung):
-    darlehen = preis - anzahlung
-    zinsrate = 0.05  # Beispiel: 5% Zinssatz   ->  wobei dass wieder aus datenbank kommen sollte so dasss admin es änder kann wann er will
-    raten = darlehen * (zinsrate * (1 + zinsrate) ** monate) / ((1 + zinsrate) ** monate - 1)
-    return raten
 
 
-    route für flask finanzierung ist
 
-    @app.route('/finanzierung/int:auto_id', methods=['GET', 'POST'])    hier wurden die pfeile weg gemacht konnte ich nicht schreiben bei auto id nachfragen und ich erkläre es dir
-def finanzierung(auto_id):
-    auto = Auto.query.get(auto_id)
-    if request.method == 'POST':
-        # Daten aus dem Formular erhalten
-        monate = request.form['monate']
-        anzahung = request.form['anzahlung']
-        termin = request.form['termin']
-
-        # Berechnung der monatlichen Rate
-        gesamtpreis = auto.preis
-        monatliche_rate = berechne_rate(gesamtpreis, monate, anzahlung)
-
-        # Speichern der Finanzierungsdaten in der DB
-        finanzierung = Finanzierungsanfrage(
-            auto_id=auto.id,
-            user_id=session['user_id'],
-            monate=monate,
-            anzahlung=anzahlung,
-            termin=termin,
-            monatliche_rate=monatliche_rate
-        )
-        db.session.add(finanzierung)
-        db.session.commit()
-
-        return redirect(url_for('finanzierungsbestätigung'))
-    return render_template('finanzierung.html', auto=auto)
 
 
 

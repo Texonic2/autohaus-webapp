@@ -8,13 +8,11 @@ from db.db_credentials import DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE
 app = Flask(__name__)
 app.secret_key = 'dein_geheimes_schluessel'  # Geheimen Schlüssel für Sessions setzen
 
-
 @app.before_request
 def before_request():
     """ Verbindung zur Datenbank herstellen """
     g.con = mysql.connector.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
                                     database=DB_DATABASE)
-
 
 @app.teardown_request
 def teardown_request(exception):
@@ -23,11 +21,9 @@ def teardown_request(exception):
     if con is not None:
         con.close()
 
-
 @app.route('/fahrzeugkatalog')
 def fahrzeugkatalog():
     return render_template('fahrzeugkatalog.html')
-
 
 @app.route('/finanzierung', methods=['GET', 'POST'])
 def finanzierung():
@@ -37,8 +33,8 @@ def finanzierung():
     if request.method == 'POST':
         # Werte aus dem Formular auslesen und konvertieren
         fahrzeugpreis = float(request.form['fahrzeugpreis'])  # z. B. 30.000 €
-        anzahlung = float(request.form['anzahlung'])  # z. B. 5.000 €
-        laufzeit = int(request.form['laufzeit'])  # z. B. 36 Monate
+        anzahlung = float(request.form['anzahlung'])          # z. B. 5.000 €
+        laufzeit = int(request.form['laufzeit'])              # z. B. 36 Monate
         schlussrate = float(request.form.get('schlussrate', 0))  # z. B. 3.000 €, optional
 
         # Finanzierungssumme berechnen
@@ -54,17 +50,21 @@ def finanzierung():
     # HTML-Template anzeigen und ggf. berechnete Rate übergeben
     return render_template('finanzierung.html', rate=rate)
 
+@app.route('/account')
+def account():
+    if 'user_id' not in session:
+        return redirect(url_for('Login'))  # Wenn der Benutzer nicht eingeloggt ist, zum Login weiterleiten
+    return render_template('account.html')
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-
 @app.route('/Login', methods=['GET', 'POST'])
 def Login():
     if request.method == 'POST':
-        email = request.form['email']
-        passwort = request.form['passwort']
+        email = request.form['email']   # E-Mail aus dem Formular
+        passwort = request.form['passwort']  # Passwort aus dem Formular
 
         cursor = g.con.cursor()
 
@@ -77,7 +77,6 @@ def Login():
         # Überprüfen, ob der Benutzer existiert und das Passwort korrekt ist
         if user and check_password_hash(user[4], passwort):  # assuming password is at index 4
             session['user_id'] = user[0]  # user[0] ist die ID des Benutzers
-            session['role'] = user[5]  # Rolle des Benutzers (index 5 in diesem Fall)
             return redirect(url_for('index'))  # Nach dem Login zur Homepage weiterleiten
         else:
             return "Benutzername oder Passwort falsch. Bitte versuche es erneut."
@@ -96,12 +95,6 @@ def registration():
         email = request.form['email']
         passwort = request.form['password']
 
-        # Überprüfen, ob die E-Mail-Adresse mit @novadrive.de endet
-        if email.endswith('@novadrive.de'):
-            role = 'admin'  # Wenn die E-Mail mit @novadrive.de endet, wird der Benutzer als Admin festgelegt
-        else:
-            role = 'user'  # Ansonsten bekommt der Benutzer die Rolle 'user'
-
         cursor = g.con.cursor()
 
         # Überprüfen, ob die E-Mail bereits in der Datenbank existiert
@@ -114,8 +107,8 @@ def registration():
         else:
             # Falls die E-Mail nicht existiert, Benutzer registrieren
             hashed_password = generate_password_hash(passwort)
-            sql = "INSERT INTO users (vorname, nachname, email, passwort, role) VALUES (%s, %s, %s, %s, %s)"
-            val = (vorname, nachname, email, hashed_password, role)
+            sql = "INSERT INTO users (vorname, nachname, email, passwort) VALUES (%s, %s, %s, %s)"
+            val = (vorname, nachname, email, hashed_password)
             cursor.execute(sql, val)
             g.con.commit()
             return redirect(url_for('Login'))  # Weiterleitung nach erfolgreicher Registrierung
@@ -123,40 +116,10 @@ def registration():
     # Die Fehlermeldung an das Template übergeben, wenn die E-Mail bereits existiert
     return render_template('registration.html', error_message=error_message)
 
-
-
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)  # Entfernt die ID aus der Session, sodass der Benutzer ausgeloggt wird
     return redirect(url_for('index'))  # Weiterleitung zur Homepage
-
-
-@app.route('/account')
-def account():
-    if 'user_id' not in session:
-        return redirect(url_for('Login'))  # Nur eingeloggt zugreifen
-    return render_template('account.html')
-
-
-@app.route('/admin_dashboard', methods=['GET', 'POST'])
-def admin_dashboard():
-    if 'role' in session and session['role'] == 'admin':
-        cursor = g.con.cursor()
-
-        # Alle Benutzer anzeigen
-        cursor.execute("SELECT * FROM users")
-        users = cursor.fetchall()
-
-        # Optional: Verwalten von Benutzern (z. B. Löschen oder Bearbeiten)
-        if request.method == 'POST':
-            user_id_to_delete = request.form.get('delete_user_id')
-            cursor.execute("DELETE FROM users WHERE id = %s", (user_id_to_delete,))
-            g.con.commit()
-
-        return render_template('admin_dashboard.html', users=users)
-    else:
-        return redirect(url_for('index'))  # Weiterleitung, falls der Benutzer kein Admin ist
-
 
 # Start der Flask-Anwendung
 if __name__ == '__main__':

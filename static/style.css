@@ -163,7 +163,7 @@ body {
 }
 
 .finanz-section {
-  padding: 60px 20px;
+  padding: 100px 87px;
   display: flex;
   justify-content: center;
 }
@@ -233,13 +233,13 @@ body {
 }
 
 .finanz-button:hover {
-  background-color: #cc4c2e;
+  background-color: #333333;
 }
 
 .finanz-result {
   margin-top: 24px;
   background-color: #f0f8ff;
-  border: 1px solid #a6c8ff;
+  border: 1px solid #ffcc99;
   padding: 16px 24px;
   border-radius: 12px;
   text-align: center;
@@ -255,5 +255,124 @@ body {
 .finanz-value {
   font-size: 24px;
   font-weight: bold;
-  color: #1e3a8a;
+  color: #333333;
 }
+.finanz-ergebnis-box {
+  background: #f0f8ff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Button-Stil für Label */
+.finanz-button-secondary {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #b84127;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.finanz-button-secondary:hover {
+  background-color: #b84127;
+}
+}
+/* Stil für die Zusammenfassung der Finanzierungsdetails */
+.finanz-summary {
+  background-color: #fff;             /* Weißer Hintergrund für den Container */
+  padding: 20px;                       /* Innenabstand */
+  border-radius: 8px;                  /* Abgerundete Ecken */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Weicher Schatten für den Container */
+  margin-top: 20px;                    /* Abstand nach oben */
+}
+
+.finanz-summary h3 {
+  font-size: 24px;                     /* Größere Schrift für die Überschrift */
+  color: #333333;                      /* Rötlicher Farbton für die Überschrift */
+  margin-bottom: 16px;                  /* Abstand unter der Überschrift */
+}
+
+.finanz-summary ul {
+  list-style-type: none;               /* Keine Aufzählungszeichen */
+  padding-left: 0;                     /* Kein Abstand links */
+}
+
+.finanz-summary li {
+  font-size: 16px;                     /* Schriftgröße für die Listenelemente */
+  color: #444444;                         /* Dunkle Schriftfarbe für den Text */
+  margin-bottom: 8px;                  /* Abstand zwischen den Listenelementen */
+}
+
+.finanz-summary li strong {
+  color: #333333;                      /* Rötliche Farbe für den hervorgehobenen Text */
+}
+
+/* Stil für den Button "Jetzt Termin vereinbaren" */
+.finanz-summary .finanz-button-secondary {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #b84127;           /* Leicht rötlicher Farbton für den Button */
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.finanz-summary .finanz-button-secondary:hover {
+  background-color: #cc4c2e;           /* Etwas hellerer Rotton für den Hover-Effekt */
+}
+
+/* Checkbox verstecken */
+.termin-toggle {
+  display: none;
+}
+
+/* Termin-Box standardmäßig verstecken */
+.termin-box {
+  display: none;
+  background: #fff4e6; /* leicht braun/beige */
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+  border: 1px solid #ffcc99;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Wenn Checkbox aktiviert wird, zeige die Termin-Box */
+.termin-toggle:checked + label + .termin-box {
+  display: block;
+}
+.oeffnungszeiten {
+    background-color: #f9f9f9; /* Heller Hintergrund für den Öffnungszeiten-Block */
+    padding: 15px; /* Abstand um den Text */
+    border-radius: 8px; /* Abgerundete Ecken */
+    margin-top: 20px; /* Abstand nach oben */
+    border: 1px solid #ddd; /* Dünner Rand für eine klare Trennung */
+}
+
+.oeffnungszeiten h4 {
+    font-size: 20px; /* Größere Schrift für den Titel */
+    color: #333; /* Dunkle Schriftfarbe für den Titel */
+    margin-bottom: 10px; /* Abstand unter dem Titel */
+}
+
+.oeffnungszeiten p {
+    font-size: 16px; /* Schriftgröße für die Öffnungszeiten */
+    color: #555; /* Etwas hellere Textfarbe für die Zeiten */
+    margin: 5px 0; /* Abstand zwischen den einzelnen Öffnungszeiten */
+}
+
+.oeffnungszeiten p strong {
+    font-weight: bold; /* Fettgedruckte Zeitangaben */
+    color: #0056b3; /* Blaue Farbe für die hervorgehobenen Zeiten */
+}
+
+
