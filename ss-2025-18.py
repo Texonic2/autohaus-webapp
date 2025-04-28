@@ -83,10 +83,13 @@ def Login():
 
     return render_template('Login.html')
 
+
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
+    error_message = None  # Variable für die Fehlermeldung
+
     if request.method == 'POST':
-        # Daten aus dem Formular
+        # Formulardaten
         vorname = request.form['firstname']
         nachname = request.form['lastname']
         email = request.form['email']
@@ -94,25 +97,24 @@ def registration():
 
         cursor = g.con.cursor()
 
-        # SQL-Abfrage zur Überprüfung, ob die E-Mail schon existiert
+        # Überprüfen, ob die E-Mail bereits in der Datenbank existiert
         cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
         existing_user = cursor.fetchone()
 
         if existing_user:
-            return "E-Mail bereits registriert. Bitte benutze eine andere E-Mail."
+            # Falls die E-Mail schon existiert, Fehlermeldung setzen
+            error_message = "E-Mail bereits registriert. Bitte benutze eine andere E-Mail."
+        else:
+            # Falls die E-Mail nicht existiert, Benutzer registrieren
+            hashed_password = generate_password_hash(passwort)
+            sql = "INSERT INTO users (vorname, nachname, email, passwort) VALUES (%s, %s, %s, %s)"
+            val = (vorname, nachname, email, hashed_password)
+            cursor.execute(sql, val)
+            g.con.commit()
+            return redirect(url_for('Login'))  # Weiterleitung nach erfolgreicher Registrierung
 
-        # Passwort vor dem Speichern in der DB hashen
-        hashed_password = generate_password_hash(passwort)
-
-        # SQL-Abfrage zum Einfügen eines neuen Benutzers
-        sql = "INSERT INTO users (vorname, nachname, email, passwort) VALUES (%s, %s, %s, %s)"
-        val = (vorname, nachname, email, hashed_password)  # Gehashtes Passwort hier einfügen
-        cursor.execute(sql, val)
-        g.con.commit()
-
-        return redirect(url_for('Login'))  # Nach der Registrierung zum Login weiterleiten
-
-    return render_template('registration.html')
+    # Die Fehlermeldung an das Template übergeben, wenn die E-Mail bereits existiert
+    return render_template('registration.html', error_message=error_message)
 
 @app.route('/logout')
 def logout():
