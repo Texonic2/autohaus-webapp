@@ -22,13 +22,13 @@
 <body>
   <div class="login-container">
     <h2>Login</h2>
-    <form action="#" method="post">
+    <form action="{{ url_for('Login') }}" method="post">
       <label for="email">E-Mail</label>
       <input type="email" id="email" name="email" placeholder="deine@email.de" required>
 
       <label for="password">Passwort</label>
       <div class="password-wrapper">
-        <input type="password" id="password" name="password" placeholder="********" required>
+        <input type="password" id="password" name="passwort" placeholder="********" required>
         <img id="toggle-icon" class="toggle-icon" onclick="togglePassword()" src="https://img.icons8.com/ios-filled/50/000000/invisible.png" alt="Passwort anzeigen">
       </div>
 
