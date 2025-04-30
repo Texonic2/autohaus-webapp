@@ -1,0 +1,41 @@
+/* Dropdown Menü */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown .dropbtn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown .dropbtn img {
+    vertical-align: middle;
+    margin-left: 10px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #333;  /* Hintergrund des Dropdown-Menüs */
+    min-width: 160px;
+    z-index: 1;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);  /* Schatten für Dropdown */
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover {
+    background-color: #575757;  /* Hover-Effekt */
+}
+
+/* Dropdown sichtbar machen bei Hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}

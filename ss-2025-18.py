@@ -50,11 +50,7 @@ def finanzierung():
     # HTML-Template anzeigen und ggf. berechnete Rate übergeben
     return render_template('finanzierung.html', rate=rate)
 
-@app.route('/account')
-def account():
-    if 'user_id' not in session:
-        return redirect(url_for('Login'))  # Wenn der Benutzer nicht eingeloggt ist, zum Login weiterleiten
-    return render_template('account.html')
+
 
 @app.route('/')
 def index():
@@ -120,6 +116,18 @@ def registration():
 def logout():
     session.pop('user_id', None)  # Entfernt die ID aus der Session, sodass der Benutzer ausgeloggt wird
     return redirect(url_for('index'))  # Weiterleitung zur Homepage
+
+
+
+
+
+
+@app.route('/account')
+def account():
+    if 'user_id' not in session:
+        return redirect(url_for('Login'))  # Nur eingeloggt zugreifen
+    return render_template('account.html')
+
 
 # Start der Flask-Anwendung
 if __name__ == '__main__':
