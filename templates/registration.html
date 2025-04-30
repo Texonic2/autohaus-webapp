@@ -51,6 +51,18 @@
         <img id="toggle-icon" class="toggle-icon" onclick="togglePassword()" src="https://img.icons8.com/ios-filled/50/000000/invisible.png" alt="Passwort anzeigen" />
       </div>
 
+      <!-- Verstecktes Feld für den Admin-Status -->
+      <input type="hidden" name="role" value="user" id="role" /> <!-- Standardwert 'user' -->
+
+      <!-- Optional: Hier kannst du später ein Dropdown für Admins und normale Nutzer hinzufügen, falls nötig -->
+      <!-- Zum Beispiel:
+      <label for="role">Rolle</label>
+      <select id="role" name="role">
+        <option value="user">Benutzer</option>
+        <option value="admin">Admin</option>
+      </select>
+      -->
+
       <button type="submit">Registrieren</button>
     </form>
     <p class="note">Bereits registriert? <a href="{{ url_for('Login') }}">Zum Login</a></p>
