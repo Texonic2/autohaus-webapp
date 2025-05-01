@@ -23,32 +23,55 @@ def teardown_request(exception):
 
 @app.route('/fahrzeugkatalog')
 def fahrzeugkatalog():
-    return render_template('fahrzeugkatalog.html')
+    cursor = g.con.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM auto")
+    fahrzeuge = cursor.fetchall()
+    return render_template('fahrzeugkatalog.html', fahrzeuge=fahrzeuge)
 
-@app.route('/finanzierung', methods=['GET', 'POST'])
-def finanzierung():
-    rate = None  # Standard: Noch keine Rate berechnet
+@app.route('/finanzierung/<int:autoid>', methods=['GET', 'POST'])
+@app.route('/finanzierung/<int:autoid>', methods=['GET', 'POST'])
+def finanzierung(autoid):
+    cursor = g.con.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM auto WHERE autoid = %s", (autoid,))
+    fahrzeug = cursor.fetchone()
+    aktion = request.form.get("aktion")
 
-    # Wenn das Formular abgeschickt wurde (POST-Methode)
-    if request.method == 'POST':
-        # Werte aus dem Formular auslesen und konvertieren
-        fahrzeugpreis = float(request.form['fahrzeugpreis'])  # z. B. 30.000 €
-        anzahlung = float(request.form['anzahlung'])          # z. B. 5.000 €
-        laufzeit = int(request.form['laufzeit'])              # z. B. 36 Monate
-        schlussrate = float(request.form.get('schlussrate', 0))  # z. B. 3.000 €, optional
+    if not fahrzeug:
+        return "Fahrzeug nicht gefunden", 404
 
-        # Finanzierungssumme berechnen
+    # Standardwerte
+    rate = None
+    fahrzeugpreis = None
+    anzahlung = None
+    laufzeit = None
+    schlussrate = None
+
+    if aktion == "berechnen":
+        fahrzeugpreis = float(request.form['fahrzeugpreis'])
+        anzahlung = float(request.form['anzahlung'])
+        laufzeit = int(request.form['laufzeit'])
+        schlussrate = float(request.form.get('schlussrate', 0))
+
         finanzierungsbetrag = fahrzeugpreis - anzahlung - schlussrate
-
-        # Fester Zinssatz: 2 % auf den Finanzierungsbetrag
         zins = 0.02
         gesamtbetrag = finanzierungsbetrag + (finanzierungsbetrag * zins)
-
-        # Monatliche Rate = Gesamtbetrag / Laufzeit
         rate = round(gesamtbetrag / laufzeit, 2)
+    elif aktion == "barzahlung":
+        fahrzeugpreis = float(request.form['fahrzeugpreis'])
+        anzahlung = 0
+        laufzeit = 0
+        schlussrate = 0
+        rate= fahrzeugpreis
 
-    # HTML-Template anzeigen und ggf. berechnete Rate übergeben
-    return render_template('finanzierung.html', rate=rate)
+    return render_template(
+        'finanzierung.html',
+        fahrzeug=fahrzeug,
+        rate=rate,
+        fahrzeugpreis=fahrzeugpreis,
+        anzahlung=anzahlung,
+        laufzeit=laufzeit,
+        schlussrate=schlussrate
+    )
 
 @app.route('/account')
 def account():

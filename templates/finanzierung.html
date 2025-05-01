@@ -41,15 +41,12 @@
             <!-- Link zu "Standort" -->
         </div>
     </div>
- <section class="finanz-section">
-    <div class="finanz-container">
-      <h1 class="finanz-title">💶 Finanzierung berechnen</h1>
-      <p class="finanz-sub">Effektiver Jahreszins: <strong>2 %</strong> – fair & transparent</p>
 
-      <form method="post" class="finanz-form">
+<form method="post" class="finanz-form">
 
   <div class="finanz-row">
-    <input type="number" name="fahrzeugpreis" placeholder="Fahrzeugpreis (€)" required>
+    <input type="number" name="fahrzeugpreis" placeholder="Fahrzeugpreis (€)" required
+           value="{{ fahrzeug.preis }}">
     <input type="number" name="anzahlung" placeholder="Anzahlung (€)" required>
   </div>
 
@@ -58,7 +55,9 @@
     <input type="number" name="schlussrate" placeholder="Schlussrate (€ – optional)">
   </div>
 
-  <button type="submit" class="finanz-button">🧮 Monatsrate berechnen</button>
+  <button type="submit" name="aktion" value="berechnen" class="finanz-button">🧮 Monatsrate berechnen</button>
+<button type="submit" name="aktion" value="barzahlung" class="finanz-button">Direkte Barzahlung</button>
+</form>
 
 {% if rate %}
   <div class="finanz-ergebnis-box">
@@ -68,16 +67,19 @@
     </div>
 
     <div class="finanz-summary">
-      <h3>Zusammenfassung Ihrer Eingaben:</h3>
-      <ul>
-        <li><strong>Fahrzeugpreis:</strong> {{ fahrzeugpreis }} €</li>
-        <li><strong>Anzahlung:</strong> {{ anzahlung }} €</li>
-        <li><strong>Laufzeit:</strong> {{ laufzeit }} Monate</li>
-        {% if schlussrate %}
-        <li><strong>Schlussrate:</strong> {{ schlussrate }} €</li>
-        {% endif %}
-        <li>Bei einer Laufzeit von <strong>{{ laufzeit }}</strong> Monaten beträgt Ihre monatliche Rate <strong>{{ rate }} €</strong>.</li>
-      </ul>
+  <h3>Ihr Wunschfahrzeug im Überblick</h3>
+  <ul>
+    <li><strong>Fahrzeug:</strong> {{ fahrzeug.marke }} {{ fahrzeug.modell }}</li>
+    <li><strong>Leistung:</strong> {{ fahrzeug.ps }} PS</li>
+    <li><strong>Fahrzeugpreis:</strong> {{ fahrzeugpreis }} €</li>
+    <li><strong>Anzahlung:</strong> {{ anzahlung }} €</li>
+    <li><strong>Laufzeit:</strong> {{ laufzeit }} Monate</li>
+    {% if schlussrate %}
+    <li><strong>Schlussrate:</strong> {{ schlussrate }} €</li>
+    {% endif %}
+    <li>Bei einer Laufzeit von <strong>{{ laufzeit }}</strong> Monaten beträgt Ihre monatliche Rate <strong>{{ rate }} €</strong>.</li>
+  </ul>
+</div>
 
       <!-- Trick: Checkbox für Anzeigen/Verstecken -->
       <input type="checkbox" id="termin-toggle" class="termin-toggle">
@@ -118,14 +120,6 @@
 {% endif %}
 
 </form>
-
-
-
-
-
-
-
-
 
 
     <div class="legal-content">

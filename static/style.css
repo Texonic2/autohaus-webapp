@@ -30,6 +30,15 @@ body {
     background-color: white;             /* Weißer Hintergrund für besseren Kontrast */
     padding: 16px;                        /* Innenabstand rundherum */
 }
+.image-container1 img {
+    height: 490px; /* etwas größer als vorher */
+    background-color: white;             /* Weißer Hintergrund für besseren Kontrast */
+    padding: 16px;
+    object-fit: cover;
+    object-position: 50% 40%; /* verschiebt den sichtbaren Bildausschnitt weiter nach unten */
+    width: 97.5%;
+    display: block;
+}
 
 /* Navigation oben: horizontales Menü */
 .navbar {

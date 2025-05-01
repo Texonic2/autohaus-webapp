@@ -52,90 +52,33 @@
   <button type="submit">🔍 Suchen</button>
 </form>
 
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='s klasse 63.jpg') }}" class="header-image" alt="Header Bild">
-</div>
-<!-- Der gesamte Textcontainer bekommt ein flexibles Layout -->
-<div class="text-container" style="display: flex; align-items: center;">
-
-    <!-- Der Beschreibungstext bleibt ganz normal links -->
-    <span>    <div class="car-details">
-      <h3>Mercedes C-Klasse</h3>
-      <p><strong>Modell:</strong> C220d AMG Line</p>
-      <p><strong>Baujahr:</strong> 2021</p>
-      <p><strong>Leistung:</strong> 194 PS</p>
-      <p><strong>Preis:</strong> 34.990 €</p>
-    </div></span>
-
-    <!-- Der Button wird durch margin-left: auto ganz nach rechts geschoben -->
-    <!-- "margin-left: auto;" nutzt den freien Platz zwischen Text und Button -->
-    <a href="finanzierung" style="margin-left: auto;">
-
-        <button>Finanzieren</button>
-    <a href="#" style="margin-left: auto;">
-
-        <button>PDF</button>
-    </a>
-</div>
-    <div class="car-card">
-
-  <!-- Bild oben -->
-  <div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-  </div>
-
-  <!-- Fahrzeugdaten & Button -->
-  <div class="car-info">
-
-
-    <div class="pdf-button">
-      <a href="{{ url_for('static', filename='pdfs/mercedes-c-klasse.pdf') }}" target="_blank">
-        <button>📄 PDF</button>
-      </a>
+{% for fahrzeug in fahrzeuge %}
+    <div class="image-container1">
+        <img src="{{ url_for('static', filename=fahrzeug.url) }}" class="header-image"
+             alt="Bild von {{ fahrzeug.marke }} {{ fahrzeug.modell }}">
     </div>
 
-  </div>
-</div>
+    <div class="text-container" style="display: flex; align-items: center;">
+        <div class="car-details">
+            <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
+            <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
+            <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
+            <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
+        </div>
+
+        <div style="margin-left: auto; display: flex; gap: 10px;">
+            <a href="/finanzierung/{{ fahrzeug.autoid }}">
+                <button>Finanzieren</button>
+            </a>
+            <a href="/pdf/{{ fahrzeug.autoid }}">
+                <button>PDF</button>
+            </a>
+        </div>
+    </div>
+    <hr>
+{% endfor %}
 
 
-
-
-<div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-<div class="text-container" style="display: flex; align-items: center;">
-    <span>Auto eins – Daten, PDF, Button etc.</span>
-    <a href="#" style="margin-left: auto;">
-        <button>PDF</button>
-    </a>
-</div>
-    <p>
-Diese Seite dient als Vorlage, wie später alle Autos angezeigt werden sollen.<br>
-Aber aktuell sind die Autos hier <strong>manuell</strong> eingefügt – also jedes Auto mit HTML kopiert und eingefügt.<br><br>
-
-Später wollen wir die Autos aber <strong>aus der Datenbank automatisch anzeigen lassen</strong>.<br>
-Das heißt: Wir brauchen eine <strong>Schleife</strong>, die mit Flask und Jinja2 über alle passenden Autos geht.<br>
-Zum Beispiel so: <code>&#123;% for auto in autos %&#125;</code><br>
-Und dann wird für jedes Auto:<br>
-– das Bild bzw nur url weil bild speichert man nicht in datenbank <br>
-– der Name<br>
-– der Preis<br>
-– und die Buttons (PDF, Finanzierung)<br>
-automatisch eingefügt.<br><br>
-
-Zusätzlich soll es oben ein <strong>Suchfeld oder Filter-Menü</strong> geben (z. B. nach Marke, Modell, Preisbereich usw.).<br>
-Wenn der Nutzer etwas sucht oder filtert, dann wird die Datenbank abgefragt<br>
-und es werden <strong>nur die Autos angezeigt, die zum Filter passen</strong>.<br><br>
-
-Ohne diese Schleife würde der Filter keinen Sinn machen,<br>
-weil sonst ja trotzdem alle Autos auf der Seite stehen – egal was gesucht wurde.<br><br>
-
-Zusammengefasst:<br>
-✔️ Datenbank enthält alle Autodaten (Name, Preis, Bild, …)<br>
-✔️ In Flask wird eine Abfrage mit Filter gemacht<br>
-✔️ In HTML nutzen wir eine Schleife mit <code>&#123;% for auto in autos %&#125;</code><br>
-✔️ So wird jedes passende Auto automatisch angezeigt – je nach Filter<br>
 </p>
 
 
