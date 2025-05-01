@@ -172,15 +172,15 @@ body {
 }
 
 .finanz-section {
-  padding: 100px 87px;
+  padding: 20px 95px;
   display: flex;
   justify-content: center;
 }
 
 .finanz-container {
   background: white;
-  padding: 40px;
-  max-width: 650px;
+  padding: 75px;
+  max-width: 900px;
   width: 100%;
   border-radius: 16px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);

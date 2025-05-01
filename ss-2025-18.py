@@ -28,7 +28,34 @@ def fahrzeugkatalog():
     fahrzeuge = cursor.fetchall()
     return render_template('fahrzeugkatalog.html', fahrzeuge=fahrzeuge)
 
-@app.route('/finanzierung/<int:autoid>', methods=['GET', 'POST'])
+
+
+@app.route("/finanzierungbsp", methods=["GET", "POST"])
+def finanzierungbsp():
+    rate = None
+
+    if request.method == "POST":
+        try:
+            fahrzeugpreis = float(request.form["fahrzeugpreis"])
+            anzahlung = float(request.form["anzahlung"])
+            laufzeit = int(request.form["laufzeit"])
+            schlussrate = float(request.form["schlussrate"])
+
+            # Effektivzins: 2 % jährlich → monatlich:
+            zinssatz = 0.02 / 12
+            kreditbetrag = fahrzeugpreis - anzahlung - schlussrate
+
+            if laufzeit > 0 and kreditbetrag > 0:
+                rate = kreditbetrag * zinssatz / (1 - (1 + zinssatz) ** -laufzeit)
+                rate = round(rate, 2)
+            else:
+                rate = "Ungültige Eingaben"
+
+        except (ValueError, ZeroDivisionError):
+            rate = "Eingabefehler"
+
+    return render_template("finanzierungbsp.html", rate=rate)
+
 @app.route('/finanzierung/<int:autoid>', methods=['GET', 'POST'])
 def finanzierung(autoid):
     cursor = g.con.cursor(dictionary=True)
