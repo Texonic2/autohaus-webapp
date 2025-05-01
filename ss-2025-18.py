@@ -29,7 +29,9 @@ def fahrzeugkatalog():
     return render_template('fahrzeugkatalog.html', fahrzeuge=fahrzeuge)
 
 @app.route('/finanzierung/<int:autoid>', methods=['GET', 'POST'])
-@app.route('/finanzierung/<int:autoid>', methods=['GET', 'POST'])
+
+
+
 def finanzierung(autoid):
     cursor = g.con.cursor(dictionary=True)
     cursor.execute("SELECT * FROM auto WHERE autoid = %s", (autoid,))
