@@ -383,5 +383,73 @@ body {
     font-weight: bold; /* Fettgedruckte Zeitangaben */
     color: #0056b3; /* Blaue Farbe für die hervorgehobenen Zeiten */
 }
+/* Accountseite kunde */
 
 
+.finanzierungsanfrage-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 60px;
+    background-color: #f7f7f7;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.finanzierungsanfrage-container h2 {
+    text-align: center;
+    margin-bottom: 27px;
+    color: #333;
+    font-size: 28px;
+}
+
+.finanzierungsanfrage-card {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 60px;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.auto-bild img {
+    width: 400px;
+    max-height: 280px;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.anfrage-details {
+    flex: 1;
+}
+
+.anfrage-details h3 {
+    margin-top: 0;
+    color: #1a1a1a;
+    font-size: 22px;
+}
+
+.anfrage-details p {
+    margin: 6px 0;
+    font-size: 16px;
+    color: #444;
+}
+
+.status {
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.status.angenommen {
+    background-color: #28a745;
+}
+
+.status.abgelehnt {
+    background-color: #dc3545;
+}
