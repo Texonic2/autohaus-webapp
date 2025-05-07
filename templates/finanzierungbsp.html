@@ -1,44 +1,9 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <!-- Der Kopfbereich: Hier kommen Infos für den Browser, nicht für den Nutzer -->
-    <meta charset="UTF-8">
-    <!-- Zeichensatz ist UTF-8 (für Sonderzeichen wie ä, ö, ü) -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Sorgt für Kompatibilität mit dem Internet Explorer -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Wichtig für responsive Design (Skalierung auf Smartphones/Tablets) -->
-    <title>Autohaus Heilbronn</title>
-    <!-- Titel, der im Tab vom Browser angezeigt wird -->
+{% extends "base.html" %}
 
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <!-- Stellt früher Verbindung zu Google Fonts her (schnelleres Laden) -->
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
-    <!-- Lädt die Schriftart "Open Sans" in verschiedenen Stärken von Google Fonts -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+{% block title %}Startseite – Autohaus Heilbronn{% endblock %}
 
-</head>
-<body>
-    <!-- Hier beginnt der sichtbare Inhalt der Webseite -->
+{% block content %}
 
-    <div class="navbar">
-        <!-- Bereich für die Navigationsleiste (Menü) -->
-        <h1 class="headline">
-            <!-- Große Überschrift -->
-            NovaDrive<br> <span class="text-highlight">Finanzierung</span>
-            <!-- Die Stadt wird hervorgehoben durch die Klasse „text-highlight“ -->
-        </h1>
-
-        <div>
-            <!-- Ein weiterer Block für die Navigation-Links -->
-            <a href="{{ url_for('index') }}">Homepage</a>
-            <!-- Link zu "Infos" (das # bedeutet: führt aktuell noch nirgendwo hin) -->
-            <a href="fahrzeugkatalog">Fahrzeugkatalog</a>
-            <!-- Link zu "Preise" -->
-            <a href="account">Account </a>
-            <!-- Link zu "Termin" -->
-
-            <!-- Link zu "Standort" -->
         </div>
     </div>
  <section class="finanz-section">
@@ -71,3 +36,4 @@
     </div>
   </section>
   </div>
+{% endblock %}
