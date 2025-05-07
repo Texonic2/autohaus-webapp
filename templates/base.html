@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Autohaus Heilbronn{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dropdown_konto.css') }}">
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <div class="navbar">
+        <h1 class="headline">
+            NovaDrive<br> <span class="text-highlight">Heilbronn</span>
+        </h1>
+
+        <div>
+            <a href="{{ url_for('index') }}">Homepage</a>
+            <a href="{{ url_for('fahrzeugkatalog') }}">Fahrzeugkatalog</a>
+            <a href="{{ url_for('finanzierungbsp') }}">Finanzierungsrechner</a>
+
+            {% if 'user_id' in session %}
+                <div class="dropdown">
+                    <a href="#" class="dropbtn">
+                        <img src="https://img.icons8.com/ios-glyphs/30/000000/user--v1.png" alt="Mein Konto">
+                    </a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('account') }}">Mein Konto</a>
+                        <a href="{{ url_for('logout') }}">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{{ url_for('Login') }}">Login</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- INHALT DER SEITE -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>
