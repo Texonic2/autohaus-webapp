@@ -92,6 +92,7 @@
 <div class="termin-box">
   <h3>🗓️ Termin vereinbaren</h3>
   <form method="post">
+      <input type="hidden" name="aktion" value="termin">
     <div class="termin-row">
       <label for="termin">Gewünschtes Datum:</label>
       <input type="date" id="termin" name="termin" required>
@@ -101,8 +102,8 @@
       <input type="time" id="uhrzeit" name="uhrzeit" required>
     </div>
     <button type="submit" class="finanz-button">Termin anfragen</button>
-  </form>
 
+  </form>
   <div class="oeffnungszeiten">
     <h4>Unsere Öffnungszeiten:</h4>
     <p>Montag - Freitag: 08:00 - 18:00</p>

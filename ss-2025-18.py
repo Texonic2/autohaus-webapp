@@ -83,6 +83,16 @@ def finanzierung(autoid):
         zins = 0.02
         gesamtbetrag = finanzierungsbetrag + (finanzierungsbetrag * zins)
         rate = round(gesamtbetrag / laufzeit, 2)
+
+        # Speichern in der Session
+        session['finanzierung'] = {
+            'autoid': autoid,
+            'fahrzeugpreis': fahrzeugpreis,
+            'anzahlung': anzahlung,
+            'laufzeit': laufzeit,
+            'schlussrate': schlussrate,
+            'rate': rate
+        }
     elif aktion == "barzahlung":
         fahrzeugpreis = float(request.form['fahrzeugpreis'])
         anzahlung = 0
@@ -90,10 +100,27 @@ def finanzierung(autoid):
         schlussrate = 0
         rate= fahrzeugpreis
 
+
+    elif aktion == "termin":
+        fahrzeugpreis = float(request.form['fahrzeugpreis'])
+        anzahlung = float(request.form['anzahlung'])
+        laufzeit = int(request.form['laufzeit'])
+        schlussrate = float(request.form.get('schlussrate', 0))
+        rate = float(request.form['rate'])
+        terminwunsch = f"{request.form['termin']} {request.form['uhrzeit']}"
+
+        cursor.execute(
+            "INSERT INTO finanzierungsanfrage (Auto_ID, Anzahlung, Monate, Monatliche_Rate, Terminwunsch, Status) VALUES (%s, %s, %s, %s, %s, %s)",
+            (autoid, anzahlung, laufzeit, rate, terminwunsch, "offen")
+        )
+        g.con.commit()
+        return redirect(url_for('danke'))
+
     return render_template(
         'finanzierung.html',
         fahrzeug=fahrzeug,
         rate=rate,
+
         fahrzeugpreis=fahrzeugpreis,
         anzahlung=anzahlung,
         laufzeit=laufzeit,
