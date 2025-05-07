@@ -86,21 +86,56 @@ button:active {
   text-align: center;
 }
 
-.finanz-rate-direkt {
-  margin-top: 20px;
+/* Fehlermeldungen für falsche Anmeldedaten */
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
   text-align: center;
-  background-color: #f0f8ff;
-  border: 1px solid #a6c8ff;
-  padding: 14px;
-  border-radius: 10px;
+  font-size: 14px;
 }
 
-.finanz-rate-direkt p {
-  margin: 6px 0;
-  font-size: 16px;
+/* Beispiel-Stil für eine fehlende Registrierung (keine E-Mail) */
+.error-message.invalid-email {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
-.rate-wert {
-  font-size: 22px;
-  color: #1e3a8a;
+/* Beispiel-Stil für falsches Passwort */
+.error-message.invalid-password {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+/* Erfolgsbenachrichtigung */
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Passwort Eingabefeld und Toggle Button */
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* Anpassung der Fehler- und Erfolgsnachrichten */
+.error-message, .success-message {
+  margin-top: 1rem;
 }

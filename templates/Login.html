@@ -22,6 +22,12 @@
 <body>
   <div class="login-container">
     <h2>Login</h2>
+
+    <!-- Fehlermeldung wird hier angezeigt, wenn vorhanden -->
+    {% if error_message %}
+      <div class="error-message">{{ error_message }}</div>
+    {% endif %}
+
     <form action="{{ url_for('Login') }}" method="post">
       <label for="email">E-Mail</label>
       <input type="email" id="email" name="email" placeholder="deine@email.de" required>
@@ -34,6 +40,7 @@
 
       <button type="submit">Einloggen</button>
     </form>
+
     <p class="note">Noch keinen Account? <a href="{{ url_for('registration') }}">Registrieren</a></p>
   </div>
 </body>

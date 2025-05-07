@@ -110,10 +110,13 @@ def account():
 def index():
     return render_template('index.html')
 
+
 @app.route('/Login', methods=['GET', 'POST'])
 def Login():
+    error_message = None  # Hier wird die Fehlermeldung gesetzt, falls eine auftaucht.
+
     if request.method == 'POST':
-        email = request.form['email']   # E-Mail aus dem Formular
+        email = request.form['email']  # E-Mail aus dem Formular
         passwort = request.form['passwort']  # Passwort aus dem Formular
 
         cursor = g.con.cursor()
@@ -124,14 +127,15 @@ def Login():
         cursor.execute(sql, val)
         user = cursor.fetchone()
 
-        # Überprüfen, ob der Benutzer existiert und das Passwort korrekt ist
-        if user and check_password_hash(user[4], passwort):  # assuming password is at index 4
-            session['user_id'] = user[0]  # user[0] ist die ID des Benutzers
-            return redirect(url_for('index'))  # Nach dem Login zur Homepage weiterleiten
+        if user is None:
+            error_message = "Diese E-Mail-Adresse ist noch nicht registriert."  # Fehler bei nicht existierender E-Mail
+        elif not check_password_hash(user[4], passwort):  # assuming password is at index 4
+            error_message = "Das Passwort ist falsch. Bitte versuche es erneut."  # Fehler bei falschem Passwort
         else:
-            return "Benutzername oder Passwort falsch. Bitte versuche es erneut."
+            session['user_id'] = user[0]  # user[0] ist die ID des Benutzers
+            return redirect(url_for('index'))  # Weiterleitung bei erfolgreichem Login
 
-    return render_template('Login.html')
+    return render_template('Login.html', error_message=error_message)
 
 
 @app.route('/registration', methods=['GET', 'POST'])
