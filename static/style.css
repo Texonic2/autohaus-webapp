@@ -66,6 +66,7 @@ a:hover {
     font-size: 47px;                     /* Große Schriftgröße */
 }
 
+
 /* Box mit Hintergrund für Texte wie "30 Minuten" oder rechts neben der Karte */
 .text-container {
     background-color: #DEDEDE;           /* Hellgrauer Hintergrund */
@@ -78,7 +79,10 @@ a:hover {
 .maps-container {
     margin-top: 16px;                    /* Abstand nach oben */
     display: flex;                       /* Karte und Text nebeneinander */
+    gap: 16px;
     justify-content: space-between;      /* Abstand zwischen Karte und Text */
+    width: 100%;
+    allign-items:stretch;
 }
 
 /* Rechte Box neben der Karte */
