@@ -70,7 +70,7 @@ a:hover {
 /* Box mit Hintergrund für Texte wie "30 Minuten" oder rechts neben der Karte */
 .text-container {
     background-color: #DEDEDE;           /* Hellgrauer Hintergrund */
-    padding: 8px;                        /* Innenabstand */
+    padding: 15px;                        /* Innenabstand */
     color: #484846;                      /* Dunkelgraue Schriftfarbe */
     font-weight: 600;                    /* Halbfett */
 }
@@ -79,23 +79,22 @@ a:hover {
 .maps-container {
     margin-top: 16px;                    /* Abstand nach oben */
     display: flex;                       /* Karte und Text nebeneinander */
-    gap: 16px;
+    gap: 20px;
     justify-content: space-between;      /* Abstand zwischen Karte und Text */
-    width: 100%;
-    allign-items:stretch;
+    allign-items:flex-start;
 }
 
 /* Rechte Box neben der Karte */
 .maps-right {
     margin-left: 16px;                   /* Abstand links zur Karte */
-    width: 30%;                          /* Nimmt 30% des Platzes ein */
+    width: 45%;                          /* Nimmt 30% des Platzes ein */
 }
 
 /* Google Maps Frame */
 .maps-frame {
     border: 0;                           /* Kein Rahmen */
-    height: 350px;                       /* Feste Höhe */
-    width: 70%;                          /* Nimmt 70% der Breite ein */
+    height: 400px;                       /* Feste Höhe */
+    width: 75%;                          /* Nimmt 70% der Breite ein */
 }
 
 /* Bereich ganz unten mit Impressum etc. */

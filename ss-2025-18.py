@@ -202,6 +202,16 @@ def logout():
     session.pop('user_id', None)  # Entfernt die ID aus der Session, sodass der Benutzer ausgeloggt wird
     return redirect(url_for('index'))  # Weiterleitung zur Homepage
 
+
+
+@app.route('/impressum')
+def impressum():
+    return render_template('impressum.html')
+
+@app.route('/Datenschutz')
+def datenschutz():
+    return render_template('datenschutz.html')
+
 # Start der Flask-Anwendung
 if __name__ == '__main__':
     app.run(debug=True)
