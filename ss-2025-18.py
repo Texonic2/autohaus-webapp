@@ -1,4 +1,4 @@
-from flask import Flask, render_template, g, request, redirect, url_for, session
+from flask import Flask, render_template, g, request, redirect, url_for, session, flash
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -7,6 +7,82 @@ from db.db_credentials import DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE
 
 app = Flask(__name__)
 app.secret_key = 'dein_geheimes_schluessel'  # Geheimen Schlüssel für Sessions setzen
+
+from functools import wraps
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if session.get("role") != "admin":
+            flash("Zugriff nur für Administratoren.")
+            return redirect(url_for("Login"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route("/admin") #Admin Dashboard
+@admin_required
+def admin_dashboard():
+    return render_template("admin/dashboard.html")
+
+@app.route("/admin/users") #Benutzerliste
+@admin_required
+def user_list():
+    db = mysql.connector.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_DATABASE
+    )
+    cursor = db.cursor()
+    cursor.execute("SELECT User_ID, vorname, nachname, email, role FROM users")
+    users = cursor.fetchall()
+    db.close()
+    return render_template("admin/user_list.html", users=users)
+
+@app.route("/admin/users/delete/<int:user_id>") #Benutzer löschen
+@admin_required
+def delete_user(user_id):
+    db = mysql.connector.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_DATABASE
+    )
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM users WHERE User_ID = %s", (user_id,))
+    db.commit()
+    db.close()
+    return redirect(url_for("user_list"))
+
+@app.route("/admin/autos")
+@admin_required
+def auto_list():
+    db = mysql.connector.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_DATABASE
+    )
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM auto")
+    autos = cursor.fetchall()
+    db.close()
+    return render_template("admin/auto_list.html", autos=autos)
+
+@app.route("/admin/autos/delete/<int:autoid>")
+@admin_required
+def delete_auto(autoid):
+    db = mysql.connector.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        database=DB_DATABASE
+    )
+    cursor = db.cursor()
+    cursor.execute("DELETE FROM auto WHERE autoid = %s", (autoid,))
+    db.commit()
+    db.close()
+    return redirect(url_for("auto_list"))
 
 @app.before_request
 def before_request():
@@ -160,7 +236,12 @@ def Login():
             error_message = "Das Passwort ist falsch. Bitte versuche es erneut."  # Fehler bei falschem Passwort
         else:
             session['user_id'] = user[0]  # user[0] ist die ID des Benutzers
-            return redirect(url_for('index'))  # Weiterleitung bei erfolgreichem Login
+            if user[5] == "admin":  # user[5] ist die Spalte "role"
+                session['role'] = "admin"
+                return redirect(url_for('admin_dashboard'))
+            else:
+                session['role'] = "customer"
+                return redirect(url_for('index'))
 
     return render_template('Login.html', error_message=error_message)
 
