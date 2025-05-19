@@ -1,0 +1,88 @@
+body {
+    background-color: white; /* Weißer Hintergrund */
+    color: #990000; /* Standardfarbe Rot für den restlichen Text */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #990000; /* Dunkelrot für den Header */
+    color: white; /* Weißer Text */
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+/* Sicherstellen, dass Elemente mit der Klasse .black-text Schwarz haben */
+.black-text {
+    color: black !important; /* Erzwingt Schwarz und überschreibt andere Stile */
+}
+
+/* Allgemeine Absätze */
+p {
+    line-height: 1.6;
+    font-size: 1.1rem;
+    margin: 10px 20px;
+}
+
+/* Links */
+a {
+    color: #990000; /* Rot für Links */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    color: white; /* Weiß bei Hover */
+    background-color: #990000; /* Rot als Hintergrund */
+    padding: 2px 5px;
+    border-radius: 5px; /* Leichte Rundung */
+}
+
+footer {
+    background-color: #990000; /* Dunkelrot für den Footer */
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.adresse {
+    color: black;
+}
+
+.vertreter {
+    color: black;
+}
+
+.kontakt {
+    color: black;
+}
+
+.handlungsreg {
+    color: black;
+}
+
+.umsatzid {
+    color: black;
+}
+
+.haftungsausschluss {
+    color: black;
+}
+
+
+.aufsichtsbehörde {
+    color: black;
+}
+
+.umsatz {
+    color: red;
+}
