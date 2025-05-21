@@ -133,6 +133,10 @@ def account():
     if 'user_id' not in session:
         return redirect(url_for('Login'))
 
+    if session.get('role') == 'admin':
+        return redirect(url_for('admin_dashboar'))
+
+    # Falls kein Admin → reguläre Konto-Seite laden
     user_id = session['user_id']
     cursor = g.con.cursor(dictionary=True)
 
@@ -143,10 +147,9 @@ def account():
         WHERE f.Nutzer_ID = %s
         ORDER BY f.erstellt_am DESC
     """, (user_id,))
-
     anfragen = cursor.fetchall()
-    return render_template('account.html', anfragen=anfragen)
 
+    return render_template('account.html', anfragen=anfragen)
 
 @app.route('/')
 def index():
@@ -237,9 +240,37 @@ def impressum():
 def datenschutz():
     return render_template('datenschutz.html')
 
-@app.route("/admin")
+@app.route("/admin", methods=["GET", "POST"])
 def admin():
-    return render_template("admin.html")
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Zugriff verweigert", 403
+
+    cursor = g.con.cursor(dictionary=True)
+
+    if request.method == "POST":
+        aktion = request.form.get("aktion")
+        anfrage_id = request.form.get("anfrage_id")
+
+        if aktion == "ablehnen":
+            cursor.execute("UPDATE Finanzierungsanfrage SET Status = 'abgelehnt' WHERE ID = %s", (anfrage_id,))
+        elif aktion == "annehmen":
+            cursor.execute("UPDATE Finanzierungsanfrage SET Status = 'angenommen' WHERE ID = %s", (anfrage_id,))
+        elif aktion == "kaufvertrag":
+            # Beispielhafte Einfügung, kann erweitert werden
+            cursor.execute("INSERT INTO Kaufvertrag (Finanzierungs_ID, Datum_Erstellung, PDF_Pfad) VALUES (%s, NOW(), 'kaufvertrag.pdf')", (anfrage_id,))
+
+        g.con.commit()
+
+    # Admin soll ALLE Anfragen sehen
+    cursor.execute("""
+        SELECT f.*, a.marke, a.modell, a.url
+        FROM Finanzierungsanfrage f
+        JOIN auto a ON f.Auto_ID = a.autoid
+        ORDER BY f.ID DESC
+    """)
+    anfragen = cursor.fetchall()
+
+    return render_template("admin.html", anfragen=anfragen)
 
 @app.route('/admin/action', methods=['POST'])
 def admin_action():

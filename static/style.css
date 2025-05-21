@@ -467,3 +467,69 @@ body {
     padding: 2px 8px;
     border-radius: 4px;
 }
+/* Buttons & Status nebeneinander */
+.status-und-aktionen {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+/* Formular mit den Buttons */
+.admin-aktionen-form {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+/* Standard Button-Stil */
+.admin-aktionen-form button {
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: white;
+}
+
+/* Farbvarianten */
+.admin-aktionen-form button[value="ablehnen"] {
+    background-color: #e53935;
+}
+
+.admin-aktionen-form button[value="annehmen"] {
+    background-color: #43a047;
+}
+
+.admin-aktionen-form button[value="kaufvertrag"] {
+    background-color: #1e88e5;
+}
+
+/* Hover-Effekte */
+.admin-aktionen-form button:hover {
+    opacity: 0.9;
+}
+.admin-info-section {
+    background-color: #fff;
+    margin: 40px auto;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    max-width: 1000px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #333;
+}
+.admin-info-section h2 {
+    font-size: 24px;
+    color: #831D17;
+    margin-bottom: 20px;
+}
+.admin-info-section p {
+    margin-bottom: 15px;
+}
