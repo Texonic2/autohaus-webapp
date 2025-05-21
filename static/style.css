@@ -450,9 +450,20 @@ body {
 }
 
 .status.angenommen {
-    background-color: #28a745;
+    background-color: #4CAF50;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
 }
-
 .status.abgelehnt {
-    background-color: #dc3545;
+    background-color: #F44336;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+.status.angefragt {
+    background-color: #FFA500;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
 }

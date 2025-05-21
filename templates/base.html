@@ -24,7 +24,10 @@
         <div>
             <a href="{{ url_for('index') }}">Homepage</a>
             <a href="{{ url_for('fahrzeugkatalog') }}">Fahrzeugkatalog</a>
-            <a href="{{ url_for('finanzierungbsp') }}">Finanzierungsrechner</a>
+            <a href="{{ url_for('finanzierungbsp') }}">Finanzierungsrechner</a>{% if session.get('role') == 'admin' %}
+    <a href="{{ url_for('admin_dashboard') }}">Adminbereich</a>
+{% endif %}
+
 
             {% if 'user_id' in session %}
                 <div class="dropdown">

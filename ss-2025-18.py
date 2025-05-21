@@ -127,11 +127,26 @@ def finanzierung(autoid):
         schlussrate=schlussrate
     )
 
+
 @app.route('/account')
 def account():
     if 'user_id' not in session:
-        return redirect(url_for('Login'))  # Wenn der Benutzer nicht eingeloggt ist, zum Login weiterleiten
-    return render_template('account.html')
+        return redirect(url_for('Login'))
+
+    user_id = session['user_id']
+    cursor = g.con.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT f.*, a.marke, a.modell, a.url
+        FROM Finanzierungsanfrage f
+        JOIN auto a ON f.Auto_ID = a.autoid
+        WHERE f.Nutzer_ID = %s
+        ORDER BY f.erstellt_am DESC
+    """, (user_id,))
+
+    anfragen = cursor.fetchall()
+    return render_template('account.html', anfragen=anfragen)
+
 
 @app.route('/')
 def index():
