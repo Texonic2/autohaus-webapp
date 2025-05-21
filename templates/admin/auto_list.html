@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Autos</h2>
+<table>
+  <tr>
+    <th>ID</th><th>Marke</th><th>Modell</th><th>Baujahr</th><th>Leistung</th><th>Preis</th><th>Aktion</th>
+  </tr>
+  {% for auto in autos %}
+  <tr>
+    <td>{{ auto[0] }}</td>
+    <td>{{ auto[1] }}</td>
+    <td>{{ auto[2] }}</td>
+    <td>{{ auto[3] }}</td>
+    <td>{{ auto[4] }} PS</td>
+    <td>{{ auto[5] }} €</td>
+    <td><a href="{{ url_for('delete_auto', autoid=auto[0]) }}">Löschen</a></td>
+  </tr>
+  {% endfor %}
+</table>
+
+</body>
+</html>
