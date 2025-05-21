@@ -237,6 +237,28 @@ def impressum():
 def datenschutz():
     return render_template('datenschutz.html')
 
+@app.route("/admin")
+def admin():
+    return render_template("admin.html")
+
+@app.route('/admin/action', methods=['POST'])
+def admin_action():
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Keine Berechtigung", 403
+
+    aktion = request.form.get('aktion')
+    if aktion == "ablehnen":
+        # Logik zum Ablehnen
+        pass
+    elif aktion == "annehmen":
+        # Logik zum Annehmen
+        pass
+    elif aktion == "kaufvertrag":
+        # Logik zum Kaufvertrag erstellen
+        pass
+
+    return redirect(url_for('admin'))  # z.B. zurück zum Adminbereich
+
 # Start der Flask-Anwendung
 if __name__ == '__main__':
     app.run(debug=True)
