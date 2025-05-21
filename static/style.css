@@ -533,3 +533,37 @@ body {
 .admin-info-section p {
     margin-bottom: 15px;
 }
+.finanzierungsanfrage-card {
+    position: relative; /* Damit wir absolute Elemente darin positionieren können */
+}
+
+.aktionen-buttons {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.aktionen-buttons button {
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.aktionen-buttons button[value="ablehnen"] {
+    background-color: #e53935;
+}
+
+.aktionen-buttons button[value="annehmen"] {
+    background-color: #43a047;
+}
+
+.aktionen-buttons button[value="kaufvertrag"] {
+    background-color: #1e88e5;
+}

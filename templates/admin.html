@@ -24,18 +24,17 @@
             <p><strong>Monatliche Rate:</strong> {{ eintrag.Monatliche_Rate }} €</p>
             <p><strong>Schlussrate:</strong> 5.000 €</p>
 
-            <div class="status-und-aktionen">
-                <p><strong>Status:</strong>
                     <span class="status {{ eintrag.Status|lower }}">{{ eintrag.Status|capitalize }}</span>
-                </p>
+            </p>
+        </div>
 
-                <form method="post" action="{{ url_for('admin_action') }}" class="admin-aktionen-form">
-                    <input type="hidden" name="anfrage_id" value="{{ eintrag.ID }}">
-                    <button type="submit" name="aktion" value="ablehnen">Ablehnen</button>
-                    <button type="submit" name="aktion" value="annehmen">Annehmen</button>
-                    <button type="submit" name="aktion" value="kaufvertrag">Kaufvertrag</button>
-                </form>
-            </div>
+        <div class="aktionen-buttons">
+            <form method="post" action="{{ url_for('admin_action') }}" class="admin-aktionen-form">
+                <input type="hidden" name="anfrage_id" value="{{ eintrag.ID }}">
+                <button type="submit" name="aktion" value="ablehnen">Ablehnen</button>
+                <button type="submit" name="aktion" value="annehmen">Annehmen</button>
+                <button type="submit" name="aktion" value="kaufvertrag">Kaufvertrag</button>
+            </form>
         </div>
     </div>
     {% endfor %}
