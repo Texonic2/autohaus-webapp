@@ -140,37 +140,40 @@ def index():
 
 @app.route('/Login', methods=['GET', 'POST'])
 def Login():
-    error_message = None  # Hier wird die Fehlermeldung gesetzt, falls eine auftaucht.
+    error_message = None
 
     if request.method == 'POST':
-        email = request.form['email']  # E-Mail aus dem Formular
-        passwort = request.form['passwort']  # Passwort aus dem Formular
+        email = request.form['email']
+        passwort = request.form['passwort']
 
         cursor = g.con.cursor()
-
-        # SQL-Abfrage, um nach einem Benutzer mit der angegebenen E-Mail zu suchen
-        sql = "SELECT * FROM users WHERE email = %s"
-        val = (email,)
-        cursor.execute(sql, val)
+        cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
         user = cursor.fetchone()
 
         if user is None:
-            error_message = "Diese E-Mail-Adresse ist noch nicht registriert."  # Fehler bei nicht existierender E-Mail
-        elif not check_password_hash(user[4], passwort):  # assuming password is at index 4
-            error_message = "Das Passwort ist falsch. Bitte versuche es erneut."  # Fehler bei falschem Passwort
+            error_message = "Diese E-Mail-Adresse ist noch nicht registriert."
+        elif not check_password_hash(user[4], passwort):  # user[4] = passwort
+            error_message = "Das Passwort ist falsch. Bitte versuche es erneut."
         else:
-            session['user_id'] = user[0]  # user[0] ist die ID des Benutzers
-            return redirect(url_for('index'))  # Weiterleitung bei erfolgreichem Login
+            session['user_id'] = user[0]
+
+            # Rollenlogik: Admin, wenn @novadrive.hn
+            if email.endswith('@novadrive.hn'):
+                session['user_role'] = 'admin'
+            else:
+                session['user_role'] = 'customer'
+
+            return redirect(url_for('index'))
 
     return render_template('Login.html', error_message=error_message)
 
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
-    error_message = None  # Variable für die Fehlermeldung
+    error_message = None  # Für Fehlermeldungen
 
     if request.method == 'POST':
-        # Formulardaten
+        # Formulardaten holen
         vorname = request.form['firstname']
         nachname = request.form['lastname']
         email = request.form['email']
@@ -178,24 +181,31 @@ def registration():
 
         cursor = g.con.cursor()
 
-        # Überprüfen, ob die E-Mail bereits in der Datenbank existiert
+        # Prüfen, ob E-Mail bereits registriert ist
         cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
         existing_user = cursor.fetchone()
 
         if existing_user:
-            # Falls die E-Mail schon existiert, Fehlermeldung setzen
-            error_message = "E-Mail bereits registriert. Bitte benutze eine andere E-Mail."
+            error_message = "E-Mail bereits registriert. Bitte benutze eine andere."
         else:
-            # Falls die E-Mail nicht existiert, Benutzer registrieren
+            # Automatisch Rolle zuweisen: admin, wenn @novadrive.hn
+            rolle = 'admin' if email.endswith('@novadrive.hn') else 'customer'
+
+            # Passwort hashen
             hashed_password = generate_password_hash(passwort)
-            sql = "INSERT INTO users (vorname, nachname, email, passwort) VALUES (%s, %s, %s, %s)"
-            val = (vorname, nachname, email, hashed_password)
+
+            # Nutzer in Datenbank einfügen
+            sql = "INSERT INTO users (vorname, nachname, email, passwort, role) VALUES (%s, %s, %s, %s, %s)"
+            val = (vorname, nachname, email, hashed_password, rolle)
             cursor.execute(sql, val)
             g.con.commit()
+
             return redirect(url_for('Login'))  # Weiterleitung nach erfolgreicher Registrierung
 
-    # Die Fehlermeldung an das Template übergeben, wenn die E-Mail bereits existiert
+    # Seite rendern (inkl. evtl. Fehlermeldung)
     return render_template('registration.html', error_message=error_message)
+
+
 
 @app.route('/logout')
 def logout():
