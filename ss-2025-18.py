@@ -263,10 +263,11 @@ def admin():
 
     # Admin soll ALLE Anfragen sehen
     cursor.execute("""
-        SELECT f.*, a.marke, a.modell, a.url
+        SELECT f.*, a.marke, a.modell, a.url, u.vorname, u.nachname, u.email
         FROM Finanzierungsanfrage f
         JOIN auto a ON f.Auto_ID = a.autoid
-        ORDER BY f.ID DESC
+        JOIN users u ON f.Nutzer_ID = u.User_ID
+        ORDER BY f.erstellt_am DESC
     """)
     anfragen = cursor.fetchall()
 

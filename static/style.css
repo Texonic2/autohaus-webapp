@@ -294,7 +294,7 @@ body {
 .finanz-button-secondary:hover {
   background-color: #b84127;
 }
-}
+
 /* Stil für die Zusammenfassung der Finanzierungsdetails */
 .finanz-summary {
   background-color: #fff;             /* Weißer Hintergrund für den Container */
@@ -567,3 +567,54 @@ body {
 .aktionen-buttons button[value="kaufvertrag"] {
     background-color: #1e88e5;
 }
+.finanzierungsanfrage-card {
+  display: flex;
+  justify-content: space-between;  /* Links ↔ Rechts */
+  align-items: flex-start;         /* Oben ausrichten */
+  position: relative;              /* Für absolutes Positionieren der Buttons */
+  padding: 40px;
+  gap: 20px;                       /* Abstand zwischen den Spalten */
+}
+
+.anfrage-details {
+  flex: 1;                         /* Details nehmen so viel Platz wie möglich ein */
+  min-width: 200px;
+}
+
+.kontakt-info {
+  text-align: left;
+  min-width: 180px;
+}
+
+/* Überschrift „Von:“ etwas größer */
+.von-label {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+/* Name + Email direkt darunter, keine Einrückung notwendig */
+.user-info {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Buttons unten rechts in der Karte */
+.aktionen-buttons {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+.kontakt-info {
+  text-align: left;
+}
+
+.kontakt-info .kontakt-field {
+  margin: 4px 0;       /* etwas Abstand zwischen den Zeilen */
+  font-size: 14px;     /* z.B. eine winzige Schriftreduzierung */
+}
+
+.kontakt-info .kontakt-field strong {
+  display: inline-block;
+  width: 60px;         /* sorgt dafür, dass "Name:" und "E-Mail:" untereinander beginnen */
+}
+

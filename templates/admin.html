@@ -12,34 +12,37 @@
 
     {% for eintrag in anfragen %}
     <div class="finanzierungsanfrage-card">
-        <div class="auto-bild">
-            <img src="{{ url_for('static', filename='images/' ~ eintrag.url) }}" alt="{{ eintrag.marke }} {{ eintrag.modell }}">
-        </div>
+  <!-- linke Spalte: Details -->
+  <div class="anfrage-details">
+    <h3>{{ eintrag.marke }} {{ eintrag.modell }}</h3>
+    <p><strong>Termin:</strong> {{ eintrag.Terminwunsch.strftime('%d.%m.%Y, %H:%M Uhr') }}</p>
+    <p><strong>Finanzierungsdauer:</strong> {{ eintrag.Monate }} Monate</p>
+    <p><strong>Anzahlung:</strong> {{ eintrag.Anzahlung }} €</p>
+    <p><strong>Monatliche Rate:</strong> {{ eintrag.Monatliche_Rate }} €</p>
+    <p><strong>Schlussrate:</strong> 5.000 €</p>
+    <span class="status {{ eintrag.Status|lower }}">
+      {{ eintrag.Status|capitalize }}
+    </span>
+  </div>
 
-        <div class="anfrage-details">
-            <h3>{{ eintrag.marke }} {{ eintrag.modell }}</h3>
-            <p><strong>Termin:</strong> {{ eintrag.Terminwunsch.strftime('%d.%m.%Y, %H:%M Uhr') }}</p>
-            <p><strong>Finanzierungsdauer:</strong> {{ eintrag.Monate }} Monate</p>
-            <p><strong>Anzahlung:</strong> {{ eintrag.Anzahlung }} €</p>
-            <p><strong>Monatliche Rate:</strong> {{ eintrag.Monatliche_Rate }} €</p>
-            <p><strong>Schlussrate:</strong> 5.000 €</p>
-
-                    <span class="status {{ eintrag.Status|lower }}">{{ eintrag.Status|capitalize }}</span>
-            </p>
-        </div>
-
-        <div class="aktionen-buttons">
-            <form method="post" action="{{ url_for('admin_action') }}" class="admin-aktionen-form">
-                <input type="hidden" name="anfrage_id" value="{{ eintrag.ID }}">
-                <button type="submit" name="aktion" value="ablehnen">Ablehnen</button>
-                <button type="submit" name="aktion" value="annehmen">Annehmen</button>
-                <button type="submit" name="aktion" value="kaufvertrag">Kaufvertrag</button>
-            </form>
-        </div>
+    <div class="kontakt-info">
+        <p class="von-label"><strong>Von:</strong></p>
+        <p class="kontakt-field"><strong>Name:</strong> {{ eintrag.vorname }} {{ eintrag.nachname }}</p>
+        <p class="kontakt-field"><strong>E-Mail:</strong> {{ eintrag.email }}</p>
     </div>
-    {% endfor %}
+
+    <!-- Buttons unten rechts -->
+  <div class="aktionen-buttons">
+    <form method="post" action="{{ url_for('admin_action') }}" class="admin-aktionen-form">
+      <input type="hidden" name="anfrage_id" value="{{ eintrag.ID }}">
+      <button type="submit" name="aktion" value="ablehnen">Ablehnen</button>
+      <button type="submit" name="aktion" value="annehmen">Annehmen</button>
+      <button type="submit" name="aktion" value="kaufvertrag">Kaufvertrag</button>
+    </form>
+  </div>
 </div>
 
+ {% endfor %}
 <br><br><br><br><br><br><br><br><br><br>
 <br><br><br><br><br><br><br><br><br><br>
 <br><br><br><br><br><br><br><br><br><br>
