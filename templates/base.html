@@ -22,11 +22,14 @@
         </h1>
 
         <div>
+        <a href="{{ url_for('reviews') }}">Rezensionen</a>
         <a href="{{ url_for('admin') }}">Admin</a>
             <a href="{{ url_for('index') }}">Homepage</a>
             <a href="{{ url_for('fahrzeugkatalog') }}">Fahrzeugkatalog</a>
             <a href="{{ url_for('finanzierungbsp') }}">Finanzierungsrechner</a>{% if session.get('role') == 'admin' %}
     <a href="{{ url_for('admin_dashboard') }}">Adminbereich</a>
+
+
 {% endif %}
 
 

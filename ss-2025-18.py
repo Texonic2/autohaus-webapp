@@ -290,6 +290,31 @@ def admin_action():
 
     return redirect(url_for('admin'))  # z.B. zurück zum Adminbereich
 
+@app.route('/reviews', methods=['GET', 'POST'])
+def reviews():
+    if request.method == 'POST':
+        # Rezension speichern
+        user_id = session.get('user_id')  # Falls User-Login vorhanden
+        rating = request.form['rating']
+        comment = request.form['comment']
+
+        cursor = g.con.cursor()
+        cursor.execute("""
+            INSERT INTO reviews (user_id, rating, comment) 
+            VALUES (%s, %s, %s)
+        """, (user_id, rating, comment))
+        g.con.commit()
+
+        return redirect(url_for('reviews'))
+
+    # Alle Rezensionen abrufen
+    cursor = g.con.cursor(dictionary=True)
+    cursor.execute("SELECT r.*, u.vorname, u.nachname FROM reviews r LEFT JOIN users u ON r.user_id = u.User_ID")
+    reviews = cursor.fetchall()
+
+    return render_template('reviews.html', reviews=reviews)
+
+
 # Start der Flask-Anwendung
 if __name__ == '__main__':
     app.run(debug=True)
