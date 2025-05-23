@@ -30,7 +30,7 @@ def fahrzeugkatalog():
     cursor = g.cursor
     cursor.execute("SELECT * FROM auto")
     fahrzeuge = cursor.fetchall()
-    print("Gefundene Autos:", fahrzeuge)
+    app.logger.debug(f"Gefundene Autos: {fahrzeuge!r}")
     return render_template("fahrzeugkatalog.html", fahrzeuge=fahrzeuge)
 
 @app.route("/finanzierungbsp", methods=["GET", "POST"])
