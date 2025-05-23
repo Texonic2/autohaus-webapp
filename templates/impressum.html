@@ -1,81 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Impressum - NOVA Drive</title>
+{% extends "base.html" %}
+
+{% block title %}Impressum – NovaDrive{% endblock %}
+
+{% block head %}
     <link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
-
     <link rel="stylesheet" href="{{ url_for('static', filename='datenschutz.css') }}">
-</head>
-<body>
-    <header>
-        <h1>Impressum</h1>
-    </header>
-    <main>
-        <section>
-            <h2>Angaben gemäß § 5 TMG</h2>
-            <p>
-                <strong>NOVA Drive GmbH</strong><br>
-                Max-Planck-Straße 39<br>
-                74081 Heilbronn<br>
-                Deutschland
-            </p>
-        </section>
+{% endblock %}
 
-        <section>
-            <h2>Vertreten durch</h2>
-            <p>
-                John Großmann
-            </p>
-        </section>
+{% block content %}
+<h1>Impressum</h1>
 
-        <section>
-            <h2>Kontakt</h2>
-            <p>
-                Telefon: 07131 / 123456<br>
-                E-Mail: <a href="mailto:info@novadrive.de">info@novadrive.de</a>
-            </p>
-        </section>
+<section>
+    <h2>Angaben gemäß § 5 TMG</h2>
+    <p>
+        <strong>NOVA Drive GmbH</strong><br>
+        Max-Planck-Straße 39<br>
+        74081 Heilbronn<br>
+        Deutschland
+    </p>
+</section>
 
-        <section>
-            <h2>Handelsregister</h2>
-            <p>
-                Eintragung im Handelsregister.<br>
-                Registergericht: Amtsgericht Stuttgart<br>
-                Registernummer: HRB 123456
-            </p>
-        </section>
+<section>
+    <h2>Vertreten durch</h2>
+    <p>John Großmann</p>
+</section>
 
-        <section>
-            <h2>Umsatzsteuer-ID</h2>
-            <p>
-                Umsatzsteuer-Identifikationsnummer gemäß
-                <span class="highlight-red">§27 a Umsatzsteuergesetz</span>:<br>
-                DE123456789
-            </p>
-        </section>
+<section>
+    <h2>Kontakt</h2>
+    <p>
+        Telefon: 07131 / 123456<br>
+        E-Mail: <a href="mailto:info@novadrive.de">info@novadrive.de</a>
+    </p>
+</section>
 
-        <section>
-            <h2>Aufsichtsbehörde</h2>
-            <p>
-                Kraftfahrt-Bundesamt (KBA)<br>
-                Fördestraße 16<br>
-                24159 Kiel
-            </p>
-        </section>
+<section>
+    <h2>Handelsregister</h2>
+    <p>
+        Eintragung im Handelsregister.<br>
+        Registergericht: Amtsgericht Stuttgart<br>
+        Registernummer: HRB 123456
+    </p>
+</section>
 
-        <section>
-            <h2>Haftungsausschluss</h2>
-            <p>
-                Die Inhalte dieser Website werden mit größtmöglicher Sorgfalt erstellt. Der Anbieter übernimmt jedoch keine Gewähr für die Richtigkeit, Vollständigkeit und Aktualität der bereitgestellten Inhalte. Die Nutzung der Inhalte der Website erfolgt auf eigene Gefahr des Nutzers. Namentlich gekennzeichnete Beiträge geben die Meinung des jeweiligen Autors und nicht immer die Meinung des Anbieters wieder. Mit der reinen Nutzung der Website des Anbieters kommt keinerlei Vertragsverhältnis zwischen dem Nutzer und dem Anbieter zustande.
-            </p>
-        </section>
+<section>
+    <h2>Umsatzsteuer-ID</h2>
+    <p>
+        Umsatzsteuer-Identifikationsnummer gemäß
+        <span class="highlight-red">§27 a Umsatzsteuergesetz</span>:<br>
+        DE123456789
+    </p>
+</section>
 
-        <p><a href="{{ url_for('index') }}">Zurück zur Startseite</a></p>
-    </main>
-    <footer>
-        &copy; 2025 NOVA Drive GmbH
-    </footer>
-</body>
-</html>
+<section>
+    <h2>Aufsichtsbehörde</h2>
+    <p>
+        Kraftfahrt-Bundesamt (KBA)<br>
+        Fördestraße 16<br>
+        24159 Kiel
+    </p>
+</section>
+
+<section>
+    <h2>Haftungsausschluss</h2>
+    <p>
+        Die Inhalte dieser Website werden mit größtmöglicher Sorgfalt erstellt. Der Anbieter übernimmt jedoch keine Gewähr für die Richtigkeit, Vollständigkeit und Aktualität der bereitgestellten Inhalte. Die Nutzung der Inhalte der Website erfolgt auf eigene Gefahr des Nutzers. Namentlich gekennzeichnete Beiträge geben die Meinung des jeweiligen Autors und nicht immer die Meinung des Anbieters wieder. Mit der reinen Nutzung der Website des Anbieters kommt keinerlei Vertragsverhältnis zwischen dem Nutzer und dem Anbieter zustande.
+    </p>
+</section>
+
+<p><a href="{{ url_for('index') }}">Zurück zur Startseite</a></p>
+{% endblock %}

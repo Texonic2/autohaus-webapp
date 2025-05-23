@@ -2,8 +2,125 @@
 
 {% block head %}
     <link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #d62828;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #d62828;
+            margin-bottom: 10px;
+        }
+
+        .review-card {
+            background: #fff;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            width: 60%;
+        }
+
+        .review-card h3 {
+            margin: 0;
+            color: #d62828;
+        }
+
+        .review-card p {
+            margin: 5px 0;
+        }
+
+        .review-card small {
+            color: #888;
+        }
+
+        .delete-review-form {
+            margin-top: 10px;
+        }
+
+        .delete-review-form button {
+            background-color: #d62828;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .delete-review-form button:hover {
+            background-color: #b02222;
+        }
+
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            margin: 20px auto;
+            text-align: left;
+        }
+
+        form label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        form input,
+        form textarea,
+        form button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        form textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        form button {
+            background-color: #d62828;
+            color: white;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #b02222;
+        }
+
+        p a {
+            color: #d62828;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        p a:hover {
+            text-decoration: underline;
+        }
+    </style>
 {% endblock %}
 
+{% block title %}Rezensionen – Autohaus Heilbronn{% endblock %}
 
 {% block content %}
 <h1>Rezensionen</h1>
@@ -11,19 +128,27 @@
 <!-- Rezensionen anzeigen -->
 <div>
     {% for review in reviews %}
-        <div>
+        <div class="review-card">
             <h3>{{ review.vorname }} {{ review.nachname }}</h3>
-            <p>Bewertung: {{ review.rating }} / 5</p>
-            <p>{{ review.comment }}</p>
-            <small>{{ review.created_at }}</small>
+            <p><strong>Bewertung:</strong> {{ review.rating }} / 5</p>
+            <p><strong>Kommentar:</strong> {{ review.comment }}</p>
+            <small><em>{{ review.created_at }}</em></small>
+
+            {% if session.get('user_role') == 'admin' %}
+                <!-- Button zum Löschen der Rezension (nur für Admins sichtbar) -->
+                <form method="POST" action="{{ url_for('delete_review') }}" class="delete-review-form">
+                    <input type="hidden" name="review_id" value="{{ review.id }}">
+                    <button type="submit">Löschen</button>
+                </form>
+            {% endif %}
         </div>
     {% endfor %}
 </div>
 
 <!-- Formular für neue Rezension -->
 {% if 'user_id' in session %}
-    <h2>Rezension schreiben</h2>
-    <form method="POST">
+    <h2 style="text-align: center;">Rezension schreiben</h2>
+    <form method="POST" action="{{ url_for('reviews') }}">
         <label for="rating">Bewertung (1-5):</label>
         <input type="number" id="rating" name="rating" min="1" max="5" required>
 
@@ -33,6 +158,6 @@
         <button type="submit">Absenden</button>
     </form>
 {% else %}
-    <p>Bitte <a href="{{ url_for('Login') }}">melden Sie sich an</a>, um eine Rezension zu schreiben.</p>
+    <p style="text-align: center;">Bitte <a href="{{ url_for('Login') }}">melden Sie sich an</a>, um eine Rezension zu schreiben.</p>
 {% endif %}
 {% endblock %}

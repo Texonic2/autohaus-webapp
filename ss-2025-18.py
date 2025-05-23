@@ -332,6 +332,22 @@ def termine_anzeigen():
     termine = cursor.fetchall()
     return render_template('termine.html', termine=termine)
 
+@app.route('/delete_review', methods=['POST'])
+def delete_review():
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Keine Berechtigung", 403
+
+    review_id = request.form.get('review_id')
+
+    if not review_id:
+        return "Rezension-ID fehlt", 400
+
+    cursor = g.cursor
+    cursor.execute("DELETE FROM reviews WHERE id = %s", (review_id,))
+    g.con.commit()
+
+    return redirect(url_for('reviews'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
