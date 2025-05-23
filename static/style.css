@@ -449,7 +449,7 @@ body {
     color: #fff;
 }
 
-.status.angenommen {
+.status.genehmigt {
     background-color: #4CAF50;
     color: white;
     padding: 2px 8px;

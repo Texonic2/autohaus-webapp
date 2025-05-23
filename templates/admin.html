@@ -12,66 +12,63 @@
 
     {% for eintrag in anfragen %}
     <div class="finanzierungsanfrage-card">
-  <!-- linke Spalte: Details -->
-  <div class="anfrage-details">
-    <h3>{{ eintrag.marke }} {{ eintrag.modell }}</h3>
-    <p><strong>Termin:</strong> {{ eintrag.Terminwunsch.strftime('%d.%m.%Y, %H:%M Uhr') }}</p>
-    <p><strong>Finanzierungsdauer:</strong> {{ eintrag.Monate }} Monate</p>
-    <p><strong>Anzahlung:</strong> {{ eintrag.Anzahlung }} €</p>
-    <p><strong>Monatliche Rate:</strong> {{ eintrag.Monatliche_Rate }} €</p>
-    <p><strong>Schlussrate:</strong> 5.000 €</p>
-    <span class="status {{ eintrag.Status|lower }}">
-      {{ eintrag.Status|capitalize }}
-    </span>
-  </div>
+        <!-- linke Spalte: Details -->
+        <div class="anfrage-details">
+            <h3>{{ eintrag.marke }} {{ eintrag.modell }}</h3>
+            <p><strong>Termin:</strong> {{ eintrag.Terminwunsch.strftime('%d.%m.%Y, %H:%M Uhr') }}</p>
+            <p><strong>Finanzierungsdauer:</strong> {{ eintrag.Monate }} Monate</p>
+            <p><strong>Anzahlung:</strong> {{ eintrag.Anzahlung }} €</p>
+            <p><strong>Monatliche Rate:</strong> {{ eintrag.Monatliche_Rate }} €</p>
+            <p><strong>Schlussrate:</strong> {{ eintrag.Schlussrate }} €</p>
+            <span class="status {{ eintrag.Status|lower }}">
+                {{ eintrag.Status|capitalize }}
+            </span>
+        </div>
 
-    <div class="kontakt-info">
-        <p class="von-label"><strong>Anfrage von:</strong></p>
-        <p class="kontakt-field"><strong>Name:</strong> {{ eintrag.vorname }} {{ eintrag.nachname }}</p>
-        <p class="kontakt-field"><strong>E-Mail:</strong> {{ eintrag.email }}</p>
+        <div class="kontakt-info">
+            <p class="von-label"><strong>Anfrage von:</strong></p>
+            <p class="kontakt-field"><strong>Name:</strong> {{ eintrag.vorname }} {{ eintrag.nachname }}</p>
+            <p class="kontakt-field"><strong>E-Mail:</strong> {{ eintrag.email }}</p>
+        </div>
+
+        <!-- Buttons unten rechts -->
+        <div class="aktionen-buttons">
+            <form method="post" action="{{ url_for('admin_action') }}" class="admin-aktionen-form">
+                <input type="hidden" name="anfrage_id" value="{{ eintrag.ID }}">
+                <button type="submit" name="aktion" value="ablehnen">Ablehnen</button>
+                <button type="submit" name="aktion" value="annehmen">Annehmen</button>
+                <button type="submit" name="aktion" value="kaufvertrag">Kaufvertrag</button>
+            </form>
+        </div>
     </div>
+    {% endfor %}
 
-    <!-- Buttons unten rechts -->
-  <div class="aktionen-buttons">
-    <form method="post" action="{{ url_for('admin_action') }}" class="admin-aktionen-form">
-      <input type="hidden" name="anfrage_id" value="{{ eintrag.ID }}">
-      <button type="submit" name="aktion" value="ablehnen">Ablehnen</button>
-      <button type="submit" name="aktion" value="annehmen">Annehmen</button>
-      <button type="submit" name="aktion" value="kaufvertrag">Kaufvertrag</button>
-    </form>
-  </div>
-</div>
+    <section class="admin-info-section">
+        <h2>Datenbankstruktur & Adminfunktionen</h2>
 
- {% endfor %}
-<br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br>
-<br><br><br><br><br><br><br><br><br><br>
+        <p><strong>1. User (Benutzer):</strong><br>
+        Enthält alle registrierten Nutzer – Kunden und Admins.<br>
+        Attribute: ID, Vorname, Nachname, E-Mail, Passwort (gehashed), Rolle ("kunde" oder "admin")</p>
 
-<section class="admin-info-section">
-    <h2>Datenbankstruktur & Adminfunktionen</h2>
+        <p><strong>2. Auto (Fahrzeuge):</strong><br>
+        Fahrzeugkatalog mit Marke, Modell, Baujahr, Leistung, Kraftstoff, Preis, Bild</p>
 
-    <p><strong>1. User (Benutzer):</strong><br>
-    Enthält alle registrierten Nutzer – Kunden und Admins.<br>
-    Attribute: ID, Vorname, Nachname, E-Mail, Passwort (gehashed), Rolle ("kunde" oder "admin")</p>
+        <p><strong>3. Finanzierungsanfrage:</strong><br>
+        Speichert alle Kundenanfragen mit Laufzeit, Rate, Termin, Status ("angefragt", "genehmigt", "abgelehnt")</p>
 
-    <p><strong>2. Auto (Fahrzeuge):</strong><br>
-    Fahrzeugkatalog mit Marke, Modell, Baujahr, Leistung, Kraftstoff, Preis, Bild</p>
+        <p><strong>4. Kaufvertrag:</strong><br>
+        Wird erzeugt nach Genehmigung. Verknüpft mit Anfrage & Auto, enthält Erstellungsdatum + PDF-Dateipfad</p>
 
-    <p><strong>3. Finanzierungsanfrage:</strong><br>
-    Speichert alle Kundenanfragen mit Laufzeit, Rate, Termin, Status ("angefragt", "angenommen", "abgelehnt")</p>
+        <p><strong>Admin kann:</strong><br>
+        - Anfragen annehmen/ablehnen<br>
+        - Kaufvertrag direkt erzeugen<br>
+        - Entscheidungen basierend auf Laufzeit/Anzahlung treffen</p>
+    </section>
 
-    <p><strong>4. Kaufvertrag:</strong><br>
-    Wird erzeugt nach Genehmigung. Verknüpft mit Anfrage & Auto, enthält Erstellungsdatum + PDF-Dateipfad</p>
-
-    <p><strong>Admin kann:</strong><br>
-    - Anfragen annehmen/ablehnen<br>
-    - Kaufvertrag direkt erzeugen<br>
-    - Entscheidungen basierend auf Laufzeit/Anzahlung treffen</p>
-</section>
-
-<div class="legal-content">
-    <span class="legal-text">(c) 2023 - NOvA Drive GmbH</span>
-    | <a href="#">Impressum</a>
-    | <a href="#">Datenschutz</a>
+    <div class="legal-content">
+        <span class="legal-text">(c) 2023 - NOvA Drive GmbH</span>
+        | <a href="#">Impressum</a>
+        | <a href="#">Datenschutz</a>
+    </div>
 </div>
 {% endblock %}

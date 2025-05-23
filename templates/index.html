@@ -7,40 +7,30 @@
 {% block title %}Startseite – Autohaus Heilbronn{% endblock %}
 
 {% block content %}
+    <div class="image-container">
+        <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
+    </div>
 
-   <div class="image-container">
-    <img src="{{ url_for('static', filename='header2.webp') }}" class="header-image" alt="Header Bild">
-</div>
-        <div class="text-container">
-            Fahr die Zukunft – heute.
-            <!-- Einfacher Text unter dem Bild (mit CSS kann der Text angepasst sein) -->
-        </div>
+    <div class="text-container">
+        Fahr die Zukunft – heute.
+    </div>
+
     <div class="maps-container">
-       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2611.149200799906!2d9.208837975376474!3d49.121801482134806!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47982f20dad6455f%3A0xdd34a8fa0848409b!2sHochschule%20Heilbronn%20%E2%80%93%20TechCampus!5e0!3m2!1sde!2sde!4v1747215698035!5m2!1sde!2sde"
-               width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            <!-- Zeigt eine eingebettete Google Maps Karte an. "loading='lazy'" sorgt dafür, dass sie erst geladen wird, wenn man sie sieht. -->
-        <div class="text-container maps-right">
-                Unsere Öffnungszeiten                <br>
-                Montag - Freitag: 08:00 - 18:00      <br>
-                Samstag: 09:00 - 14:00               <br>
-                Sonntag: Geschlossen
-        </div>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2611.149200799906!2d9.208837975376474!3d49.121801482134806!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47982f20dad6455f%3A0xdd34a8fa0848409b!2sHochschule%20Heilbronn%20%E2%80%93%20TechCampus!5e0!3m2!1sde!2sde!4v1747215698035!5m2!1sde!2sde"
+                width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
 
+        <div class="text-container maps-right">
+            Unsere Öffnungszeiten<br>
+            Montag - Freitag: 08:00 - 18:00<br>
+            Samstag: 09:00 - 14:00<br>
+            Sonntag: Geschlossen
         </div>
     </div>
 
     <div class="legal-content">
-        <!-- Footer-Bereich (unten auf der Seite) -->
-        <span class="legal-text">(c) 2023 - NOvA Drive GmbH</span>
-        <!-- Copyright-Hinweis -->
-
-        |<a href="{{ url_for('impressum') }}">Impressum</a>
-        <!-- Link zum Impressum -->
+        <span class="legal-text">(c) 2023 - NovaDrive GmbH</span>
+        | <a href="{{ url_for('impressum') }}">Impressum</a>
         | <a href="{{ url_for('datenschutz') }}">Datenschutz</a>
-        <!-- Link zur Datenschutzerklärung -->
     </div>
-
-</body>
-</html>
-
 {% endblock %}

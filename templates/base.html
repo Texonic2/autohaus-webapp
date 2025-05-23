@@ -5,11 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Autohaus Heilbronn{% endblock %}</title>
-{% block head %}{% endblock %}
+    {% block head %}{% endblock %}
 
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='dropdown_konto.css') }}">
 </head>
@@ -18,19 +20,14 @@
     <!-- NAVIGATION -->
     <div class="navbar">
         <h1 class="headline">
-            NovaDrive<br> <span class="text-highlight">Heilbronn</span>
+            NovaDrive<br><span class="text-highlight">Heilbronn</span>
         </h1>
 
         <div>
-        <a href="{{ url_for('reviews') }}">Rezensionen</a>
-        <a href="{{ url_for('admin') }}">Admin</a>
+            <a href="{{ url_for('reviews') }}">Rezensionen</a>
             <a href="{{ url_for('index') }}">Homepage</a>
             <a href="{{ url_for('fahrzeugkatalog') }}">Fahrzeugkatalog</a>
-            <a href="{{ url_for('finanzierungbsp') }}">Finanzierungsrechner</a>{% if session.get('role') == 'admin' %}
-    <a href="{{ url_for('admin_dashboard') }}">Adminbereich</a>
-        #
-        {% endif %}
-
+            <a href="{{ url_for('finanzierungbsp') }}">Finanzierungsrechner</a>
 
             {% if 'user_id' in session %}
                 <div class="dropdown">
@@ -39,6 +36,11 @@
                     </a>
                     <div class="dropdown-content">
                         <a href="{{ url_for('account') }}">Mein Konto</a>
+
+                        {% if session.get('user_role') == 'admin' %}
+                            <a href="{{ url_for('admin') }}">Adminbereich</a>
+                        {% endif %}
+
                         <a href="{{ url_for('logout') }}">Logout</a>
                     </div>
                 </div>
@@ -52,6 +54,13 @@
     <main>
         {% block content %}{% endblock %}
     </main>
+
+    <!-- FOOTER -->
+    <div class="legal-content">
+        <span class="legal-text">(c) 2023 - NovaDrive GmbH</span>
+        | <a href="{{ url_for('impressum') }}">Impressum</a>
+        | <a href="{{ url_for('datenschutz') }}">Datenschutz</a>
+    </div>
 
 </body>
 </html>

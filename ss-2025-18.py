@@ -10,25 +10,28 @@ app.secret_key = 'dein_geheimes_schluessel'  # Geheimen Schlüssel für Sessions
 
 @app.before_request
 def before_request():
-    """ Verbindung zur Datenbank herstellen """
+    """ Verbindung zur Datenbank herstellen und Cursor öffnen """
     g.con = mysql.connector.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
                                     database=DB_DATABASE)
+    g.cursor = g.con.cursor(dictionary=True)
 
 @app.teardown_request
 def teardown_request(exception):
-    """ Verbindung zur Datenbank trennen """
+    """ Cursor und Verbindung zur Datenbank trennen """
+    cursor = getattr(g, 'cursor', None)
+    if cursor is not None:
+        cursor.close()
     con = getattr(g, 'con', None)
     if con is not None:
         con.close()
 
 @app.route('/fahrzeugkatalog')
 def fahrzeugkatalog():
-    cursor = g.con.cursor(dictionary=True)
+    cursor = g.cursor
     cursor.execute("SELECT * FROM auto")
     fahrzeuge = cursor.fetchall()
-    return render_template('fahrzeugkatalog.html', fahrzeuge=fahrzeuge)
-
-
+    print("Gefundene Autos:", fahrzeuge)
+    return render_template("fahrzeugkatalog.html", fahrzeuge=fahrzeuge)
 
 @app.route("/finanzierungbsp", methods=["GET", "POST"])
 def finanzierungbsp():
@@ -58,90 +61,102 @@ def finanzierungbsp():
 
 @app.route('/finanzierung/<int:autoid>', methods=['GET', 'POST'])
 def finanzierung(autoid):
-    cursor = g.con.cursor(dictionary=True)
+    if 'user_id' not in session:
+        return redirect(url_for('Login'))
+
+    cursor = g.cursor
+
+    # Fahrzeugdaten laden (nur für Anzeige)
     cursor.execute("SELECT * FROM auto WHERE autoid = %s", (autoid,))
     fahrzeug = cursor.fetchone()
-    aktion = request.form.get("aktion")
-
     if not fahrzeug:
         return "Fahrzeug nicht gefunden", 404
 
-    # Standardwerte
     rate = None
     fahrzeugpreis = None
     anzahlung = None
     laufzeit = None
     schlussrate = None
 
-    if aktion == "berechnen":
-        fahrzeugpreis = float(request.form['fahrzeugpreis'])
-        anzahlung = float(request.form['anzahlung'])
-        laufzeit = int(request.form['laufzeit'])
-        schlussrate = float(request.form.get('schlussrate', 0))
+    if request.method == "POST":
+        aktion = request.form.get('aktion')
 
-        finanzierungsbetrag = fahrzeugpreis - anzahlung - schlussrate
-        zins = 0.02
-        gesamtbetrag = finanzierungsbetrag + (finanzierungsbetrag * zins)
-        rate = round(gesamtbetrag / laufzeit, 2)
+        if aktion == "berechnen":
+            try:
+                fahrzeugpreis = float(request.form['fahrzeugpreis'])
+                anzahlung = float(request.form['anzahlung'])
+                laufzeit = int(request.form['laufzeit'])
+                schlussrate_raw = request.form.get('schlussrate', '').strip()
+                schlussrate = float(schlussrate_raw) if schlussrate_raw else 0.0
 
-        # Speichern in der Session
-        session['finanzierung'] = {
-            'autoid': autoid,
-            'fahrzeugpreis': fahrzeugpreis,
-            'anzahlung': anzahlung,
-            'laufzeit': laufzeit,
-            'schlussrate': schlussrate,
-            'rate': rate
-        }
-    elif aktion == "barzahlung":
-        fahrzeugpreis = float(request.form['fahrzeugpreis'])
-        anzahlung = 0
-        laufzeit = 0
-        schlussrate = 0
-        rate= fahrzeugpreis
+                kreditbetrag = fahrzeugpreis - anzahlung - schlussrate
+                zins = 0.02  # 2%
+                rate = round((kreditbetrag * (1 + zins)) / laufzeit, 2)
 
+            except Exception:
+                rate = None  # Fehler bei Eingabe ignorieren
 
-    elif aktion == "termin":
-        fahrzeugpreis = float(request.form['fahrzeugpreis'])
-        anzahlung = float(request.form['anzahlung'])
-        laufzeit = int(request.form['laufzeit'])
-        schlussrate = float(request.form.get('schlussrate', 0))
-        rate = float(request.form['rate'])
-        terminwunsch = f"{request.form['termin']} {request.form['uhrzeit']}"
+        elif aktion == "barzahlung":
+            # Hier ggf. Logik für Barzahlung
+            return redirect(url_for('index'))
 
-        cursor.execute(
-            "INSERT INTO finanzierungsanfrage (Auto_ID, Anzahlung, Monate, Monatliche_Rate, Terminwunsch, Status) VALUES (%s, %s, %s, %s, %s, %s)",
-            (autoid, anzahlung, laufzeit, rate, terminwunsch, "offen")
-        )
-        g.con.commit()
-        return redirect(url_for('danke'))
+        elif aktion == "termin":
+            try:
+                fahrzeugpreis = float(request.form['fahrzeugpreis'])
+                anzahlung = float(request.form['anzahlung'])
+                laufzeit = int(request.form['laufzeit'])
+                schlussrate_raw = request.form.get('schlussrate', '').strip()
+                schlussrate = float(schlussrate_raw) if schlussrate_raw else 0.0
+
+                rate_raw = request.form.get('rate', '0').strip()
+                rate = float(rate_raw) if rate_raw else 0.0
+
+                termin_datum = request.form['termin']
+                termin_uhrzeit = request.form['uhrzeit']
+                terminwunsch = f"{termin_datum} {termin_uhrzeit}"
+
+                nutzer_id = session.get('user_id')
+                if not nutzer_id:
+                    return redirect(url_for('Login'))
+
+                cursor.execute(
+                    """INSERT INTO Finanzierungsanfrage 
+                       (Auto_ID, Anzahlung, Monate, Monatliche_Rate, Terminwunsch, Status, Schlussrate, Nutzer_ID) 
+                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
+                    (autoid, anzahlung, laufzeit, rate, terminwunsch, "angefragt", schlussrate, nutzer_id)
+                )
+                g.con.commit()
+
+                return redirect(url_for('index'))
+
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                return f"Fehler beim Speichern des Termins: {e}", 500
 
     return render_template(
-        'finanzierung.html',
+        "finanzierung.html",
         fahrzeug=fahrzeug,
         rate=rate,
-
         fahrzeugpreis=fahrzeugpreis,
         anzahlung=anzahlung,
         laufzeit=laufzeit,
         schlussrate=schlussrate
     )
 
-
 @app.route('/account')
 def account():
     if 'user_id' not in session:
         return redirect(url_for('Login'))
 
-    if session.get('role') == 'admin':
-        return redirect(url_for('admin_dashboar'))
+    # Kein automatisches Redirect mehr für Admins!
+    # Admins und Kunden sehen hier ihre eigene Finanzierungsanfragen.
 
-    # Falls kein Admin → reguläre Konto-Seite laden
     user_id = session['user_id']
-    cursor = g.con.cursor(dictionary=True)
+    cursor = g.cursor
 
     cursor.execute("""
-        SELECT f.*, a.marke, a.modell, a.url
+        SELECT f.*, a.marke, a.modell, a.url, a.autoid AS ID, f.monatliche_rate, f.schlussrate
         FROM Finanzierungsanfrage f
         JOIN auto a ON f.Auto_ID = a.autoid
         WHERE f.Nutzer_ID = %s
@@ -149,12 +164,12 @@ def account():
     """, (user_id,))
     anfragen = cursor.fetchall()
 
-    return render_template('account.html', anfragen=anfragen)
+    return render_template('account.html', finanzierungsanfragen=anfragen)
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/Login', methods=['GET', 'POST'])
 def Login():
@@ -164,16 +179,16 @@ def Login():
         email = request.form['email']
         passwort = request.form['passwort']
 
-        cursor = g.con.cursor()
+        cursor = g.cursor
         cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
         user = cursor.fetchone()
 
         if user is None:
             error_message = "Diese E-Mail-Adresse ist noch nicht registriert."
-        elif not check_password_hash(user[4], passwort):  # user[4] = passwort
+        elif not check_password_hash(user['passwort'], passwort):
             error_message = "Das Passwort ist falsch. Bitte versuche es erneut."
         else:
-            session['user_id'] = user[0]
+            session['user_id'] = user['User_ID']
 
             # Rollenlogik: Admin, wenn @novadrive.hn
             if email.endswith('@novadrive.hn'):
@@ -185,52 +200,41 @@ def Login():
 
     return render_template('Login.html', error_message=error_message)
 
-
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
-    error_message = None  # Für Fehlermeldungen
+    error_message = None
 
     if request.method == 'POST':
-        # Formulardaten holen
         vorname = request.form['firstname']
         nachname = request.form['lastname']
         email = request.form['email']
         passwort = request.form['password']
 
-        cursor = g.con.cursor()
+        cursor = g.cursor
 
-        # Prüfen, ob E-Mail bereits registriert ist
         cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
         existing_user = cursor.fetchone()
 
         if existing_user:
             error_message = "E-Mail bereits registriert. Bitte benutze eine andere."
         else:
-            # Automatisch Rolle zuweisen: admin, wenn @novadrive.hn
             rolle = 'admin' if email.endswith('@novadrive.hn') else 'customer'
-
-            # Passwort hashen
             hashed_password = generate_password_hash(passwort)
 
-            # Nutzer in Datenbank einfügen
             sql = "INSERT INTO users (vorname, nachname, email, passwort, role) VALUES (%s, %s, %s, %s, %s)"
             val = (vorname, nachname, email, hashed_password, rolle)
             cursor.execute(sql, val)
             g.con.commit()
 
-            return redirect(url_for('Login'))  # Weiterleitung nach erfolgreicher Registrierung
+            return redirect(url_for('Login'))
 
-    # Seite rendern (inkl. evtl. Fehlermeldung)
     return render_template('registration.html', error_message=error_message)
-
-
 
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)  # Entfernt die ID aus der Session, sodass der Benutzer ausgeloggt wird
-    return redirect(url_for('index'))  # Weiterleitung zur Homepage
-
-
+    session.pop('user_id', None)
+    session.pop('user_role', None)
+    return redirect(url_for('index'))
 
 @app.route('/impressum')
 def impressum():
@@ -245,7 +249,7 @@ def admin():
     if 'user_role' not in session or session['user_role'] != 'admin':
         return "Zugriff verweigert", 403
 
-    cursor = g.con.cursor(dictionary=True)
+    cursor = g.cursor
 
     if request.method == "POST":
         aktion = request.form.get("aktion")
@@ -256,12 +260,10 @@ def admin():
         elif aktion == "annehmen":
             cursor.execute("UPDATE Finanzierungsanfrage SET Status = 'angenommen' WHERE ID = %s", (anfrage_id,))
         elif aktion == "kaufvertrag":
-            # Beispielhafte Einfügung, kann erweitert werden
             cursor.execute("INSERT INTO Kaufvertrag (Finanzierungs_ID, Datum_Erstellung, PDF_Pfad) VALUES (%s, NOW(), 'kaufvertrag.pdf')", (anfrage_id,))
 
         g.con.commit()
 
-    # Admin soll ALLE Anfragen sehen
     cursor.execute("""
         SELECT f.*, a.marke, a.modell, a.url, u.vorname, u.nachname, u.email
         FROM Finanzierungsanfrage f
@@ -279,27 +281,36 @@ def admin_action():
         return "Keine Berechtigung", 403
 
     aktion = request.form.get('aktion')
-    if aktion == "ablehnen":
-        # Logik zum Ablehnen
-        pass
-    elif aktion == "annehmen":
-        # Logik zum Annehmen
-        pass
-    elif aktion == "kaufvertrag":
-        # Logik zum Kaufvertrag erstellen
-        pass
+    anfrage_id = request.form.get('anfrage_id')
 
-    return redirect(url_for('admin'))  # z.B. zurück zum Adminbereich
+    cursor = g.cursor
+
+    if not anfrage_id:
+        return "Anfrage-ID fehlt", 400
+
+    if aktion == "ablehnen":
+        cursor.execute("UPDATE Finanzierungsanfrage SET Status = 'abgelehnt' WHERE ID = %s", (anfrage_id,))
+    elif aktion == "annehmen":
+        cursor.execute("UPDATE Finanzierungsanfrage SET Status = 'genehmigt' WHERE ID = %s", (anfrage_id,))
+    elif aktion == "kaufvertrag":
+        # Optional: prüfen, ob Kaufvertrag für die Anfrage schon existiert, um Duplikate zu vermeiden
+        cursor.execute("SELECT * FROM Kaufvertrag WHERE Finanzierungs_ID = %s", (anfrage_id,))
+        vorhandener_vertrag = cursor.fetchone()
+        if not vorhandener_vertrag:
+            cursor.execute("INSERT INTO Kaufvertrag (Finanzierungs_ID, Datum_Erstellung, PDF_Pfad) VALUES (%s, NOW(), 'kaufvertrag.pdf')", (anfrage_id,))
+
+    g.con.commit()
+
+    return redirect(url_for('admin'))
 
 @app.route('/reviews', methods=['GET', 'POST'])
 def reviews():
     if request.method == 'POST':
-        # Rezension speichern
-        user_id = session.get('user_id')  # Falls User-Login vorhanden
+        user_id = session.get('user_id')
         rating = request.form['rating']
         comment = request.form['comment']
 
-        cursor = g.con.cursor()
+        cursor = g.cursor
         cursor.execute("""
             INSERT INTO reviews (user_id, rating, comment) 
             VALUES (%s, %s, %s)
@@ -308,14 +319,19 @@ def reviews():
 
         return redirect(url_for('reviews'))
 
-    # Alle Rezensionen abrufen
-    cursor = g.con.cursor(dictionary=True)
+    cursor = g.cursor
     cursor.execute("SELECT r.*, u.vorname, u.nachname FROM reviews r LEFT JOIN users u ON r.user_id = u.User_ID")
     reviews = cursor.fetchall()
 
     return render_template('reviews.html', reviews=reviews)
 
+@app.route('/termine')
+def termine_anzeigen():
+    cursor = g.cursor
+    cursor.execute("SELECT fa.*, a.marke, a.modell FROM finanzierungsanfrage fa JOIN auto a ON fa.Auto_ID = a.autoid ORDER BY fa.Terminwunsch DESC")
+    termine = cursor.fetchall()
+    return render_template('termine.html', termine=termine)
 
-# Start der Flask-Anwendung
+
 if __name__ == '__main__':
     app.run(debug=True)

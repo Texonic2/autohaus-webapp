@@ -13,98 +13,92 @@
       <h1 class="finanz-title">💶 Finanzierung berechnen</h1>
       <p class="finanz-sub">Effektiver Jahreszins: <strong>2 %</strong> – fair & transparent</p>
 
-<form method="post" class="finanz-form">
+  <form method="post" class="finanz-form">
 
-  <div class="finanz-row">
-    <input type="number" name="fahrzeugpreis" placeholder="Fahrzeugpreis (€)" required
-           value="{{ fahrzeug.preis }}">
-    <input type="number" name="anzahlung" placeholder="Anzahlung (€)" required>
-  </div>
+    <!-- Versteckte Aktion, wird per JS geändert -->
+    <input type="hidden" name="aktion" id="aktion" value="">
 
-  <div class="finanz-row">
-    <input type="number" name="laufzeit" placeholder="Laufzeit (Monate)" required>
-    <input type="number" name="schlussrate" placeholder="Schlussrate (€ – optional)">
-  </div>
+    <div class="finanz-row">
+      <input type="number" name="fahrzeugpreis" placeholder="Fahrzeugpreis (€)" required
+       value="{{ fahrzeugpreis if fahrzeugpreis else fahrzeug.preis }}">
 
-  <button type="submit" name="aktion" value="berechnen" class="finanz-button">🧮 Monatsrate berechnen</button>
-<button type="submit" name="aktion" value="barzahlung" class="finanz-button">Direkte Barzahlung</button>
-</form>
 
-{% if rate %}
-  <div class="finanz-ergebnis-box">
-    <div class="finanz-result">
-      <span class="finanz-label">Monatliche Rate:</span>
-      <span class="finanz-value">{{ rate }} €</span>
+      <input type="number" name="anzahlung" placeholder="Anzahlung (€)" required
+             value="">
     </div>
 
-    <div class="finanz-summary">
-  <h3>Ihr Wunschfahrzeug im Überblick</h3>
-  <ul>
-    <li><strong>Fahrzeug:</strong> {{ fahrzeug.marke }} {{ fahrzeug.modell }}</li>
-    <li><strong>Leistung:</strong> {{ fahrzeug.ps }} PS</li>
-    <li><strong>Fahrzeugpreis:</strong> {{ fahrzeugpreis }} €</li>
-    <li><strong>Anzahlung:</strong> {{ anzahlung }} €</li>
-    <li><strong>Laufzeit:</strong> {{ laufzeit }} Monate</li>
-    {% if schlussrate %}
-    <li><strong>Schlussrate:</strong> {{ schlussrate }} €</li>
-    {% endif %}
-    <li>Bei einer Laufzeit von <strong>{{ laufzeit }}</strong> Monaten beträgt Ihre monatliche Rate <strong>{{ rate }} €</strong>.</li>
-  </ul>
-</div>
+    <div class="finanz-row">
+      <input type="number" name="laufzeit" placeholder="Laufzeit (Monate)" required
+             value="">
+      <input type="number" name="schlussrate" placeholder="Schlussrate (€ – optional)"
+             value="">
+    </div>
 
-      <!-- Trick: Checkbox für Anzeigen/Verstecken -->
+    <!-- Verstecktes Feld für die berechnete Rate -->
+    <input type="hidden" name="rate" id="rate" value="{{ rate if rate else '' }}">
+
+    <button type="submit" onclick="document.getElementById('aktion').value='berechnen';" class="finanz-button">🧮 Monatsrate berechnen</button>
+    <button type="submit" onclick="document.getElementById('aktion').value='barzahlung';" class="finanz-button">Direkte Barzahlung</button>
+
+    {% if rate %}
+    <div class="finanz-ergebnis-box">
+      <div class="finanz-result">
+        <span class="finanz-label">Monatliche Rate:</span>
+        <span class="finanz-value">{{ rate }} €</span>
+      </div>
+
+      <div class="finanz-summary">
+        <h3>Ihr Wunschfahrzeug im Überblick</h3>
+        <ul>
+          <li><strong>Fahrzeug:</strong> {{ fahrzeug.marke }} {{ fahrzeug.modell }}</li>
+          <li><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</li>
+          <li><strong>Fahrzeugpreis:</strong> {{ fahrzeugpreis }} €</li>
+          <li><strong>Anzahlung:</strong> {{ anzahlung }} €</li>
+          <li><strong>Laufzeit:</strong> {{ laufzeit }} Monate</li>
+          {% if schlussrate %}
+          <li><strong>Schlussrate:</strong> {{ schlussrate }} €</li>
+          {% endif %}
+          <li>Bei einer Laufzeit von <strong>{{ laufzeit }}</strong> Monaten beträgt Ihre monatliche Rate <strong>{{ rate }} €</strong>.</li>
+        </ul>
+      </div>
+
+      <!-- Checkbox für Anzeige des Terminbereichs -->
       <input type="checkbox" id="termin-toggle" class="termin-toggle">
       <label for="termin-toggle" class="finanz-button-secondary">Jetzt Termin vereinbaren</label>
 
-<div class="termin-box">
-  <h3>🗓️ Termin vereinbaren</h3>
-  <form method="post">
-      <input type="hidden" name="aktion" value="termin">
-    <div class="termin-row">
-      <label for="termin">Gewünschtes Datum:</label>
-      <input type="date" id="termin" name="termin" required>
+      <div class="termin-box">
+        <h3>🗓️ Termin vereinbaren</h3>
+
+          <div class="termin-row">
+            <label for="termin">Gewünschtes Datum:</label>
+            <input type="date" id="termin" name="termin" required>
+          </div>
+          <div class="termin-row">
+            <label for="uhrzeit">Gewünschte Uhrzeit:</label>
+            <input type="time" id="uhrzeit" name="uhrzeit" required>
+          </div>
+
+          <button type="submit" onclick="document.getElementById('aktion').value='termin';" class="finanz-button">Termin anfragen</button>
+
+      </div>
     </div>
-    <div class="termin-row">
-      <label for="uhrzeit">Gewünschte Uhrzeit:</label>
-      <input type="time" id="uhrzeit" name="uhrzeit" required>
-    </div>
-    <button type="submit" class="finanz-button">Termin anfragen</button>
+    {% endif %}
 
   </form>
-  <div class="oeffnungszeiten">
-    <h4>Unsere Öffnungszeiten:</h4>
-    <p>Montag - Freitag: 08:00 - 18:00</p>
-    <p>Samstag: 09:00 - 14:00</p>
-    <p>Sonntag: Geschlossen</p>
-  </div>
-</div>
-
-    </div>
-  </div>
-{% endif %}
-
-{% if termin_datum and termin_uhrzeit %}
-  <div class="termin-bestaetigung">
-    <p>Ihr Wunschtermin für den <strong>{{ termin_datum }}</strong> um <strong>{{ termin_uhrzeit }}</strong> wurde erfolgreich angefragt.</p>
-    <p>Bitte beachten Sie, dass dies lediglich eine Anfrage ist und noch keine verbindliche Zusage darstellt.</p>
-    <p>Wir werden uns so schnell wie möglich mit Ihnen in Verbindung setzen, um den Termin zu bestätigen.</p>
-  </div>
-{% endif %}
-
-</form>
 </section>
 
-    <div class="legal-content">
-        <!-- Footer-Bereich (unten auf der Seite) -->
-        <span class="legal-text">(c) 2023 - NOvA Drive GmbH</span>
-        <!-- Copyright-Hinweis -->
+<div class="legal-content">
+    <span class="legal-text">(c) 2023 - NOvA Drive GmbH</span> |
+    <a href="#">Impressum</a> |
+    <a href="#">Datenschutz</a>
+</div>
 
-        | <a href="#">Impressum</a>
-        <!-- Link zum Impressum -->
-        | <a href="#">Datenschutz</a>
-        <!-- Link zur Datenschutzerklärung -->
-    </div>
+<script>
+  // Optional: Wenn du die Rate mit JS berechnest, dann hier den Wert in #rate setzen.
+  // Beispiel (wenn nötig):
+  // function setRateValue(rate) {
+  //   document.getElementById('rate').value = rate;
+  // }
+</script>
 
-</body>
-</html>
 {% endblock %}
