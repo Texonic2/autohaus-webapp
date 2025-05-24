@@ -617,4 +617,25 @@ body {
   display: inline-block;
   width: 60px;         /* sorgt dafür, dass "Name:" und "E-Mail:" untereinander beginnen */
 }
+.fahrzeug-vorteile {
+  margin-top: 20px;
+  padding: 15px 20px;
+  background-color: #f5f5f5;
+  border-left: 4px solid #4CAF50;
+  border-radius: 4px;
+}
 
+.fahrzeug-vorteile h4 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.fahrzeug-vorteile ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.fahrzeug-vorteile li {
+  margin-bottom: 6px;
+  line-height: 1.4;
+}

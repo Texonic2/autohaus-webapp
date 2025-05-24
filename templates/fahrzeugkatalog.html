@@ -4,17 +4,17 @@
     <link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
 {% endblock %}
 
-{% block title %}Startseite – Autohaus Heilbronn{% endblock %}
+{% block title %}Fahrzeugkatalog – Autohaus Heilbronn{% endblock %}
  <link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
 {% block content %}
 
 <form class="search-bar-horizontal" action="#" method="get">
   <input type="text" value="Mercedes" readonly title="Marke">
-  <input type="text" name="modell" placeholder="Modell (z. B. C-Klasse)">
-  <input type="number" name="preis" placeholder="Maximalpreis (€)">
-  <input type="number" name="baujahr" placeholder="Baujahr ab">
-  <input type="number" name="ps" placeholder="Leistung ab (PS)">
-  <button type="submit">🔍 Suchen</button>
+   <input type="text" name="modell" placeholder="Modell (z. B. C-Klasse)" value="{{ request.args.get('modell', '') }}">
+  <input type="number" name="preis" placeholder="Maximalpreis (€)" value="{{ request.args.get('preis', '') }}">
+  <input type="number" name="baujahr" placeholder="Baujahr ab" value="{{ request.args.get('baujahr', '') }}">
+  <input type="number" name="ps" placeholder="Leistung ab (PS)" value="{{ request.args.get('ps', '') }}">
+  <button type="submit"> Suchen</button>
 </form>
 
 {% for fahrzeug in fahrzeuge %}

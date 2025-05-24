@@ -28,9 +28,33 @@ def teardown_request(exception):
 @app.route('/fahrzeugkatalog')
 def fahrzeugkatalog():
     cursor = g.cursor
-    cursor.execute("SELECT * FROM auto")
+
+    # Filterwerte aus dem GET-Request lesen
+    modell = request.args.get('modell')
+    max_preis = request.args.get('preis', type=int)
+    baujahr = request.args.get('baujahr', type=int)
+    ps = request.args.get('ps', type=int)
+
+    # Dynamisch SQL-Query aufbauen
+    sql = "SELECT * FROM auto WHERE marke = 'Mercedes'"
+    params = []
+
+    if modell:
+        sql += " AND modell LIKE %s"
+        params.append(f"%{modell}%")
+    if max_preis:
+        sql += " AND preis <= %s"
+        params.append(max_preis)
+    if baujahr:
+        sql += " AND baujahr >= %s"
+        params.append(baujahr)
+    if ps:
+        sql += " AND leistung >= %s"
+        params.append(ps)
+
+    cursor.execute(sql, params)
     fahrzeuge = cursor.fetchall()
-    app.logger.debug(f"Gefundene Autos: {fahrzeuge!r}")
+
     return render_template("fahrzeugkatalog.html", fahrzeuge=fahrzeuge)
 
 @app.route("/finanzierungbsp", methods=["GET", "POST"])
