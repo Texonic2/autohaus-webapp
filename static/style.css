@@ -639,3 +639,76 @@ body {
   margin-bottom: 6px;
   line-height: 1.4;
 }
+
+
+.btn-finanzieren {
+    background-color: #b84127;
+    color: white;
+}
+
+.btn-finanzieren:hover {
+    background-color: #b84127;
+}
+
+.btn-pdf {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-pdf:hover {
+    background-color: #5a6268;
+}
+.fahrzeug-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 8px;
+  position: relative;
+  min-height: 200px;
+}
+
+.fahrzeug-details {
+  margin-bottom: 60px; /* Platz für Buttons unten */
+}
+
+.fahrzeug-details p {
+  margin: 5px 0;
+}
+
+.fahrzeug-actions {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.fahrzeug-actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn-finanzieren {
+  background-color: #b84127;
+  color: white;
+}
+
+.btn-finanzieren:hover {
+  background-color: #a83622;
+}
+
+.btn-pdf {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-pdf:hover {
+  background-color: #5a6268;
+}
