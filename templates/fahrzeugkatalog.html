@@ -23,29 +23,28 @@
              alt="Bild von {{ fahrzeug.marke }} {{ fahrzeug.modell }}">
     </div>
 
-    <div class="text-container" style="display: flex; align-items: center;">
-        <div class="car-details">
-            <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
-            <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
-            <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
-            <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
-             <p><strong>Hubraum:</strong> {{ fahrzeug.hubraum }}cm³</p>
-            <p><strong>Kraftstoffverbrauch:</strong> {{ fahrzeug.kraftstoffverbrauch }} l/100km</p>
-            <p><strong>Getriebeart:</strong> {{ fahrzeug.getriebeart }}</p>
-            <p><strong>Hubraum:</strong> {{ fahrzeug.antriebsart }}</p>
-            <p><strong>Umweltplakette:</strong> {{ fahrzeug.umweltplakette }}</p>
-
-        </div>
-
-        <div style="margin-left: auto; display: flex; gap: 10px;">
-            <a href="/finanzierung/{{ fahrzeug.autoid }}">
-                <button>Finanzieren</button>
-            </a>
-            <a href="/pdf/{{ fahrzeug.autoid }}">
-                <button>PDF</button>
-            </a>
-        </div>
+    <div class="text-container" style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; padding-bottom: 60px;">
+    <div class="car-details">
+        <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
+        <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
+        <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
+        <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
+        <p><strong>Hubraum:</strong> {{ fahrzeug.hubraum }} cm³</p>
+        <p><strong>Kraftstoffverbrauch:</strong> {{ fahrzeug.kraftstoffverbrauch }} l/100km</p>
+        <p><strong>Getriebeart:</strong> {{ fahrzeug.getriebeart }}</p>
+        <p><strong>Antriebsart:</strong> {{ fahrzeug.antriebsart }}</p>
+        <p><strong>Umweltplakette:</strong> {{ fahrzeug.umweltplakette }}</p>
     </div>
+
+    <div class="fahrzeug-actions">
+        <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get">
+            <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
+        </form>
+        <form action="/pdf/{{ fahrzeug.autoid }}" method="get">
+            <button type="submit" class="btn-pdf">PDF</button>
+        </form>
+    </div>
+</div>
     <hr>
 {% endfor %}
 
