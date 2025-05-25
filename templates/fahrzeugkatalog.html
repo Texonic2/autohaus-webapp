@@ -22,27 +22,38 @@
         <img src="{{ url_for('static', filename=fahrzeug.url) }}" class="header-image"
              alt="Bild von {{ fahrzeug.marke }} {{ fahrzeug.modell }}">
     </div>
-    <div class="fahrzeug-box">
-  <div class="fahrzeug-details">
-    <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
-    <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
-    <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
-    <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
-      <p><strong>Junge Sterne Garantie – geprüft und zertifiziert</strong> </p>
-      <p><strong>12 Monate Gebrauchtwagenschutz inklusive</strong> </p>
 
-  </div>
+    <div class="text-container" style="display: flex; align-items: center;">
+        <div class="car-details">
+            <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
+            <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
+            <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
+            <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
+        </div>
 
-  <div class="fahrzeug-actions">
-    <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get">
-      <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
-    </form>
-    <form action="/pdf/{{ fahrzeug.autoid }}" method="get">
-      <button type="submit" class="btn-pdf">PDF</button>
-    </form>
-  </div>
-</div>
+        <div style="margin-left: auto; display: flex; gap: 10px;">
+            <a href="/finanzierung/{{ fahrzeug.autoid }}">
+                <button>Finanzieren</button>
+            </a>
+            <a href="/pdf/{{ fahrzeug.autoid }}">
+                <button>PDF</button>
+            </a>
+        </div>
+    </div>
+    <hr>
 {% endfor %}
+
+
+</p>
+
+
+
+
+
+
+        </div>
+    </div>
+
 </body>
 </html>
 {% endblock %}
