@@ -399,6 +399,29 @@ def benutzer_verwalten():
     benutzerliste = cursor.fetchall()
 
     return render_template("benutzer_verwalten.html", benutzerliste=benutzerliste)
+@app.route("/benutzer_anlegen", methods=["GET", "POST"])
+
+def benutzer_anlegen():
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Zugriff verweigert", 403
+
+    if request.method == "POST":
+        vorname = request.form.get("vorname")
+        nachname = request.form.get("nachname")
+        email = request.form.get("email")
+        passwort = request.form.get("passwort")
+        rolle = request.form.get("rolle")
+
+        hashed_pw = generate_password_hash(passwort)
+
+        cursor = g.cursor
+        cursor.execute("INSERT INTO users (vorname, nachname, email, passwort, role) VALUES (%s, %s, %s, %s, %s)",
+                       (vorname, nachname, email, hashed_pw, rolle))
+        g.con.commit()
+
+        return redirect(url_for('benutzer_verwalten'))
+
+    return render_template("benutzer_anlegen.html")
 
 
 if __name__ == '__main__':

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Benutzer anlegen{% endblock %}
+
+{% block content %}
+
+
+<div class="benutzer-form-wrapper">
+  <h2>Neuen Benutzer anlegen</h2>
+
+  <form method="post" class="benutzer-form">
+    <input type="text" name="vorname" placeholder="Vorname" required>
+    <input type="text" name="nachname" placeholder="Nachname" required>
+    <input type="email" name="email" placeholder="E-Mail" required>
+    <input type="password" name="passwort" placeholder="Passwort" required>
+
+    <select name="rolle" required>
+      <option value="customer">Kunde</option>
+      <option value="admin">Admin</option>
+    </select>
+
+    <button type="submit">✅ Benutzer speichern</button>
+  </form>
+
+  <div class="benutzer-zurueck">
+    <a href="{{ url_for('benutzer_verwalten') }}">← Zurück zur Benutzerverwaltung</a>
+  </div>
+</div>
+{% endblock %}

@@ -734,3 +734,53 @@ button {
   font-size: 13px;
   cursor: pointer;
 }
+/* ---------- Benutzer anlegen ---------- */
+.benutzer-form-wrapper {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.benutzer-form-wrapper h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.benutzer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.benutzer-form input,
+.benutzer-form select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.benutzer-form button {
+  padding: 12px;
+  background-color: #b84127;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.benutzer-form button:hover {
+  background-color: #a83622;
+}
+
+.benutzer-zurueck {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.benutzer-zurueck a {
+  text-decoration: none;
+  color: #555;
+}
