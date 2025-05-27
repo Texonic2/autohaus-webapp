@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Fahrzeugverwaltung – Admin{% endblock %}
+
+{% block content %}
+<h2 class="admin-title">🚗 Fahrzeugverwaltung</h2>
+
+
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Marke</th>
+        <th>Modell</th>
+        <th>Baujahr</th>
+        <th>Leistung (PS)</th>
+        <th>Aktion</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for auto in autos %}
+      <tr>
+        <td>{{ auto.autoid }}</td>
+        <td>{{ auto.marke }}</td>
+        <td>{{ auto.modell }}</td>
+        <td>{{ auto.baujahr }}</td>
+        <td>{{ auto.leistung }}</td>
+        <td>
+            <a href="{{ url_for('auto_bearbeiten', autoid=auto.autoid) }}" class="btn-bearbeiten-link">Bearbeiten</a>
+        </td>
+      </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+</div>
+{% endblock %}

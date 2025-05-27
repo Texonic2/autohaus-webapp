@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Fahrzeug bearbeiten{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h2 class="form-title">🚗 Fahrzeug bearbeiten</h2>
+
+  <form method="post" class="form-styled">
+  <label for="marke">Marke:</label>
+  <input type="text" id="marke" name="marke" value="{{ auto.marke }}" required>
+
+  <label for="modell">Modell:</label>
+  <input type="text" id="modell" name="modell" value="{{ auto.modell }}" required>
+
+  <label for="baujahr">Baujahr:</label>
+  <input type="number" id="baujahr" name="baujahr" value="{{ auto.baujahr }}" required>
+
+  <label for="leistung">Leistung (PS):</label>
+  <input type="number" id="leistung" name="leistung" value="{{ auto.leistung }}" required>
+
+  <label for="preis">Preis (€):</label>
+  <input type="number" id="preis" name="preis" value="{{ auto.preis }}" required>
+
+  <label for="url">Bild-Dateiname (static/):</label>
+  <input type="text" id="url" name="url" value="{{ auto.url }}" required>
+
+  <label for="kraftstoffverbrauch">Kraftstoffverbrauch (l/100km):</label>
+  <input type="text" id="kraftstoffverbrauch" name="kraftstoffverbrauch" value="{{ auto.kraftstoffverbrauch }}">
+
+  <label for="hubraum">Hubraum (cm³):</label>
+  <input type="text" id="hubraum" name="hubraum" value="{{ auto.hubraum }}">
+
+  <label for="getriebeart">Getriebeart:</label>
+  <input type="text" id="getriebeart" name="getriebeart" value="{{ auto.getriebeart }}">
+
+  <label for="antriebsart">Antriebsart:</label>
+  <input type="text" id="antriebsart" name="antriebsart" value="{{ auto.antriebsart }}">
+
+  <label for="umweltplakette">Umweltplakette:</label>
+  <input type="text" id="umweltplakette" name="umweltplakette" value="{{ auto.umweltplakette }}">
+
+  <button type="submit" class="btn-save">✅ Änderungen speichern</button>
+</form>
+
+  <div style="text-align: center; margin-top: 15px;">
+    <a href="{{ url_for('auto_verwalten') }}" class="back-link">← Zurück zur Fahrzeugverwaltung</a>
+  </div>
+</div>
+{% endblock %}

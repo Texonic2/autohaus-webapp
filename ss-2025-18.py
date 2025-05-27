@@ -270,6 +270,7 @@ def datenschutz():
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
+    geloescht = request.args.get("geloescht") #
     if 'user_role' not in session or session['user_role'] != 'admin':
         return "Zugriff verweigert", 403
 
@@ -297,7 +298,7 @@ def admin():
     """)
     anfragen = cursor.fetchall()
 
-    return render_template("admin.html", anfragen=anfragen)
+    return render_template("admin.html", anfragen=anfragen, geloescht=geloescht)
 
 @app.route('/admin/action', methods=['POST'])
 def admin_action():
@@ -426,7 +427,7 @@ def benutzer_anlegen():
 @app.route('/anfrage_loeschen/<int:anfrage_id>', methods=['POST'])
 def anfrage_loeschen(anfrage_id):
     if 'user_id' not in session:
-        return redirect(url_for('Login'))
+        return redirect(url_for('Login'))   # ey dass ist zweilmal drinn
 
     user_id = session['user_id']
     cursor = g.cursor
@@ -448,6 +449,90 @@ def anfrage_loeschen_admin(anfrage_id):
 
     return redirect(url_for('admin'))
 
+@app.route('/admin/loesche_abgelehnte', methods=['POST'])
+@app.route('/admin/loesche_abgelehnte', methods=['POST'])
+def loesche_abgelehnte_anfragen():
+    cursor = g.cursor
+
+    # Anzahl zählen
+    cursor.execute("SELECT COUNT(*) AS anzahl FROM Finanzierungsanfrage WHERE LOWER(Status) = 'abgelehnt'")
+    result = cursor.fetchone()
+    anzahl = result['anzahl'] if result else 0
+
+    # Löschen
+    cursor.execute("DELETE FROM Finanzierungsanfrage WHERE LOWER(Status) = 'abgelehnt'")
+    g.con.commit()
+
+    # Weiterleitung + Anzahl mitgeben
+    return redirect(url_for('admin', geloescht=anzahl))
+@app.route("/auto_verwalten", methods=["GET", "POST"])
+@app.route("/auto_verwalten")
+
+@app.route("/auto_verwalten")
+def auto_verwalten():
+    # Nur Admins dürfen auf diese Seite
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Zugriff verweigert", 403
+
+    cursor = g.cursor
+    cursor.execute("""
+        SELECT autoid, marke, modell, baujahr, leistung
+        FROM auto
+        ORDER BY autoid ASC
+    """)
+    autos = cursor.fetchall()
+
+    return render_template("auto_verwalten.html", autos=autos)
+
+@app.route('/auto_bearbeiten/<int:autoid>', methods=['GET', 'POST'])
+def auto_bearbeiten(autoid):
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Zugriff verweigert", 403
+
+    cursor = g.cursor
+
+    if request.method == 'POST':
+        daten = (
+            request.form['marke'],
+            request.form['modell'],
+            request.form['baujahr'],
+            request.form['leistung'],
+            request.form['preis'],
+            request.form['url'],
+            request.form['kraftstoffverbrauch'],
+            request.form['hubraum'],
+            request.form['getriebeart'],
+            request.form['antriebsart'],
+            request.form['umweltplakette'],
+            autoid
+        )
+
+        cursor.execute("""
+            UPDATE auto SET
+              marke = %s,
+              modell = %s,
+              baujahr = %s,
+              leistung = %s,
+              preis = %s,
+              url = %s,
+              kraftstoffverbrauch = %s,
+              hubraum = %s,
+              getriebeart = %s,
+              antriebsart = %s,
+              umweltplakette = %s
+            WHERE autoid = %s
+        """, daten)
+        g.con.commit()
+        return redirect(url_for('auto_verwalten'))
+
+    # Auto-Daten laden
+    cursor.execute("SELECT * FROM auto WHERE autoid = %s", (autoid,))
+    auto = cursor.fetchone()
+
+    if not auto:
+        return "Fahrzeug nicht gefunden", 404
+
+    return render_template("auto_bearbeiten.html", auto=auto)
 
 if __name__ == '__main__':
     app.run(debug=True)

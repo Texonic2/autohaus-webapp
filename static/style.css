@@ -798,3 +798,90 @@ button {
 .btn-anfrage-loeschen:hover {
   background-color: #e6972e;
 }
+.admin-button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 250px;
+  margin: 20px auto;
+}
+.admin-button-row {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px auto;
+  flex-wrap: wrap;
+}
+
+.admin-button {
+  display: inline-block;
+  padding: 12px 20px;
+  background-color: #b84127;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.admin-button:hover {
+  background-color: #a6361f;
+}
+.loesch-info {
+  background-color: #e7f4e4;
+  color: #2d662d;
+  padding: 12px;
+  border: 1px solid #b2d8b2;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  text-align: center;
+}
+.btn-bearbeiten-link {
+  display: inline-block;
+  padding: 6px 14px;
+  background-color: #b84127;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn-bearbeiten-link:hover {
+  background-color: #a8361f;
+}
+.form-container {
+  max-width: 700px; /* vorher 500px */
+  margin: 50px auto;
+  padding: 35px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e0e0e0;
+}
+.form-title {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+}
+
+.form-styled input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #fefefe;
+  transition: border 0.2s ease;
+}
+
+.form-styled input:focus {
+  border-color: #b84127;
+  outline: none;
+}
