@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Benutzerverwaltung – Admin{% endblock %}
+
+{% block content %}
+<h2>Benutzerverwaltung</h2>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Vorname</th>
+      <th>Nachname</th>
+      <th>E-Mail</th>
+      <th>Rolle</th>
+      <th>Aktionen</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in benutzerliste %}
+    <tr>
+      <td>{{ user.User_ID }}</td>
+      <td>{{ user.vorname }}</td>
+      <td>{{ user.nachname }}</td>
+      <td>{{ user.email }}</td>
+      <td>
+        <form method="post" style="display: flex; gap: 6px;">
+          <input type="hidden" name="user_id" value="{{ user.User_ID }}">
+          <select name="rolle">
+            <option value="customer" {% if user.role == 'customer' %}selected{% endif %}>Kunde</option>
+            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+          </select>
+          <button type="submit" name="aktion" value="rolle_aendern">Rolle speichern</button>
+        </form>
+      </td>
+      <td>
+        <form method="post">
+          <input type="hidden" name="user_id" value="{{ user.User_ID }}">
+          <button type="submit" name="aktion" value="loeschen" onclick="return confirm('Benutzer wirklich löschen?')">Löschen</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

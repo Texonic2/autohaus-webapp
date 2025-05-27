@@ -712,3 +712,25 @@ body {
 .btn-pdf:hover {
   background-color: #5a6268;
 }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+thead th {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+tbody td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+button {
+  padding: 5px 10px;
+  font-size: 13px;
+  cursor: pointer;
+}

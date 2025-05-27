@@ -328,6 +328,7 @@ def admin_action():
     return redirect(url_for('admin'))
 
 @app.route('/reviews', methods=['GET', 'POST'])
+
 def reviews():
     if request.method == 'POST':
         user_id = session.get('user_id')
@@ -350,6 +351,7 @@ def reviews():
     return render_template('reviews.html', reviews=reviews)
 
 @app.route('/termine')
+
 def termine_anzeigen():
     cursor = g.cursor
     cursor.execute("SELECT fa.*, a.marke, a.modell FROM finanzierungsanfrage fa JOIN auto a ON fa.Auto_ID = a.autoid ORDER BY fa.Terminwunsch DESC")
@@ -371,6 +373,32 @@ def delete_review():
     g.con.commit()
 
     return redirect(url_for('reviews'))
+
+@app.route("/benutzer_verwalten", methods=["GET", "POST"])
+def benutzer_verwalten():
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Zugriff verweigert", 403
+
+    cursor = g.cursor
+
+    # Benutzer löschen
+    if request.method == "POST":
+        user_id = request.form.get("user_id")
+        action = request.form.get("aktion")
+
+        if action == "loeschen":
+            cursor.execute("DELETE FROM users WHERE User_ID = %s", (user_id,))
+            g.con.commit()
+        elif action == "rolle_aendern":
+            neue_rolle = request.form.get("rolle")
+            cursor.execute("UPDATE users SET role = %s WHERE User_ID = %s", (neue_rolle, user_id))
+            g.con.commit()
+
+    # Benutzerliste anzeigen
+    cursor.execute("SELECT * FROM users ORDER BY User_ID ASC")
+    benutzerliste = cursor.fetchall()
+
+    return render_template("benutzer_verwalten.html", benutzerliste=benutzerliste)
 
 
 if __name__ == '__main__':

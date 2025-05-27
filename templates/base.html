@@ -33,6 +33,7 @@
             <a href="{{ url_for('fahrzeugkatalog') }}">Fahrzeugkatalog</a>
             <a href="{{ url_for('finanzierungbsp') }}">Finanzierungsrechner</a>
 
+
             {% if 'user_id' in session %}
                 <div class="dropdown">
                     <a href="#" class="dropbtn">
@@ -43,6 +44,7 @@
 
                         {% if session.get('user_role') == 'admin' %}
                             <a href="{{ url_for('admin') }}">Adminbereich</a>
+                            <a href="{{ url_for('benutzer_verwalten') }}"> Benutzer</a>
                         {% endif %}
 
                         <a href="{{ url_for('logout') }}">Logout</a>
