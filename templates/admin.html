@@ -8,37 +8,45 @@
 
 {% block content %}
 <div class="finanzierungsanfrage-container">
-
+    <a href="{{ url_for('benutzer_verwalten') }}"> Benutzerverwaltung</a>
+    <a href=""> Autosverwalten</a>
     <h2>Meine Admin Finanzierungsanfragen</h2>
 
     {% for eintrag in anfragen %}
-    <div class="finanzierungsanfrage-card">
-        <div class="auto-bild">
-            <img src="{{ url_for('static', filename='images/' ~ eintrag.url) }}" alt="{{ eintrag.marke }} {{ eintrag.modell }}">
-        </div>
-
-        <div class="anfrage-details">
-            <h3>{{ eintrag.marke }} {{ eintrag.modell }}</h3>
-            <p><strong>Termin:</strong> {{ eintrag.Terminwunsch.strftime('%d.%m.%Y, %H:%M Uhr') }}</p>
-            <p><strong>Finanzierungsdauer:</strong> {{ eintrag.Monate }} Monate</p>
-            <p><strong>Anzahlung:</strong> {{ eintrag.Anzahlung }} €</p>
-            <p><strong>Monatliche Rate:</strong> {{ eintrag.Monatliche_Rate }} €</p>
-            <p><strong>Schlussrate:</strong> 5.000 €</p>
-
-                    <span class="status {{ eintrag.Status|lower }}">{{ eintrag.Status|capitalize }}</span>
-            </p>
-        </div>
-
-        <div class="aktionen-buttons">
-            <form method="post" action="{{ url_for('admin_action') }}" class="admin-aktionen-form">
-                <input type="hidden" name="anfrage_id" value="{{ eintrag.ID }}">
-                <button type="submit" name="aktion" value="ablehnen">Ablehnen</button>
-                <button type="submit" name="aktion" value="annehmen">Annehmen</button>
-                <button type="submit" name="aktion" value="kaufvertrag">Kaufvertrag</button>
-            </form>
-        </div>
+<div class="finanzierungsanfrage-card">
+    <div class="auto-bild">
+        <img src="{{ url_for('static', filename=eintrag.url) }}" alt="{{ eintrag.marke }} {{ eintrag.modell }}">
     </div>
-    {% endfor %}
+
+    <div class="anfrage-details">
+        <h3>{{ eintrag.marke }} {{ eintrag.modell }}</h3>
+        <p><strong>Termin:</strong> {{ eintrag.Terminwunsch.strftime('%d.%m.%Y, %H:%M Uhr') }}</p>
+        <p><strong>Finanzierungsdauer:</strong> {{ eintrag.Monate }} Monate</p>
+        <p><strong>Anzahlung:</strong> {{ eintrag.Anzahlung }} €</p>
+        <p><strong>Monatliche Rate:</strong> {{ eintrag.Monatliche_Rate }} €</p>
+        <p><strong>Schlussrate:</strong> {{ eintrag.schlussrate }} €</p>
+        <p><strong>Status:</strong> <span class="status {{ eintrag.Status|lower }}">{{ eintrag.Status|capitalize }}</span></p>
+
+        <hr style="margin: 10px 0;">
+
+        <p><strong>Kunde:</strong> {{ eintrag.vorname }} {{ eintrag.nachname }}</p>
+        <p><strong>E-Mail:</strong> {{ eintrag.email }}</p>
+
+        <form method="post" action="{{ url_for('admin_action') }}" class="admin-aktionen-form" style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <input type="hidden" name="anfrage_id" value="{{ eintrag.ID }}">
+            <button type="submit" name="aktion" value="annehmen">Annehmen</button>
+            <button type="submit" name="aktion" value="ablehnen">Ablehnen</button>
+            <button type="submit" name="aktion" value="kaufvertrag">Kaufvertrag</button>
+        </form>
+
+        <form method="post" action="{{ url_for('anfrage_loeschen_admin', anfrage_id=eintrag.ID) }}" onsubmit="return confirm('Wirklich löschen?');" style="margin-top: 10px;">
+            <button type="submit" class="btn-anfrage-loeschen">🗑️ Anfrage löschen</button>
+        </form>
+    </div>
+</div>
+{% else %}
+<p>Es liegen aktuell keine Finanzierungsanfragen vor.</p>
+{% endfor %}
 </div>
 
 <br><br><br><br><br><br><br><br><br><br>

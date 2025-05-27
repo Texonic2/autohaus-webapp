@@ -437,6 +437,17 @@ def anfrage_loeschen(anfrage_id):
 
     return redirect(url_for('account'))
 
+@app.route('/admin/anfrage_loeschen/<int:anfrage_id>', methods=['POST'])
+def anfrage_loeschen_admin(anfrage_id):
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Zugriff verweigert", 403
+
+    cursor = g.cursor
+    cursor.execute("DELETE FROM Finanzierungsanfrage WHERE ID = %s", (anfrage_id,))
+    g.con.commit()
+
+    return redirect(url_for('admin'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
