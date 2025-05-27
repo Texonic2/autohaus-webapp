@@ -784,3 +784,17 @@ button {
   text-decoration: none;
   color: #555;
 }
+.btn-anfrage-loeschen {
+  background-color: #ffb347; /* hellorange */
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn-anfrage-loeschen:hover {
+  background-color: #e6972e;
+}
