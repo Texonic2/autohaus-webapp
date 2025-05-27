@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Neues Fahrzeug eintragen{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h2 class="form-title">➕ Neues Fahrzeug eintragen</h2>
+
+  <form method="post" class="form-styled">
+    <label for="marke">Marke:</label>
+    <input type="text" id="marke" name="marke" required>
+
+    <label for="modell">Modell:</label>
+    <input type="text" id="modell" name="modell" required>
+
+    <label for="baujahr">Baujahr:</label>
+    <input type="number" id="baujahr" name="baujahr" required>
+
+    <label for="leistung">Leistung (PS):</label>
+    <input type="number" id="leistung" name="leistung" required>
+
+    <label for="preis">Preis (€):</label>
+    <input type="number" id="preis" name="preis" required>
+
+    <label for="url">Bild-Dateiname (static/ Ordner) Bitte in Staticordner manuel hinzufügen !:</label>
+    <input type="text" id="url" name="url" required>
+
+    <label for="kraftstoffverbrauch">Kraftstoffverbrauch (l/100km):</label>
+    <input type="text" id="kraftstoffverbrauch" name="kraftstoffverbrauch">
+
+    <label for="hubraum">Hubraum (cm³):</label>
+    <input type="text" id="hubraum" name="hubraum">
+
+    <label for="getriebeart">Getriebeart:</label>
+    <input type="text" id="getriebeart" name="getriebeart">
+
+    <label for="antriebsart">Antriebsart:</label>
+    <input type="text" id="antriebsart" name="antriebsart">
+
+    <label for="umweltplakette">Umweltplakette:</label>
+    <input type="text" id="umweltplakette" name="umweltplakette">
+
+    <button type="submit" class="btn-save">✅ Fahrzeug speichern</button>
+  </form>
+
+  <div style="text-align: center; margin-top: 15px;">
+    <a href="{{ url_for('auto_verwalten') }}" class="back-link">← Zurück zur Fahrzeugverwaltung</a>
+  </div>
+</div>
+{% endblock %}

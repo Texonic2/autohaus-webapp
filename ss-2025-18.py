@@ -534,5 +534,37 @@ def auto_bearbeiten(autoid):
 
     return render_template("auto_bearbeiten.html", auto=auto)
 
+@app.route('/auto_hinzufuegen', methods=['GET', 'POST'])
+def auto_hinzufuegen():
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Zugriff verweigert", 403
+
+    if request.method == 'POST':
+        daten = (
+            request.form['marke'],
+            request.form['modell'],
+            request.form['baujahr'],
+            request.form['leistung'],
+            request.form['preis'],
+            request.form['url'],
+            request.form['kraftstoffverbrauch'],
+            request.form['hubraum'],
+            request.form['getriebeart'],
+            request.form['antriebsart'],
+            request.form['umweltplakette']
+        )
+
+        cursor = g.cursor
+        cursor.execute("""
+            INSERT INTO auto (marke, modell, baujahr, leistung, preis, url,
+                kraftstoffverbrauch, hubraum, getriebeart, antriebsart, umweltplakette)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, daten)
+        g.con.commit()
+
+        return redirect(url_for('auto_verwalten'))
+
+    return render_template("auto_hinzufuegen.html")
+
 if __name__ == '__main__':
     app.run(debug=True)
