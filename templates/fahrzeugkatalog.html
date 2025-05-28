@@ -1,9 +1,5 @@
 {% extends "base.html" %}
 
-{% block head %}
-    <link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
-{% endblock %}
-
 {% block title %}Fahrzeugkatalog – Autohaus Heilbronn{% endblock %}
  <link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
 {% block content %}
@@ -37,28 +33,22 @@
     </div>
 
     <div class="fahrzeug-actions">
-        <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get">
-            <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
-        </form>
-        <form action="/pdf/{{ fahrzeug.autoid }}" method="get">
-            <button type="submit" class="btn-pdf">PDF</button>
+    <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get">
+        <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
+    </form>
+    <form action="/pdf/{{ fahrzeug.autoid }}" method="get">
+        <button type="submit" class="btn-pdf">PDF</button>
+    </form>
+        <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}">
+            {% if fahrzeug.autoid in user_fav_ids %}
+                <button type="submit" name="aktion" value="remove" class="btn-unfav">★ Entfernen</button>
+            {% else %}
+                <button type="submit" name="aktion" value="add" class="btn-fav">☆ Zu Favoriten</button>
+            {% endif %}
         </form>
     </div>
 </div>
-    <hr>
+    <hr style="margin-top: 40px;">
 {% endfor %}
 
-
-</p>
-
-
-
-
-
-
-        </div>
-    </div>
-
-</body>
-</html>
 {% endblock %}

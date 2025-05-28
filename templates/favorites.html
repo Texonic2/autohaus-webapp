@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Meine Favoriten – Autohaus Heilbronn{% endblock %}
+
+{% block content %}
+<div class="finanzierungsanfrage-container">
+    <h2>Meine Favoriten</h2>
+
+    {% if fahrzeuge %}
+        {% for f in fahrzeuge %}
+        <div class="text-container">
+            <h3>{{ f.marke }} {{ f.modell }}</h3>
+            <p><strong>Baujahr:</strong> {{ f.baujahr }}</p>
+            <p><strong>Leistung:</strong> {{ f.leistung }} PS</p>
+            <p><strong>Preis:</strong> {{ f.preis }} €</p>
+            <form action="/finanzierung/{{ f.autoid }}" method="get">
+                <button type="submit">Jetzt finanzieren</button>
+            </form>
+        </div>
+        <hr>
+        {% endfor %}
+    {% else %}
+        <p>Du hast noch keine Fahrzeuge als Favorit markiert.</p>
+    {% endif %}
+</div>
+{% endblock %}

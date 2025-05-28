@@ -26,36 +26,55 @@ def teardown_request(exception):
         con.close()
 
 @app.route('/fahrzeugkatalog')
+@app.route('/fahrzeugkatalog')
 def fahrzeugkatalog():
-    cursor = g.cursor
+    # 1. Session-User-ID holen (None, falls nicht eingeloggt)
+    user_id = session.get('user_id')
 
-    # Filterwerte aus dem GET-Request lesen
-    modell = request.args.get('modell')
-    max_preis = request.args.get('preis', type=int)
-    baujahr = request.args.get('baujahr', type=int)
-    ps = request.args.get('ps', type=int)
+    # 2. Cursor mit dict-Output
+    cursor = g.con.cursor(dictionary=True)
 
-    # Dynamisch SQL-Query aufbauen
-    sql = "SELECT * FROM auto WHERE marke = 'Mercedes'"
+    # 3. Filterwerte aus dem GET-Request
+    modell    = request.args.get('modell')
+    max_preis = request.args.get('preis',    type=int)
+    baujahr   = request.args.get('baujahr',  type=int)
+    ps        = request.args.get('ps',       type=int)
+
+    # 4. Dynamische SQL-Query bauen
+    sql    = "SELECT * FROM auto WHERE marke = 'Mercedes'"
     params = []
-
     if modell:
-        sql += " AND modell LIKE %s"
+        sql    += " AND modell LIKE %s"
         params.append(f"%{modell}%")
     if max_preis:
-        sql += " AND preis <= %s"
+        sql    += " AND preis <= %s"
         params.append(max_preis)
     if baujahr:
-        sql += " AND baujahr >= %s"
+        sql    += " AND baujahr >= %s"
         params.append(baujahr)
     if ps:
-        sql += " AND leistung >= %s"
+        sql    += " AND leistung >= %s"
         params.append(ps)
 
+    # 5. Fahrzeuge abrufen
     cursor.execute(sql, params)
     fahrzeuge = cursor.fetchall()
 
-    return render_template("fahrzeugkatalog.html", fahrzeuge=fahrzeuge)
+    # 6. Favoriten-IDs des Users abrufen
+    user_fav_ids = []
+    if user_id:
+        cursor.execute(
+            "SELECT autoid FROM favorites WHERE user_id = %s",
+            (user_id,)
+        )
+        user_fav_ids = [row['autoid'] for row in cursor.fetchall()]
+
+    # 7. Template rendern – mit beiden Listen
+    return render_template(
+        "fahrzeugkatalog.html",
+        fahrzeuge=fahrzeuge,
+        user_fav_ids=user_fav_ids
+    )
 
 @app.route("/finanzierungbsp", methods=["GET", "POST"])
 def finanzierungbsp():
@@ -566,5 +585,54 @@ def auto_hinzufuegen():
 
     return render_template("auto_hinzufuegen.html")
 
+@app.route('/favorite/toggle/<int:autoid>', methods=['POST'])
+def toggle_favorite(autoid):
+    if 'user_id' not in session:
+        return redirect(url_for('Login'))
+
+    user_id = session['user_id']
+    cursor = g.con.cursor()
+
+    # 🟡 Korrigierter Spaltenname: User_ID und autoid
+    cursor.execute(
+        "SELECT id FROM favorites WHERE User_ID = %s AND autoid = %s",
+        (user_id, autoid)
+    )
+    exists = cursor.fetchone()
+
+    if exists:
+        cursor.execute(
+            "DELETE FROM favorites WHERE id = %s",
+            (exists[0],)
+        )
+    else:
+        cursor.execute(
+            "INSERT INTO favorites (User_ID, autoid) VALUES (%s, %s)",
+            (user_id, autoid)
+        )
+
+    g.con.commit()
+    return redirect(request.referrer or url_for('fahrzeugkatalog'))
+
+@app.route('/favorites')
+def favorites():
+    if 'user_id' not in session:
+        return redirect(url_for('Login'))
+
+    user_id = session['user_id']
+    cursor = g.con.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT a.*
+        FROM favorites f
+        JOIN auto a ON f.autoid = a.autoid
+        WHERE f.User_ID = %s
+        ORDER BY a.autoid DESC
+
+    """, (user_id,))
+    fahrzeuge = cursor.fetchall()
+    return render_template('favorites.html', fahrzeuge=fahrzeuge)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+

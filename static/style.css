@@ -885,3 +885,24 @@ button {
   border-color: #b84127;
   outline: none;
 }
+
+.fav-form { display: inline-block; margin-top: 10px; }
+
+.btn-fav, .btn-unfav {
+  background: none;
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+}
+
+.btn-fav {
+  color: #f39c12;  /* goldgelb */
+}
+
+.btn-unfav {
+  color: #e74c3c;  /* rot */
+}
+
+.btn-fav:hover, .btn-unfav:hover {
+  opacity: 0.8;
+}
