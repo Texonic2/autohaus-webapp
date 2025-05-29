@@ -6,21 +6,41 @@
 <div class="finanzierungsanfrage-container">
     <h2>Meine Favoriten</h2>
 
-    {% if fahrzeuge %}
-        {% for f in fahrzeuge %}
-        <div class="text-container">
-            <h3>{{ f.marke }} {{ f.modell }}</h3>
-            <p><strong>Baujahr:</strong> {{ f.baujahr }}</p>
-            <p><strong>Leistung:</strong> {{ f.leistung }} PS</p>
-            <p><strong>Preis:</strong> {{ f.preis }} €</p>
-            <form action="/finanzierung/{{ f.autoid }}" method="get">
-                <button type="submit">Jetzt finanzieren</button>
-            </form>
+    {% for fahrzeug in fahrzeuge %}
+    <div class="finanzierungsanfrage-card">
+        <div class="auto-bild">
+            <img src="{{ url_for('static', filename=fahrzeug.url|replace(' ', '%20')) }}"
+                 alt="{{ fahrzeug.marke }} {{ fahrzeug.modell }}"
+                 style="width: 400px; height: auto; border-radius: 8px; object-fit: cover;">
         </div>
-        <hr>
-        {% endfor %}
+
+
+        <div class="anfrage-details">
+            <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
+            <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
+            <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
+            <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
+            <p><strong>Getriebe:</strong> {{ fahrzeug.getriebeart }}</p>
+            <p><strong>Umweltplakette:</strong> {{ fahrzeug.umweltplakette }}</p>
+
+            <div class="fahrzeug-actions" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px;">
+                <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get">
+                    <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
+                </form>
+
+                <form action="/pdf/{{ fahrzeug.autoid }}" method="get">
+                    <button type="submit" class="btn-pdf">PDF</button>
+                </form>
+
+                <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}">
+                    <input type="hidden" name="aktion" value="remove">
+                    <button type="submit" class="btn-unfav">★ Aus Favoriten entfernen</button>
+                </form>
+            </div>
+        </div>
+    </div>
     {% else %}
-        <p>Du hast noch keine Fahrzeuge als Favorit markiert.</p>
-    {% endif %}
+        <p>Du hast noch keine Fahrzeuge als Favoriten gespeichert.</p>
+    {% endfor %}
 </div>
 {% endblock %}
