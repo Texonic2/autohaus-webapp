@@ -29,13 +29,23 @@
             <!-- Kunden-E-Mail -->
             <label class="admin-anfrage-label">Kunden-E-Mail-Adresse:</label>
             <input type="email" name="email" class="admin-anfrage-input" required>
+
+            <!-- Terminwunsch -->
+            <label class="admin-anfrage-label">Terminwunsch (Datum & Uhrzeit):</label>
+            <input type="datetime-local" name="terminwunsch" class="admin-anfrage-input" required>
         {% endif %}
 
         {% if fehler %}
             <p style="color:red;"><strong>{{ fehler }}</strong></p>
         {% endif %}
 
-        <button type="submit" class="admin-anfrage-button">Weiter</button>
+        <button type="submit" class="admin-anfrage-button">
+            {% if rate and preis %}
+                ✅ Anfrage abschicken
+            {% else %}
+                Weiter
+            {% endif %}
+        </button>
     </form>
 </div>
 {% endblock %}

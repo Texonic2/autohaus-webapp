@@ -719,11 +719,11 @@ def reply_to_review():
 
     return redirect(url_for('reviews'))
 
-
 @app.route("/anfrage_erstellen", methods=["GET", "POST"])
 def anfrage_erstellen():
     cursor = g.cursor
 
+    # Initialwerte
     preis = None
     rate = None
     laufzeit = None
@@ -731,54 +731,71 @@ def anfrage_erstellen():
     schlussrate = None
     fehler = None
     auto_id = None
+    terminwunsch = None
 
     if request.method == "POST":
+        # Auto-ID prüfen
         auto_id_input = request.form.get("auto_id")
-
-        # ✅ Schritt 1: Auto-ID prüfen
         if auto_id_input and auto_id_input.isdigit():
             auto_id = int(auto_id_input)
             cursor.execute("SELECT preis FROM auto WHERE autoid = %s", (auto_id,))
             result = cursor.fetchone()
             if result:
-                preis = float(result[0])
+                preis = float(result['preis'])
             else:
                 fehler = "❌ Auto mit dieser ID wurde nicht gefunden."
         else:
             fehler = "❌ Bitte gib eine gültige Auto-ID ein."
 
-        # ✅ Schritt 2: Finanzierung berechnen
-        laufzeit = request.form.get("laufzeit")
-        anzahlung = request.form.get("anzahlung")
-        schlussrate = request.form.get("schlussrate")
+        # Finanzierungseingaben holen
+        laufzeit_input = request.form.get("laufzeit")
+        anzahlung_input = request.form.get("anzahlung")
+        schlussrate_input = request.form.get("schlussrate")
+        terminwunsch_input = request.form.get("terminwunsch")
 
-        if preis and laufzeit and anzahlung and schlussrate:
+        # Terminwunsch in DATETIME-Format für MySQL umwandeln
+        if terminwunsch_input:
             try:
-                laufzeit = int(laufzeit)
-                anzahlung = float(anzahlung)
-                schlussrate = float(schlussrate)
+                terminwunsch = terminwunsch_input.replace("T", " ") + ":00"
+            except Exception:
+                fehler = "❌ Ungültiges Datumsformat beim Terminwunsch."
+
+        try:
+            if preis and laufzeit_input and anzahlung_input and schlussrate_input:
+                laufzeit = int(laufzeit_input)
+                anzahlung = float(anzahlung_input)
+                schlussrate = float(schlussrate_input)
+
                 if laufzeit > 0:
                     finanzierungsbetrag = preis - anzahlung - schlussrate
-                    rate = round(finanzierungsbetrag / laufzeit, 2)
-            except ValueError:
-                fehler = "❌ Ungültige Eingaben bei Laufzeit, Anzahlung oder Schlussrate."
+                    zinsen = finanzierungsbetrag * 0.02
+                    rate = round((finanzierungsbetrag + zinsen) / laufzeit, 2)
+                else:
+                    fehler = "❌ Laufzeit muss größer als 0 sein."
+        except ValueError:
+            fehler = "❌ Ungültige Zahlen bei Laufzeit, Anzahlung oder Schlussrate."
 
-        # ✅ Schritt 3: Kunde prüfen und speichern
+        # Kunden-E-Mail prüfen & Anfrage speichern
         email = request.form.get("email")
-        if preis and rate and email:
+        if not fehler and preis and rate and email and terminwunsch:
             cursor.execute("SELECT User_ID FROM users WHERE email = %s", (email,))
             kunde = cursor.fetchone()
+
             if not kunde:
                 fehler = "❌ Kunde nicht gefunden. Bitte Kundenkonto erstellen."
             else:
-                benutzer_id = kunde[0]
-                cursor.execute("""
-                    INSERT INTO Finanzierungsanfrage 
-                    (Nutzer_ID, Auto_ID, Laufzeit, Anzahlung, Schlussrate, Monatliche_Rate, Status, erstellt_am)
-                    VALUES (%s, %s, %s, %s, %s, %s, 'offen', NOW())
-                """, (benutzer_id, auto_id, laufzeit, anzahlung, schlussrate, rate))
-                g.con.commit()
-                return redirect(url_for("admin"))
+                benutzer_id = kunde['User_ID']
+
+                try:
+                    cursor.execute("""
+                        INSERT INTO Finanzierungsanfrage 
+                        (Nutzer_ID, Auto_ID, Monate, Anzahlung, Schlussrate, Monatliche_Rate, Terminwunsch, Status, erstellt_am)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, 'offen', NOW())
+                    """, (benutzer_id, auto_id, laufzeit, anzahlung, schlussrate, rate, terminwunsch))
+                    g.con.commit()
+                    return redirect(url_for("admin"))
+                except Exception as e:
+                    fehler = f"❌ Fehler beim Speichern: {e}"
 
     return render_template("anfrage_erstellen.html",
         preis=preis,

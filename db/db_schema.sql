@@ -1,3 +1,4 @@
+SHOW CREATE TABLE auto;
 
 -- phpMyAdmin SQL Dump
 -- version 5.2.2
