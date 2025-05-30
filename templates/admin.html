@@ -18,7 +18,7 @@
   <button type="submit" class="admin-button">🗑️ Abgelehnte Anfragen löschen</button>
 </form>
 
-  <a href="/anfrage_erstellen" class="admin-button">➕ Anfrage erstellen</a>
+  <a href="{{ url_for('anfrage_erstellen') }}" class="admin-button">➕ Anfrage erstellen</a>
 </div>
 {% if geloescht %}
   <div class="loesch-info">

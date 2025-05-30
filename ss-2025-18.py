@@ -102,91 +102,6 @@ def finanzierungbsp():
 
     return render_template("finanzierungbsp.html", rate=rate)
 
-@app.route('/finanzierung/<int:autoid>', methods=['GET', 'POST'])
-def finanzierung(autoid):
-    if 'user_id' not in session:
-        return redirect(url_for('Login'))
-
-    cursor = g.cursor
-
-    # Fahrzeugdaten laden (nur für Anzeige)
-    cursor.execute("SELECT * FROM auto WHERE autoid = %s", (autoid,))
-    fahrzeug = cursor.fetchone()
-    if not fahrzeug:
-        return "Fahrzeug nicht gefunden", 404
-
-    rate = None
-    fahrzeugpreis = None
-    anzahlung = None
-    laufzeit = None
-    schlussrate = None
-
-    if request.method == "POST":
-        aktion = request.form.get('aktion')
-
-        if aktion == "berechnen":
-            try:
-                fahrzeugpreis = float(request.form['fahrzeugpreis'])
-                anzahlung = float(request.form['anzahlung'])
-                laufzeit = int(request.form['laufzeit'])
-                schlussrate_raw = request.form.get('schlussrate', '').strip()
-                schlussrate = float(schlussrate_raw) if schlussrate_raw else 0.0
-
-                kreditbetrag = fahrzeugpreis - anzahlung - schlussrate
-                zins = 0.02  # 2%
-                rate = round((kreditbetrag * (1 + zins)) / laufzeit, 2)
-
-            except Exception:
-                rate = None  # Fehler bei Eingabe ignorieren
-
-        elif aktion == "barzahlung":
-            # Hier ggf. Logik für Barzahlung
-            return redirect(url_for('index'))
-
-        elif aktion == "termin":
-            try:
-                fahrzeugpreis = float(request.form['fahrzeugpreis'])
-                anzahlung = float(request.form['anzahlung'])
-                laufzeit = int(request.form['laufzeit'])
-                schlussrate_raw = request.form.get('schlussrate', '').strip()
-                schlussrate = float(schlussrate_raw) if schlussrate_raw else 0.0
-
-                rate_raw = request.form.get('rate', '0').strip()
-                rate = float(rate_raw) if rate_raw else 0.0
-
-                termin_datum = request.form['termin']
-                termin_uhrzeit = request.form['uhrzeit']
-                terminwunsch = f"{termin_datum} {termin_uhrzeit}"
-
-                nutzer_id = session.get('user_id')
-                if not nutzer_id:
-                    return redirect(url_for('Login'))
-
-                cursor.execute(
-                    """INSERT INTO Finanzierungsanfrage 
-                       (Auto_ID, Anzahlung, Monate, Monatliche_Rate, Terminwunsch, Status, Schlussrate, Nutzer_ID) 
-                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
-                    (autoid, anzahlung, laufzeit, rate, terminwunsch, "angefragt", schlussrate, nutzer_id)
-                )
-                g.con.commit()
-
-                return redirect(url_for('index'))
-
-            except Exception as e:
-                import traceback
-                traceback.print_exc()
-                return f"Fehler beim Speichern des Termins: {e}", 500
-
-    return render_template(
-        "finanzierung.html",
-        fahrzeug=fahrzeug,
-        rate=rate,
-        fahrzeugpreis=fahrzeugpreis,
-        anzahlung=anzahlung,
-        laufzeit=laufzeit,
-        schlussrate=schlussrate
-    )
-
 @app.route('/account')
 def account():
     if 'user_id' not in session:
@@ -471,6 +386,7 @@ def loesche_abgelehnte_anfragen():
     # Weiterleitung + Anzahl mitgeben
     return redirect(url_for('admin', geloescht=anzahl))
 @app.route("/auto_verwalten", methods=["GET", "POST"])
+
 @app.route("/auto_verwalten")
 
 @app.route("/auto_verwalten")
@@ -488,6 +404,7 @@ def auto_verwalten():
     autos = cursor.fetchall()
 
     return render_template("auto_verwalten.html", autos=autos)
+
 
 @app.route('/auto_bearbeiten/<int:autoid>', methods=['GET', 'POST'])
 def auto_bearbeiten(autoid):
@@ -539,6 +456,7 @@ def auto_bearbeiten(autoid):
 
     return render_template("auto_bearbeiten.html", auto=auto)
 
+
 @app.route('/auto_hinzufuegen', methods=['GET', 'POST'])
 def auto_hinzufuegen():
     if 'user_role' not in session or session['user_role'] != 'admin':
@@ -570,6 +488,7 @@ def auto_hinzufuegen():
         return redirect(url_for('auto_verwalten'))
 
     return render_template("auto_hinzufuegen.html")
+
 
 @app.route('/favorite/toggle/<int:autoid>', methods=['POST'])
 def toggle_favorite(autoid):
@@ -617,6 +536,8 @@ def favorites():
     """, (user_id,))
     fahrzeuge = cursor.fetchall()
     return render_template('favorites.html', fahrzeuge=fahrzeuge)
+
+
 @app.route('/admin/kaufvertrag_erstellen/<int:anfrage_id>', methods=['GET', 'POST'])
 def kaufvertrag_erstellen(anfrage_id):
     autohaus_daten = {
@@ -708,6 +629,77 @@ def reply_to_review():
     g.con.commit()
 
     return redirect(url_for('reviews'))
+
+
+@app.route("/anfrage_erstellen", methods=["GET", "POST"])
+def anfrage_erstellen():
+    cursor = g.cursor
+
+    preis = None
+    rate = None
+    laufzeit = None
+    anzahlung = None
+    schlussrate = None
+    fehler = None
+    auto_id = None
+
+    if request.method == "POST":
+        auto_id_input = request.form.get("auto_id")
+
+        # ✅ Schritt 1: Auto-ID prüfen
+        if auto_id_input and auto_id_input.isdigit():
+            auto_id = int(auto_id_input)
+            cursor.execute("SELECT preis FROM auto WHERE autoid = %s", (auto_id,))
+            result = cursor.fetchone()
+            if result:
+                preis = float(result[0])
+            else:
+                fehler = "❌ Auto mit dieser ID wurde nicht gefunden."
+        else:
+            fehler = "❌ Bitte gib eine gültige Auto-ID ein."
+
+        # ✅ Schritt 2: Finanzierung berechnen
+        laufzeit = request.form.get("laufzeit")
+        anzahlung = request.form.get("anzahlung")
+        schlussrate = request.form.get("schlussrate")
+
+        if preis and laufzeit and anzahlung and schlussrate:
+            try:
+                laufzeit = int(laufzeit)
+                anzahlung = float(anzahlung)
+                schlussrate = float(schlussrate)
+                if laufzeit > 0:
+                    finanzierungsbetrag = preis - anzahlung - schlussrate
+                    rate = round(finanzierungsbetrag / laufzeit, 2)
+            except ValueError:
+                fehler = "❌ Ungültige Eingaben bei Laufzeit, Anzahlung oder Schlussrate."
+
+        # ✅ Schritt 3: Kunde prüfen und speichern
+        email = request.form.get("email")
+        if preis and rate and email:
+            cursor.execute("SELECT User_ID FROM users WHERE email = %s", (email,))
+            kunde = cursor.fetchone()
+            if not kunde:
+                fehler = "❌ Kunde nicht gefunden. Bitte Kundenkonto erstellen."
+            else:
+                benutzer_id = kunde[0]
+                cursor.execute("""
+                    INSERT INTO Finanzierungsanfrage 
+                    (Nutzer_ID, Auto_ID, Laufzeit, Anzahlung, Schlussrate, Monatliche_Rate, Status, erstellt_am)
+                    VALUES (%s, %s, %s, %s, %s, %s, 'offen', NOW())
+                """, (benutzer_id, auto_id, laufzeit, anzahlung, schlussrate, rate))
+                g.con.commit()
+                return redirect(url_for("admin"))
+
+    return render_template("anfrage_erstellen.html",
+        preis=preis,
+        rate=rate,
+        laufzeit=laufzeit,
+        anzahlung=anzahlung,
+        schlussrate=schlussrate,
+        fehler=fehler,
+        auto_id=auto_id
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)

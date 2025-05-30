@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-anfrage-box">
+    <h2 class="admin-anfrage-titel">📄 Finanzierungsanfrage erstellen</h2>
+    <form method="POST" class="admin-anfrage-formular">
+
+        <!-- Schritt 1: Auto-ID manuell eingeben -->
+        <label class="admin-anfrage-label">Auto-ID eingeben:</label>
+        <input type="number" name="auto_id" value="{{ auto_id or '' }}" required class="admin-anfrage-input" placeholder="z. B. 3">
+
+        {% if preis %}
+            <p><strong>Fahrzeugpreis:</strong> {{ preis }} €</p>
+
+            <!-- Finanzierungseingaben -->
+            <label class="admin-anfrage-label">Finanzierungsdauer (Monate):</label>
+            <input type="number" name="laufzeit" min="6" max="84" class="admin-anfrage-input" value="{{ laufzeit or '' }}" required>
+
+            <label class="admin-anfrage-label">Startzahlung (€):</label>
+            <input type="number" name="anzahlung" step="0.01" class="admin-anfrage-input" value="{{ anzahlung or '' }}" required>
+
+            <label class="admin-anfrage-label">Endzahlung (Schlussrate) (€):</label>
+            <input type="number" name="schlussrate" step="0.01" class="admin-anfrage-input" value="{{ schlussrate or '' }}" required>
+        {% endif %}
+
+        {% if rate %}
+            <p><strong>Monatliche Rate:</strong> {{ rate }} €</p>
+
+            <!-- Kunden-E-Mail -->
+            <label class="admin-anfrage-label">Kunden-E-Mail-Adresse:</label>
+            <input type="email" name="email" class="admin-anfrage-input" required>
+        {% endif %}
+
+        {% if fehler %}
+            <p style="color:red;"><strong>{{ fehler }}</strong></p>
+        {% endif %}
+
+        <button type="submit" class="admin-anfrage-button">Weiter</button>
+    </form>
+</div>
+{% endblock %}
