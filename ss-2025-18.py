@@ -353,7 +353,6 @@ def admin_action():
     return redirect(url_for('admin'))
 
 @app.route('/reviews', methods=['GET', 'POST'])
-
 def reviews():
     if request.method == 'POST':
         user_id = session.get('user_id')
@@ -382,6 +381,9 @@ def termine_anzeigen():
     cursor.execute("SELECT fa.*, a.marke, a.modell FROM finanzierungsanfrage fa JOIN auto a ON fa.Auto_ID = a.autoid ORDER BY fa.Terminwunsch DESC")
     termine = cursor.fetchall()
     return render_template('termine.html', termine=termine)
+
+@app.route('/delete_review', methods=['POST'])
+
 
 @app.route('/delete_review', methods=['POST'])
 def delete_review():
@@ -637,6 +639,26 @@ def favorites():
     fahrzeuge = cursor.fetchall()
     return render_template('favorites.html', fahrzeuge=fahrzeuge)
 
+@app.route('/reply_to_review', methods=['POST'])
+def reply_to_review():
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Keine Berechtigung", 403
+
+    review_id = request.form.get('review_id')
+    reply = request.form.get('admin_response')
+
+    if not review_id or not reply:
+        return "Fehlende Daten", 400
+
+    cursor = g.cursor
+    cursor.execute("""
+        UPDATE reviews 
+        SET admin_response = %s 
+        WHERE id = %s
+    """, (reply, review_id))
+    g.con.commit()
+
+    return redirect(url_for('reviews'))
 
 
 @app.route('/admin/kaufvertrag_erstellen/<int:anfrage_id>', methods=['GET', 'POST'])

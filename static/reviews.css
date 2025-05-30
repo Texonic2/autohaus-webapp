@@ -1,118 +1,129 @@
-/* Reset für einheitliches Rendering */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f7f7f7;
-    color: #333;
-    margin: 0;
-    padding: 0;
+/* Haupt-Header */
+.header-container {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
 }
 
-/* Überschriften */
-h1, h2 {
-    color: #831D17; /* Neue rote Farbe */
-    text-align: center;
-    margin: 20px 0;
+.header-right a:hover {
+    color: #831D17; /* Hover-Farbe */
 }
 
-/* Rezensionenkarten */
-.review-card {
-    background: #fff;
-    padding: 15px 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+/* Seite Titel */
+.page-title {
+    text-align: center;
     margin: 20px 0;
-    width: 100%;
-    max-width: 800px;
+    font-size: 28px;
+    color: #831D17;
+    font-weight: bold;
+}
+
+/* Rezensionen Container */
+.review-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Box Design für Rezensionen */
+.review-card {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .review-card h3 {
     margin: 0;
-    color: #831D17; /* Neue rote Farbe */
+    font-size: 20px;
+    color: #831D17;
+    font-weight: bold;
 }
 
 .review-card p {
-    margin: 5px 0;
+    margin: 10px 0;
+    font-size: 16px;
+    color: #555;
 }
 
 .review-card small {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
     color: #888;
 }
 
-/* Formular */
+/* Delete Button */
+.delete-review-form button {
+    margin-top: 15px;
+    padding: 8px 16px;
+    background-color: #831D17;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.delete-review-form button:hover {
+    background-color: #a62620;
+}
+
+/* Formular für neue Rezension */
 form {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
+    max-width: 600px;
+    margin: 30px auto;
+    background-color: #f9f9f9;
+    border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 800px;
-    margin: 20px 0;
-    text-align: left;
+    padding: 20px;
 }
 
 form label {
-    display: block;
+    font-size: 16px;
     font-weight: bold;
-    margin-top: 10px;
+    color: #555;
+    display: block;
+    margin: 10px 0 5px;
 }
 
-form input,
-form textarea,
-form button {
+form input[type="number"],
+form textarea {
     width: 100%;
     padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     font-size: 16px;
 }
 
-form textarea {
-    resize: none;
-    height: 100px;
-}
-
 form button {
-    background-color: #831D17; /* Neue rote Farbe */
+    padding: 10px 20px;
+    background-color: #831D17;
     color: white;
-    font-weight: bold;
     border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s ease;
 }
 
 form button:hover {
-    background-color: #6e1914; /* Etwas dunklerer Rotton für Hover-Effekt */
+    background-color: #a62620;
 }
 
-/* Link-Stile */
-p a {
-    color: #831D17; /* Neue rote Farbe */
-    text-decoration: none;
-    font-weight: bold;
+h1, h2 {
+    color: #831D17;
 }
-
-p a:hover {
-    text-decoration: underline;
-}
-
-/* Allgemeine zentrierte Container */
-.container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-

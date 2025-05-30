@@ -18,8 +18,22 @@
             <p><strong>Kommentar:</strong> {{ review.comment }}</p>
             <small><em>{{ review.created_at }}</em></small>
 
+            <!-- Admin-Antwort anzeigen -->
+            {% if review.admin_response %}
+                <div class="admin-response">
+                    <p><strong>Antwort von NOVA DRIVE Heilbronn:</strong> {{ review.admin_response }}</p>
+                </div>
+            {% endif %}
+
+            <!-- Antwortformular für Admins -->
             {% if session.get('user_role') == 'admin' %}
-                <!-- Button zum Löschen der Rezension (nur für Admins sichtbar) -->
+                <form method="POST" action="{{ url_for('reply_to_review') }}" class="admin-reply-form">
+                    <input type="hidden" name="review_id" value="{{ review.id }}">
+                    <textarea name="admin_response" rows="2" placeholder="Antwort hinzufügen..." required>{{ review.admin_response or '' }}</textarea>
+                    <button type="submit">Antwort speichern</button>
+                </form>
+
+                <!-- Button zum Löschen der Rezension -->
                 <form method="POST" action="{{ url_for('delete_review') }}" class="delete-review-form">
                     <input type="hidden" name="review_id" value="{{ review.id }}">
                     <button type="submit">Löschen</button>
@@ -45,3 +59,4 @@
     <p style="text-align: center;">Bitte <a href="{{ url_for('Login') }}">melden Sie sich an</a>, um eine Rezension zu schreiben.</p>
 {% endif %}
 {% endblock %}
+
