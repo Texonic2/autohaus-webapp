@@ -102,6 +102,95 @@ def finanzierungbsp():
 
     return render_template("finanzierungbsp.html", rate=rate)
 
+
+@app.route('/finanzierung/<int:autoid>', methods=['GET', 'POST'])
+def finanzierung(autoid):
+    if 'user_id' not in session:
+        return redirect(url_for('Login'))
+
+    cursor = g.cursor
+
+    # Fahrzeugdaten laden (nur für Anzeige)
+    cursor.execute("SELECT * FROM auto WHERE autoid = %s", (autoid,))
+    fahrzeug = cursor.fetchone()
+    if not fahrzeug:
+        return "Fahrzeug nicht gefunden", 404
+
+    rate = None
+    fahrzeugpreis = None
+    anzahlung = None
+    laufzeit = None
+    schlussrate = None
+
+    if request.method == "POST":
+        aktion = request.form.get('aktion')
+
+        if aktion == "berechnen":
+            try:
+                fahrzeugpreis = float(request.form['fahrzeugpreis'])
+                anzahlung = float(request.form['anzahlung'])
+                laufzeit = int(request.form['laufzeit'])
+                schlussrate_raw = request.form.get('schlussrate', '').strip()
+                schlussrate = float(schlussrate_raw) if schlussrate_raw else 0.0
+
+                kreditbetrag = fahrzeugpreis - anzahlung - schlussrate
+                zins = 0.02  # 2%
+                rate = round((kreditbetrag * (1 + zins)) / laufzeit, 2)
+
+            except Exception:
+                rate = None  # Fehler bei Eingabe ignorieren
+
+        elif aktion == "barzahlung":
+            # Hier ggf. Logik für Barzahlung
+            return redirect(url_for('index'))
+
+        elif aktion == "termin":
+            try:
+                fahrzeugpreis = float(request.form['fahrzeugpreis'])
+                anzahlung = float(request.form['anzahlung'])
+                laufzeit = int(request.form['laufzeit'])
+                schlussrate_raw = request.form.get('schlussrate', '').strip()
+                schlussrate = float(schlussrate_raw) if schlussrate_raw else 0.0
+
+                rate_raw = request.form.get('rate', '0').strip()
+                rate = float(rate_raw) if rate_raw else 0.0
+
+                termin_datum = request.form['termin']
+                termin_uhrzeit = request.form['uhrzeit']
+                terminwunsch = f"{termin_datum} {termin_uhrzeit}"
+
+                nutzer_id = session.get('user_id')
+                if not nutzer_id:
+                    return redirect(url_for('Login'))
+
+                cursor.execute(
+                    """INSERT INTO Finanzierungsanfrage 
+                       (Auto_ID, Anzahlung, Monate, Monatliche_Rate, Terminwunsch, Status, Schlussrate, Nutzer_ID) 
+                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
+                    (autoid, anzahlung, laufzeit, rate, terminwunsch, "angefragt", schlussrate, nutzer_id)
+                )
+                g.con.commit()
+
+                return redirect(url_for('index'))
+
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                return f"Fehler beim Speichern des Termins: {e}", 500
+
+    return render_template(
+        "finanzierung.html",
+        fahrzeug=fahrzeug,
+        rate=rate,
+        fahrzeugpreis=fahrzeugpreis,
+        anzahlung=anzahlung,
+        laufzeit=laufzeit,
+        schlussrate=schlussrate
+    )
+
+
+
+
 @app.route('/account')
 def account():
     if 'user_id' not in session:
