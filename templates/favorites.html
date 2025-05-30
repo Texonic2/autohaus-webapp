@@ -3,44 +3,44 @@
 {% block title %}Meine Favoriten – Autohaus Heilbronn{% endblock %}
 
 {% block content %}
-<div class="finanzierungsanfrage-container">
-    <h2>Meine Favoriten</h2>
+<h2 style="text-align: center; margin-top: 20px;">Meine Favoriten</h2>
 
-    {% for fahrzeug in fahrzeuge %}
-    <div class="finanzierungsanfrage-card">
-        <div class="auto-bild">
-            <img src="{{ url_for('static', filename=fahrzeug.url|replace(' ', '%20')) }}"
-                 alt="{{ fahrzeug.marke }} {{ fahrzeug.modell }}"
-                 style="width: 400px; height: auto; border-radius: 8px; object-fit: cover;">
-        </div>
+{% for fahrzeug in fahrzeuge %}
+    <div class="image-container1">
+        <img src="{{ url_for('static', filename=fahrzeug.url) }}" class="header-image"
+             alt="Bild von {{ fahrzeug.marke }} {{ fahrzeug.modell }}">
+    </div>
 
-
-        <div class="anfrage-details">
+    <div class="text-container" style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; padding-bottom: 60px;">
+        <div class="car-details">
             <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
             <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
             <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
-            <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
-            <p><strong>Getriebe:</strong> {{ fahrzeug.getriebeart }}</p>
+            <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
+            <p><strong>Hubraum:</strong> {{ fahrzeug.hubraum }} cm³</p>
+            <p><strong>Kraftstoffverbrauch:</strong> {{ fahrzeug.kraftstoffverbrauch }} l/100km</p>
+            <p><strong>Getriebeart:</strong> {{ fahrzeug.getriebeart }}</p>
+            <p><strong>Antriebsart:</strong> {{ fahrzeug.antriebsart }}</p>
             <p><strong>Umweltplakette:</strong> {{ fahrzeug.umweltplakette }}</p>
+        </div>
 
-            <div class="fahrzeug-actions" style="margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px;">
-                <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get">
-                    <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
-                </form>
-
-                <form action="/pdf/{{ fahrzeug.autoid }}" method="get">
-                    <button type="submit" class="btn-pdf">PDF</button>
-                </form>
-
-                <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}">
-                    <input type="hidden" name="aktion" value="remove">
-                    <button type="submit" class="btn-unfav">★ Aus Favoriten entfernen</button>
-                </form>
-            </div>
+        <div class="fahrzeug-actions">
+            <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get">
+                <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
+            </form>
+            <form action="/pdf/{{ fahrzeug.autoid }}" method="get">
+                <button type="submit" class="btn-pdf">PDF</button>
+            </form>
+            <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}">
+                <input type="hidden" name="aktion" value="remove">
+                <button type="submit" class="btn-unfav">★ Aus Favoriten entfernen</button>
+            </form>
         </div>
     </div>
-    {% else %}
-        <p>Du hast noch keine Fahrzeuge als Favoriten gespeichert.</p>
-    {% endfor %}
-</div>
+    <hr style="margin-top: 40px;">
+{% else %}
+    <p style="text-align: center; margin-top: 40px;">Du hast noch keine Fahrzeuge als Favoriten gespeichert.</p>
+{% endfor %}
+
 {% endblock %}
+
