@@ -1,45 +1,57 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="admin-anfrage-box">
-    <h2 class="admin-anfrage-titel">📄 Finanzierungsanfrage erstellen</h2>
-    <form method="POST" class="admin-anfrage-formular">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/anfrage_erstellen.css') }}">
 
-        <!-- Schritt 1: Auto-ID manuell eingeben -->
-        <label class="admin-anfrage-label">Auto-ID eingeben:</label>
-        <input type="number" name="auto_id" value="{{ auto_id or '' }}" required class="admin-anfrage-input" placeholder="z. B. 3">
+<div class="anfrage-wrapper">
+    <h2>📄 Finanzierungsanfrage erstellen</h2>
+    <form method="POST">
+
+        <!-- Auto-ID -->
+        <label class="anfrage-label">Auto-ID eingeben:</label>
+        <input type="number" name="auto_id" class="anfrage-input"
+               value="{{ auto_id or request.form.auto_id or '' }}" required placeholder="z. B. 3">
 
         {% if preis %}
-            <p><strong>Fahrzeugpreis:</strong> {{ preis }} €</p>
+            <div class="anfrage-info">
+                Fahrzeugpreis: {{ preis }} €
+            </div>
 
-            <!-- Finanzierungseingaben -->
-            <label class="admin-anfrage-label">Finanzierungsdauer (Monate):</label>
-            <input type="number" name="laufzeit" min="6" max="84" class="admin-anfrage-input" value="{{ laufzeit or '' }}" required>
+            <!-- Finanzierung -->
+            <label class="anfrage-label">Finanzierungsdauer (Monate):</label>
+            <input type="number" name="laufzeit" min="1" class="anfrage-input"
+                   value="{{ laufzeit or request.form.laufzeit or '' }}" required>
 
-            <label class="admin-anfrage-label">Startzahlung (€):</label>
-            <input type="number" name="anzahlung" step="0.01" class="admin-anfrage-input" value="{{ anzahlung or '' }}" required>
+            <label class="anfrage-label">Startzahlung (€):</label>
+            <input type="number" name="anzahlung" step="0.01" class="anfrage-input"
+                   value="{{ anzahlung or request.form.anzahlung or '' }}" required>
 
-            <label class="admin-anfrage-label">Endzahlung (Schlussrate) (€):</label>
-            <input type="number" name="schlussrate" step="0.01" class="admin-anfrage-input" value="{{ schlussrate or '' }}" required>
+            <label class="anfrage-label">Endzahlung (Schlussrate) (€):</label>
+            <input type="number" name="schlussrate" step="0.01" class="anfrage-input"
+                   value="{{ schlussrate or request.form.schlussrate or '' }}" required>
         {% endif %}
 
         {% if rate %}
-            <p><strong>Monatliche Rate:</strong> {{ rate }} €</p>
+            <div class="anfrage-info">
+                Monatliche Rate: {{ rate }} €
+            </div>
 
             <!-- Kunden-E-Mail -->
-            <label class="admin-anfrage-label">Kunden-E-Mail-Adresse:</label>
-            <input type="email" name="email" class="admin-anfrage-input" required>
+            <label class="anfrage-label">Kunden-E-Mail-Adresse:</label>
+            <input type="email" name="email" class="anfrage-input"
+                   value="{{ request.form.email or '' }}" required>
 
             <!-- Terminwunsch -->
-            <label class="admin-anfrage-label">Terminwunsch (Datum & Uhrzeit):</label>
-            <input type="datetime-local" name="terminwunsch" class="admin-anfrage-input" required>
+            <label class="anfrage-label">Terminwunsch (Datum & Uhrzeit):</label>
+            <input type="datetime-local" name="terminwunsch" class="anfrage-input"
+                   value="{{ request.form.terminwunsch or '' }}" required>
         {% endif %}
 
         {% if fehler %}
-            <p style="color:red;"><strong>{{ fehler }}</strong></p>
+            <p class="anfrage-error">{{ fehler }}</p>
         {% endif %}
 
-        <button type="submit" class="admin-anfrage-button">
+        <button type="submit" class="anfrage-button">
             {% if rate and preis %}
                 ✅ Anfrage abschicken
             {% else %}

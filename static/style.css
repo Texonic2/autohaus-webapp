@@ -1105,4 +1105,67 @@ button {
 .admin-anfrage-button:hover {
   background-color: #218838;
 }
+.anfrage-wrapper {
+    max-width: 600px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', sans-serif;
+}
 
+.anfrage-wrapper h2 {
+    text-align: center;
+    color: #e74c3c;
+    margin-bottom: 20px;
+}
+
+.anfrage-label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+.anfrage-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+.anfrage-button {
+    margin-top: 25px;
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.anfrage-button:hover {
+    background-color: #cf3f32;
+}
+
+.anfrage-info {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #fef2f0;
+    border: 1px solid #e0b4b4;
+    border-radius: 8px;
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.anfrage-error {
+    margin-top: 15px;
+    color: red;
+    font-weight: bold;
+}
