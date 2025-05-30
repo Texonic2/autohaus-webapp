@@ -1,4 +1,4 @@
-from flask import Flask, render_template, g, request, redirect, url_for, session, flash, get_flashed_messages
+from flask import Flask, render_template, g, request, redirect, url_for, session
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -13,22 +13,17 @@ def before_request():
     """ Verbindung zur Datenbank herstellen und Cursor öffnen """
     g.con = mysql.connector.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
                                     database=DB_DATABASE)
-    g.cursor = g.con.cursor(dictionary=True, buffered=True)
-
+    g.cursor = g.con.cursor(dictionary=True)
 
 @app.teardown_request
 def teardown_request(exception):
     """ Cursor und Verbindung zur Datenbank trennen """
     cursor = getattr(g, 'cursor', None)
     if cursor is not None:
-        try:
-            cursor.close()
-        except mysql.connector.errors.InternalError:
-            pass  # Ignoriere Fehler wegen unvollständiger Resultate
+        cursor.close()
     con = getattr(g, 'con', None)
     if con is not None:
         con.close()
-
 
 @app.route('/fahrzeugkatalog')
 @app.route('/fahrzeugkatalog')
@@ -353,6 +348,7 @@ def admin_action():
     return redirect(url_for('admin'))
 
 @app.route('/reviews', methods=['GET', 'POST'])
+
 def reviews():
     if request.method == 'POST':
         user_id = session.get('user_id')
@@ -381,9 +377,6 @@ def termine_anzeigen():
     cursor.execute("SELECT fa.*, a.marke, a.modell FROM finanzierungsanfrage fa JOIN auto a ON fa.Auto_ID = a.autoid ORDER BY fa.Terminwunsch DESC")
     termine = cursor.fetchall()
     return render_template('termine.html', termine=termine)
-
-@app.route('/delete_review', methods=['POST'])
-
 
 @app.route('/delete_review', methods=['POST'])
 def delete_review():
@@ -638,29 +631,6 @@ def favorites():
     """, (user_id,))
     fahrzeuge = cursor.fetchall()
     return render_template('favorites.html', fahrzeuge=fahrzeuge)
-
-@app.route('/reply_to_review', methods=['POST'])
-def reply_to_review():
-    if 'user_role' not in session or session['user_role'] != 'admin':
-        return "Keine Berechtigung", 403
-
-    review_id = request.form.get('review_id')
-    reply = request.form.get('admin_response')
-
-    if not review_id or not reply:
-        return "Fehlende Daten", 400
-
-    cursor = g.cursor
-    cursor.execute("""
-        UPDATE reviews 
-        SET admin_response = %s 
-        WHERE id = %s
-    """, (reply, review_id))
-    g.con.commit()
-
-    return redirect(url_for('reviews'))
-
-
 @app.route('/admin/kaufvertrag_erstellen/<int:anfrage_id>', methods=['GET', 'POST'])
 def kaufvertrag_erstellen(anfrage_id):
     autohaus_daten = {
@@ -686,6 +656,11 @@ def kaufvertrag_erstellen(anfrage_id):
         if not daten:
             return "Anfrage nicht gefunden", 404
 
+        # ⛔ Ablehnen, wenn Status nicht "angenommen"
+        if daten['Status'] != 'genehmigt':
+            flash("Kaufvertrag kann nur für angenommene Anfragen erstellt werden.", "error")
+            return redirect(url_for('admin'))  # <-- Endpunkt für Admin-Übersicht
+
         if request.method == "POST":
             try:
                 cursor.execute("SELECT * FROM Kaufvertrag WHERE Finanzierungs_ID = %s", (anfrage_id,))
@@ -702,13 +677,13 @@ def kaufvertrag_erstellen(anfrage_id):
             except Exception as e:
                 return f"Fehler beim Speichern des Kaufvertrags: {e}", 500
 
-    return render_template("kaufvertrag.html", kaufvertrag=daten, autohaus=autohaus_daten)
+        return render_template("kaufvertrag.html", kaufvertrag=daten, autohaus=autohaus_daten)
 
 
 @app.route('/admin/kaufvertrag_erfolgreich/<int:anfrage_id>')
 def kaufvertrag_erfolgreich(anfrage_id):
     return render_template("kaufvertrag_erfolgreich.html", anfrage_id=anfrage_id)
 
-
 if __name__ == '__main__':
     app.run(debug=True)
+
