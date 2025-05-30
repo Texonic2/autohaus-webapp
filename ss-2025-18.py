@@ -1,4 +1,4 @@
-from flask import Flask, render_template, g, request, redirect, url_for, session
+from flask import Flask, render_template, g, request, redirect, url_for, session, flash, get_flashed_messages
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -13,17 +13,22 @@ def before_request():
     """ Verbindung zur Datenbank herstellen und Cursor öffnen """
     g.con = mysql.connector.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
                                     database=DB_DATABASE)
-    g.cursor = g.con.cursor(dictionary=True)
+    g.cursor = g.con.cursor(dictionary=True, buffered=True)
+
 
 @app.teardown_request
 def teardown_request(exception):
     """ Cursor und Verbindung zur Datenbank trennen """
     cursor = getattr(g, 'cursor', None)
     if cursor is not None:
-        cursor.close()
+        try:
+            cursor.close()
+        except mysql.connector.errors.InternalError:
+            pass  # Ignoriere Fehler wegen unvollständiger Resultate
     con = getattr(g, 'con', None)
     if con is not None:
         con.close()
+
 
 @app.route('/fahrzeugkatalog')
 @app.route('/fahrzeugkatalog')
@@ -633,6 +638,55 @@ def favorites():
     return render_template('favorites.html', fahrzeuge=fahrzeuge)
 
 
+
+@app.route('/admin/kaufvertrag_erstellen/<int:anfrage_id>', methods=['GET', 'POST'])
+def kaufvertrag_erstellen(anfrage_id):
+    autohaus_daten = {
+        "name": "Nova Drive",
+        "adresse": "Max-Planck-Straße 39, 74072 Heilbronn",
+        "telefon": "07131 123456",
+        "email": "NovaDrive@autohaus-heilbronn.de",
+        "geschaeftsfuehrer": "LeBron James"
+    }
+
+    with g.con.cursor(dictionary=True, buffered=True) as cursor:
+        cursor.execute("""
+            SELECT fa.ID, fa.Terminwunsch, fa.Monate, fa.Anzahlung, fa.Monatliche_Rate, fa.schlussrate, fa.Status,
+                   u.vorname, u.nachname, u.email,
+                   a.marke, a.modell, a.url
+            FROM Finanzierungsanfrage fa
+            JOIN users u ON fa.Nutzer_ID = u.User_ID
+            JOIN auto a ON fa.Auto_ID = a.autoid
+            WHERE fa.ID = %s
+        """, (anfrage_id,))
+        daten = cursor.fetchone()
+
+        if not daten:
+            return "Anfrage nicht gefunden", 404
+
+        if request.method == "POST":
+            try:
+                cursor.execute("SELECT * FROM Kaufvertrag WHERE Finanzierungs_ID = %s", (anfrage_id,))
+                vorhanden = cursor.fetchone()
+                if not vorhanden:
+                    pdf_pfad = f'kaufvertrag_{anfrage_id}.pdf'
+                    cursor.execute("""
+                        INSERT INTO Kaufvertrag (Finanzierungs_ID, Datum_Erstellung, PDF_Pfad)
+                        VALUES (%s, NOW(), %s)
+                    """, (anfrage_id, pdf_pfad))
+                    g.con.commit()
+                flash("Kaufvertrag wurde erfolgreich gespeichert!", "success")
+                return redirect(url_for('kaufvertrag_erfolgreich', anfrage_id=anfrage_id))
+            except Exception as e:
+                return f"Fehler beim Speichern des Kaufvertrags: {e}", 500
+
+    return render_template("kaufvertrag.html", kaufvertrag=daten, autohaus=autohaus_daten)
+
+
+@app.route('/admin/kaufvertrag_erfolgreich/<int:anfrage_id>')
+def kaufvertrag_erfolgreich(anfrage_id):
+    return render_template("kaufvertrag_erfolgreich.html", anfrage_id=anfrage_id)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-

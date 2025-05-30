@@ -969,3 +969,91 @@ button {
     border-radius: 8px;
     object-fit: cover;
 }
+
+
+.kaufvertrag-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem 2rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.kaufvertrag-container h2,
+.kaufvertrag-container h3 {
+  color: #004080;
+  margin-bottom: 1rem;
+}
+
+.kaufvertrag-container p,
+.kaufvertrag-container label {
+  margin: 0.3rem 0;
+}
+
+.kaufvertrag-container label {
+  font-weight: 600;
+  display: block;
+  margin-top: 0.8rem;
+}
+
+.kaufvertrag-container input[type="text"],
+.kaufvertrag-container input[type="email"],
+.kaufvertrag-container input[type="tel"],
+.kaufvertrag-container textarea {
+  width: 100%;
+  padding: 0.4rem;
+  margin-top: 0.2rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.kaufvertrag-container textarea {
+  resize: vertical;
+}
+
+.kaufvertrag-container button.kaufvertrag-submit-button {
+  margin-top: 1.5rem;
+  background-color: #004080;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.kaufvertrag-container button.kaufvertrag-submit-button:hover,
+.kaufvertrag-container button.kaufvertrag-submit-button:focus {
+  background-color: #002d59;
+  outline: none;
+}
+
+.kaufvertrag-container fieldset {
+  border: 1px solid #004080;
+  border-radius: 6px;
+  padding: 1rem 1.2rem;
+  margin-top: 1.5rem;
+  background-color: #e8f0fe;
+}
+
+.kaufvertrag-container fieldset legend {
+  font-weight: 700;
+  color: #004080;
+  padding: 0 0.5rem;
+}
+
+.kaufvertrag-container fieldset p {
+  margin: 0.7rem 0;
+  line-height: 1.4;
+}
+
+.kaufvertrag-container fieldset strong {
+  color: #004080;
+}

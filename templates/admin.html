@@ -52,8 +52,13 @@
             <input type="hidden" name="anfrage_id" value="{{ eintrag.ID }}">
             <button type="submit" name="aktion" value="annehmen">Annehmen</button>
             <button type="submit" name="aktion" value="ablehnen">Ablehnen</button>
+        </form>
+
+        <form method="get" action="{{ url_for('kaufvertrag_erstellen', anfrage_id=eintrag.ID) }}" class="admin-aktionen-form" style="margin-top: 10px;">
+            <input type="hidden" name="anfrage_id" value="{{ eintrag.ID }}">
             <button type="submit" name="aktion" value="kaufvertrag">Kaufvertrag</button>
         </form>
+
 
         <form method="post" action="{{ url_for('anfrage_loeschen_admin', anfrage_id=eintrag.ID) }}" onsubmit="return confirm('Wirklich löschen?');" style="margin-top: 10px;">
             <button type="submit" class="btn-anfrage-loeschen">🗑️ Anfrage löschen</button>
@@ -75,5 +80,10 @@
 
 </section>
 
-
+<div class="legal-content">
+    <span class="legal-text">(c) 2023 - NOvA Drive GmbH</span>
+    | <a href="#">Impressum</a>
+    | <a href="#">Datenschutz</a>
+</div>
 {% endblock %}
+

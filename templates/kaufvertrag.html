@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Kaufvertrag – Autohaus Heilbronn{% endblock %}
+
+{% block head %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/popup.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="kaufvertrag-container">
+
+    <h2>Kaufvertrag erstellen</h2>
+
+    <div class="autohaus-info">
+        <h3>{{ autohaus.name }}</h3>
+        <p>{{ autohaus.adresse }}</p>
+        <p>Telefon: {{ autohaus.telefon }}</p>
+        <p>Email: {{ autohaus.email }}</p>
+        <p>Geschäftsführer: {{ autohaus.geschaeftsfuehrer }}</p>
+    </div>
+
+    <hr>
+
+    <h3>Fahrzeugdaten</h3>
+    <p><strong>Marke:</strong> {{ kaufvertrag.marke }}</p>
+    <p><strong>Modell:</strong> {{ kaufvertrag.modell }}</p>
+    <p><strong>Finanzierungsdauer:</strong> {{ kaufvertrag.Monate }} Monate</p>
+    <p><strong>Anzahlung:</strong> {{ kaufvertrag.Anzahlung }} €</p>
+    <p><strong>Monatliche Rate:</strong> {{ kaufvertrag.Monatliche_Rate }} €</p>
+    <p><strong>Schlussrate:</strong> {{ kaufvertrag.schlussrate }} €</p>
+    <p><strong>Terminwunsch:</strong> {{ kaufvertrag.Terminwunsch.strftime('%d.%m.%Y, %H:%M') }}</p>
+
+    <hr>
+
+    <h3>Kundendaten eingeben</h3>
+    <form method="post">
+        <label for="vorname">Vorname:</label><br>
+        <input type="text" id="vorname" name="vorname" value="{{ kaufvertrag.vorname }}" required><br><br>
+
+        <label for="nachname">Nachname:</label><br>
+        <input type="text" id="nachname" name="nachname" value="{{ kaufvertrag.nachname }}" required><br><br>
+
+        <label for="email">E-Mail:</label><br>
+        <input type="email" id="email" name="email" value="{{ kaufvertrag.email }}" required><br><br>
+
+        <label for="adresse">Adresse:</label><br>
+        <textarea id="adresse" name="adresse" rows="3" required></textarea><br><br>
+
+        <label for="telefon">Telefon:</label><br>
+        <input type="tel" id="telefon" name="telefon" required><br><br>
+
+        <fieldset>
+            <legend>Kaufvertragstext</legend>
+            <p>
+                Zwischen <strong>{{ autohaus.name }}</strong>, vertreten durch den Geschäftsführer {{ autohaus.geschaeftsfuehrer }},
+                mit Sitz in {{ autohaus.adresse }}, und dem Käufer <strong><span id="kunde-name"></span></strong>,
+                wird folgender Kaufvertrag geschlossen:
+            </p>
+            <p>
+                Das Fahrzeug <strong>{{ kaufvertrag.marke }} {{ kaufvertrag.modell }}</strong> wird zu den folgenden Konditionen verkauft:
+                Finanzierungsdauer {{ kaufvertrag.Monate }} Monate, Anzahlung {{ kaufvertrag.Anzahlung }} €, monatliche Rate {{ kaufvertrag.Monatliche_Rate }} €, Schlussrate {{ kaufvertrag.schlussrate }} €.
+            </p>
+            <p>
+                Der Käufer bestätigt hiermit, alle Vertragsbedingungen gelesen und akzeptiert zu haben.
+            </p>
+        </fieldset>
+
+        <br>
+        <button type="submit" class="kaufvertrag-submit-button">Kaufvertrag speichern</button>
+    </form>
+</div>
+
+<!-- Flash Message Popup -->
+<div id="flash-message"></div>
+
+<script>
+    // Zeigt den Namen des Käufers im Vertragstext an
+    const vornameInput = document.getElementById('vorname');
+    const nachnameInput = document.getElementById('nachname');
+    const kundeNameSpan = document.getElementById('kunde-name');
+
+    function updateKundeName() {
+        kundeNameSpan.textContent = vornameInput.value + " " + nachnameInput.value;
+    }
+
+    vornameInput.addEventListener('input', updateKundeName);
+    nachnameInput.addEventListener('input', updateKundeName);
+
+    // Direkt initial setzen
+    updateKundeName();
+
+    // Flash message von Flask anzeigen (falls vorhanden)
+    const flashDiv = document.getElementById('flash-message');
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                flashDiv.classList.remove('success', 'error');
+                if ("{{ category }}" === "success") {
+                    flashDiv.classList.add('success');
+                } else if ("{{ category }}" === "error") {
+                    flashDiv.classList.add('error');
+                }
+                flashDiv.textContent = "{{ message }}";
+                flashDiv.style.display = 'block';
+
+                // Automatisch nach 3 Sekunden ausblenden
+                setTimeout(() => {
+                    flashDiv.style.opacity = '0';
+                    setTimeout(() => {
+                        flashDiv.style.display = 'none';
+                        flashDiv.style.opacity = '1'; // für nächste Anzeige zurücksetzen
+                    }, 500);
+                }, 3000);
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</script>
+
+{% endblock %}
