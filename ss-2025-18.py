@@ -686,6 +686,11 @@ def kaufvertrag_erstellen(anfrage_id):
         if not daten:
             return "Anfrage nicht gefunden", 404
 
+        # ⛔ Ablehnen, wenn Status nicht "angenommen"
+        if daten['Status'] != 'genehmigt':
+            flash("Kaufvertrag kann nur für angenommene Anfragen erstellt werden.", "error")
+            return redirect(url_for('admin'))  # <-- Endpunkt für Admin-Übersicht
+
         if request.method == "POST":
             try:
                 cursor.execute("SELECT * FROM Kaufvertrag WHERE Finanzierungs_ID = %s", (anfrage_id,))
@@ -702,7 +707,7 @@ def kaufvertrag_erstellen(anfrage_id):
             except Exception as e:
                 return f"Fehler beim Speichern des Kaufvertrags: {e}", 500
 
-    return render_template("kaufvertrag.html", kaufvertrag=daten, autohaus=autohaus_daten)
+        return render_template("kaufvertrag.html", kaufvertrag=daten, autohaus=autohaus_daten)
 
 
 @app.route('/admin/kaufvertrag_erfolgreich/<int:anfrage_id>')
