@@ -370,6 +370,7 @@ def reviews():
 
     return render_template('reviews.html', reviews=reviews)
 
+
 @app.route('/termine')
 
 def termine_anzeigen():
@@ -668,6 +669,45 @@ def kaufvertrag_erstellen(anfrage_id):
 @app.route('/admin/kaufvertrag_erfolgreich/<int:anfrage_id>')
 def kaufvertrag_erfolgreich(anfrage_id):
     return render_template("kaufvertrag_erfolgreich.html", anfrage_id=anfrage_id)
+
+
+@app.route('/delete_review', methods=['POST'])
+def delete_review():
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Keine Berechtigung", 403
+
+    review_id = request.form.get('review_id')
+
+    if not review_id:
+        return "Rezension-ID fehlt", 400
+
+    cursor = g.cursor
+    cursor.execute("DELETE FROM reviews WHERE id = %s", (review_id,))
+    g.con.commit()
+
+    return redirect(url_for('reviews'))
+
+
+@app.route('/reply_to_review', methods=['POST'])
+def reply_to_review():
+    if 'user_role' not in session or session['user_role'] != 'admin':
+        return "Keine Berechtigung", 403
+
+    review_id = request.form.get('review_id')
+    reply = request.form.get('admin_response')
+
+    if not review_id or not reply:
+        return "Fehlende Daten", 400
+
+    cursor = g.cursor
+    cursor.execute("""
+        UPDATE reviews 
+        SET admin_response = %s 
+        WHERE id = %s
+    """, (reply, review_id))
+    g.con.commit()
+
+    return redirect(url_for('reviews'))
 
 if __name__ == '__main__':
     app.run(debug=True)
