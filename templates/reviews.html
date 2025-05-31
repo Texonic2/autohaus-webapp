@@ -14,7 +14,14 @@
     {% for review in reviews %}
         <div class="review-card">
             <h3>{{ review.vorname }} {{ review.nachname }}</h3>
-            <p><strong>Bewertung:</strong> {{ review.rating }} / 5</p>
+            <p>
+                <strong>Bewertung:</strong> {{ review.rating }} / 5
+                <span class="stars">
+                    {% for _ in range(review.rating) %}
+                        ⭐
+                    {% endfor %}
+                </span>
+            </p>
             <p><strong>Kommentar:</strong> {{ review.comment }}</p>
             <small><em>{{ review.created_at }}</em></small>
 
@@ -59,4 +66,3 @@
     <p style="text-align: center;">Bitte <a href="{{ url_for('Login') }}">melden Sie sich an</a>, um eine Rezension zu schreiben.</p>
 {% endif %}
 {% endblock %}
-
