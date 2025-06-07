@@ -3,44 +3,45 @@
 {% block title %}Meine Favoriten – Autohaus Heilbronn{% endblock %}
 
 {% block content %}
-<h2 style="text-align: center; margin-top: 20px;">Meine Favoriten</h2>
+<div class="finanzierungsanfrage-container">
+    <h2>Meine Favoriten</h2>
 
-{% for fahrzeug in fahrzeuge %}
-    <div class="image-container1">
-        <img src="{{ url_for('static', filename=fahrzeug.url) }}" class="header-image"
-             alt="Bild von {{ fahrzeug.marke }} {{ fahrzeug.modell }}">
-    </div>
+    {% for fahrzeug in fahrzeuge %}
+    <div class="finanzierungsanfrage-card">
+        <!-- Bild links -->
+        <div class="auto-bild">
+            <img src="{{ url_for('static', filename=fahrzeug.url) }}" alt="{{ fahrzeug.marke }} {{ fahrzeug.modell }}">
 
-    <div class="text-container" style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; padding-bottom: 60px;">
-        <div class="car-details">
+        </div>
+
+        <!-- Fahrzeugdetails rechts -->
+        <div class="anfrage-details">
             <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
             <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
             <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
-            <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
-            <p><strong>Hubraum:</strong> {{ fahrzeug.hubraum }} cm³</p>
-            <p><strong>Kraftstoffverbrauch:</strong> {{ fahrzeug.kraftstoffverbrauch }} l/100km</p>
-            <p><strong>Getriebeart:</strong> {{ fahrzeug.getriebeart }}</p>
-            <p><strong>Antriebsart:</strong> {{ fahrzeug.antriebsart }}</p>
+            <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
+            <p><strong>Getriebe:</strong> {{ fahrzeug.getriebeart }}</p>
             <p><strong>Umweltplakette:</strong> {{ fahrzeug.umweltplakette }}</p>
-        </div>
 
-        <div class="fahrzeug-actions">
-            <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get">
-                <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
-            </form>
-            <form action="/pdf/{{ fahrzeug.autoid }}" method="get">
-                <button type="submit" class="btn-pdf">PDF</button>
-            </form>
-            <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}">
+            <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}" class="admin-aktionen-form">
                 <input type="hidden" name="aktion" value="remove">
                 <button type="submit" class="btn-unfav">★ Aus Favoriten entfernen</button>
             </form>
+
+            <!-- Optional: Weitere Buttons -->
+            <div class="admin-aktionen-form" style="margin-top: 10px;">
+                <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get" style="display: inline;">
+                    <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
+                </form>
+                <form action="/pdf/{{ fahrzeug.autoid }}" method="get" style="display: inline;">
+                    <button type="submit" class="btn-pdf">PDF</button>
+                </form>
+            </div>
         </div>
     </div>
-    <hr style="margin-top: 40px;">
-{% else %}
-    <p style="text-align: center; margin-top: 40px;">Du hast noch keine Fahrzeuge als Favoriten gespeichert.</p>
-{% endfor %}
-
+    {% else %}
+        <p>Du hast noch keine Fahrzeuge als Favoriten gespeichert.</p>
+    {% endfor %}
+</div>
 {% endblock %}
 
