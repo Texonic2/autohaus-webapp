@@ -42,6 +42,8 @@
         <p><strong>Monatliche Rate:</strong> {{ eintrag.Monatliche_Rate }} €</p>
         <p><strong>Schlussrate:</strong> {{ eintrag.schlussrate }} €</p>
         <p><strong>Status:</strong> <span class="status {{ eintrag.Status|lower }}">{{ eintrag.Status|capitalize }}</span></p>
+        <p><strong>Info:</strong> {{ eintrag.info or '–' }}</p>
+
 
         <hr style="margin: 10px 0;">
 

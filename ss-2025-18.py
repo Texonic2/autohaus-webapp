@@ -313,7 +313,7 @@ def admin():
         g.con.commit()
 
     cursor.execute("""
-        SELECT f.*, a.marke, a.modell, a.url, u.vorname, u.nachname, u.email
+        SELECT f.*, a.marke, a.modell, a.url, f.info, u.vorname, u.nachname, u.email
         FROM Finanzierungsanfrage f
         JOIN auto a ON f.Auto_ID = a.autoid
         JOIN users u ON f.Nutzer_ID = u.User_ID
