@@ -33,9 +33,11 @@
     </div>
 
     <div class="fahrzeug-actions">
-    <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get">
-        <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
-        <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}">
+        <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get" style="display: inline;">
+            <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
+        </form>
+
+        <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}" style="display: inline;">
             {% if fahrzeug.autoid in user_fav_ids %}
                 <button type="submit" name="aktion" value="remove" class="btn-unfav">★ Entfernen</button>
             {% else %}
