@@ -463,7 +463,19 @@ def benutzer_anlegen():
 
     return render_template("benutzer_anlegen.html")
 
+@app.route('/anfrage_loeschen/<int:anfrage_id>', methods=['POST'])
+def anfrage_loeschen(anfrage_id):
+    if 'user_id' not in session:
+        return redirect(url_for('Login'))   # ey dass ist zweilmal drinn
 
+    user_id = session['user_id']
+    cursor = g.cursor
+
+    # Nur löschen, wenn die Anfrage auch dem eingeloggten Nutzer gehört
+    cursor.execute("DELETE FROM Finanzierungsanfrage WHERE ID = %s AND Nutzer_ID = %s", (anfrage_id, user_id))
+    g.con.commit()
+
+    return redirect(url_for('account'))
 @app.route('/admin/anfrage_loeschen/<int:anfrage_id>', methods=['POST'])
 def anfrage_loeschen_admin(anfrage_id):
     if 'user_role' not in session or session['user_role'] != 'admin':
