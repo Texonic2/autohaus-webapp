@@ -3,24 +3,37 @@
 {% block title %}📊 Unternehmenskennzahlen{% endblock %}
 
 {% block content %}
-<h2 class="admin-title">📊 Übersicht der Unternehmenskennzahlen</h2>
+<h2 class="admin-title">📊  Unternehmenskennzahlen</h2>
 
 <div class="form-container">
+
+
+
+<h3 style="margin-top: 40px;">📊 Umsatzverteilung gesamt ({{ gesamtumsatz }} €)</h3>
+
+<div class="umsatz-balken-wrapper">
+  <div class="umsatz-balken">
+    <div class="umsatz-teil barkauf" style="width: {{ (barkauf_umsatz / gesamtumsatz * 100) if gesamtumsatz else 0 }}%;"></div>
+    <div class="umsatz-teil finanzierung" style="width: {{ (finanzierungs_umsatz / gesamtumsatz * 100) if gesamtumsatz else 0 }}%;"></div>
+  </div>
+
+  <div class="umsatz-legende">
+    <span class="barkauf-label">💶 Barkauf:</span>
+    {{ barkauf_umsatz }} € ({{ (barkauf_umsatz / gesamtumsatz * 100) | round(1) if gesamtumsatz else 0 }}%)
+  </div>
+
+  <div class="umsatz-legende">
+    <span class="finanzierung-label">💳 Finanzierung:</span>
+    {{ finanzierungs_umsatz }} € ({{ (finanzierungs_umsatz / gesamtumsatz * 100) | round(1) if gesamtumsatz else 0 }}%)
+  </div>
+</div>
+
 
   <div class="kpi-zeile">
     <label>📈 Gesamtumsatz:</label>
     <span>{{ gesamtumsatz }} €</span>
   </div>
 
-  <div class="kpi-zeile">
-    <label>💶 Umsatz durch Barkäufe:</label>
-    <span>{{ barkauf_umsatz }} €</span>
-  </div>
-
-  <div class="kpi-zeile">
-    <label>💳 Umsatz durch Finanzierungen:</label>
-    <span>{{ finanzierungs_umsatz }} €</span>
-  </div>
 
   <div class="kpi-zeile">
     <label>📊 Kreditanteil (vom Gesamtumsatz):</label>
@@ -31,41 +44,36 @@
     <label>⏱ Durchschnittliche Laufzeit:</label>
     <span>{{ durchschnitt_laufzeit }} Monate</span>
   </div>
+</div>
 
+<h3 class="kpi-heading">👥 Nutzer- & Anfrage-Kennzahlen</h3>
+<div class="kpi-box">
   <div class="kpi-zeile">
     <label>📄 Anzahl aller Kaufverträge:</label>
     <span>{{ anzahl_vertraege }}</span>
   </div>
-
   <div class="kpi-zeile">
     <label>👥 Registrierte Kunden:</label>
     <span>{{ kundenanzahl }}</span>
   </div>
-
   <div class="kpi-zeile">
     <label>📋 Anzahl aller Finanzierungsanfragen:</label>
     <span>{{ gesamt_anfragen }}</span>
   </div>
-
   <div class="kpi-zeile">
     <label>📥 Offene Finanzierungsanfragen:</label>
     <span>{{ offene_anfragen }}</span>
   </div>
-
   <div class="kpi-zeile">
     <label>✅ Annahmequote:</label>
     <span>{{ annahmequote }} %</span>
   </div>
-
   <div class="kpi-zeile">
     <label>💸 Anteil Barkauf (Anfragen):</label>
     <span>{{ barkauf_anteil }} %</span>
   </div>
-
   <div class="kpi-zeile">
     <label>🏦 Anteil Finanzierung (Anfragen):</label>
     <span>{{ finanzierungs_anteil }} %</span>
   </div>
-
-</div>
 {% endblock %}
