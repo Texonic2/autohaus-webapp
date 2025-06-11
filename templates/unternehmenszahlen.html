@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}📊 Unternehmenskennzahlen{% endblock %}
+
+{% block content %}
+<h2 class="admin-title">📊 Übersicht der Unternehmenskennzahlen</h2>
+
+<div class="form-container">
+
+  <div class="kpi-zeile">
+    <label>📈 Gesamtumsatz:</label>
+    <span>{{ gesamtumsatz }} €</span>
+  </div>
+
+  <div class="kpi-zeile">
+    <label>💶 Umsatz durch Barkäufe:</label>
+    <span>{{ barkauf_umsatz }} €</span>
+  </div>
+
+  <div class="kpi-zeile">
+    <label>💳 Umsatz durch Finanzierungen:</label>
+    <span>{{ finanzierungs_umsatz }} €</span>
+  </div>
+
+  <div class="kpi-zeile">
+    <label>📊 Kreditanteil (vom Gesamtumsatz):</label>
+    <span>{{ kreditanteil_prozent }} %</span>
+  </div>
+
+  <div class="kpi-zeile">
+    <label>⏱ Durchschnittliche Laufzeit:</label>
+    <span>{{ durchschnitt_laufzeit }} Monate</span>
+  </div>
+
+  <div class="kpi-zeile">
+    <label>📄 Anzahl aller Kaufverträge:</label>
+    <span>{{ anzahl_vertraege }}</span>
+  </div>
+
+  <div class="kpi-zeile">
+    <label>👥 Registrierte Kunden:</label>
+    <span>{{ kundenanzahl }}</span>
+  </div>
+
+  <div class="kpi-zeile">
+    <label>📋 Anzahl aller Finanzierungsanfragen:</label>
+    <span>{{ gesamt_anfragen }}</span>
+  </div>
+
+  <div class="kpi-zeile">
+    <label>📥 Offene Finanzierungsanfragen:</label>
+    <span>{{ offene_anfragen }}</span>
+  </div>
+
+  <div class="kpi-zeile">
+    <label>✅ Annahmequote:</label>
+    <span>{{ annahmequote }} %</span>
+  </div>
+
+  <div class="kpi-zeile">
+    <label>💸 Anteil Barkauf (Anfragen):</label>
+    <span>{{ barkauf_anteil }} %</span>
+  </div>
+
+  <div class="kpi-zeile">
+    <label>🏦 Anteil Finanzierung (Anfragen):</label>
+    <span>{{ finanzierungs_anteil }} %</span>
+  </div>
+
+</div>
+{% endblock %}

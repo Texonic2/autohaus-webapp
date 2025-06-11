@@ -15,9 +15,12 @@
 
 <form method="post" class="finanz-form">
 
+
+
+  <!-- FORMULAR für Finanzierung -->
+<form method="post" class="finanz-form">
   <div class="finanz-row">
-    <input type="number" name="fahrzeugpreis" placeholder="Fahrzeugpreis (€)" required
-           value="{{ fahrzeug.preis }}">
+    <input type="number" name="fahrzeugpreis" placeholder="Fahrzeugpreis (€)" required value="{{ fahrzeug.preis }}">
     <input type="number" name="anzahlung" placeholder="Anzahlung (€)" required>
   </div>
 
@@ -26,11 +29,20 @@
     <input type="number" name="schlussrate" placeholder="Schlussrate (€ – optional)">
   </div>
 
-  <button type="submit" name="aktion" value="berechnen" class="finanz-button"> Monatsrate berechnen</button>
-<button type="submit" name="aktion" value="barzahlung" class="finanz-button">Direkte Barzahlung</button>
+  <button type="submit" name="aktion" value="berechnen" class="finanz-button">Monatsrate berechnen</button>
 </form>
 
-{% if rate %}
+<!-- FORMULAR für Barkauf -->
+<form method="post" class="finanz-form">
+  <input type="hidden" name="aktion" value="barzahlung">
+  <input type="hidden" name="fahrzeugpreis" value="{{ fahrzeug.preis }}">
+  <button type="submit" class="finanz-button">Direkte Barzahlung</button>
+</form>
+
+
+</form>
+
+{% if rate is not none %}
   <div class="finanz-ergebnis-box">
     <div class="finanz-result">
       <span class="finanz-label">Monatliche Rate:</span>
@@ -105,13 +117,7 @@
   </div>
 {% endif %}
 
-{% if termin_datum and termin_uhrzeit %}
-  <div class="termin-bestaetigung">
-    <p>Ihr Wunschtermin für den <strong>{{ termin_datum }}</strong> um <strong>{{ termin_uhrzeit }}</strong> wurde erfolgreich angefragt.</p>
-    <p>Bitte beachten Sie, dass dies lediglich eine Anfrage ist und noch keine verbindliche Zusage darstellt.</p>
-    <p>Wir werden uns so schnell wie möglich mit Ihnen in Verbindung setzen, um den Termin zu bestätigen.</p>
-  </div>
-{% endif %}
+
 
 </form>
 </section>

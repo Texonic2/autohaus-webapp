@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}📄 Kaufverträge{% endblock %}
+
+{% block content %}
+<h2 class="admin-title">📄 Alle Kaufverträge</h2>
+
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Finanzierungs-ID</th>
+        <th>Datum</th>
+        <th>PDF</th>
+        <th>Vorname</th>
+        <th>Nachname</th>
+        <th>Email</th>
+        <th>Adresse</th>
+        <th>Telefon</th>
+        <th>Aktion</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for vertrag in kaufvertraege %}
+      <tr>
+        <td>{{ vertrag.Kaufvertrag_ID }}</td>
+        <td>{{ vertrag.Finanzierungs_ID }}</td>
+        <td>{{ vertrag.Datum_Erstellung }}</td>
+        <td><a href="/static/{{ vertrag.PDF_Pfad }}" target="_blank" class="pdf-link">📄 öffnen</a></td>
+        <td>{{ vertrag.kunde_vorname or '-' }}</td>
+        <td>{{ vertrag.kunde_nachname or '-' }}</td>
+        <td>{{ vertrag.kunde_email or '-' }}</td>
+        <td>{{ vertrag.kunde_adresse or '-' }}</td>
+        <td>{{ vertrag.kunde_telefon or '-' }}</td>
+        <td>
+
+          <form action="{{ url_for('kaufvertrag_loeschen', vertrag_id=vertrag.Kaufvertrag_ID) }}" method="post" style="display:inline;">
+            <button type="submit" class="btn-aktion btn-loeschen" onclick="return confirm('Diesen Kaufvertrag wirklich löschen?')">Löschen</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

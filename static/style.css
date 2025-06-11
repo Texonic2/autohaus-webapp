@@ -1169,3 +1169,100 @@ button {
     color: red;
     font-weight: bold;
 }
+.finanz-button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 15px;
+  background-color: #7a1c14;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.finanz-button:hover {
+  background-color: #a0261c;
+}
+.admin-title {
+  text-align: center;
+  font-size: 26px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: #7a1c14;
+}
+
+.table-container {
+  max-width: 95%;
+  margin: 0 auto 40px auto;
+  overflow-x: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th, .admin-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.admin-table th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.admin-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.pdf-link {
+  color: #1e88e5;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.btn-aktion {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  margin: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-bearbeiten {
+  background-color: #1e88e5;
+  color: white;
+}
+
+.btn-loeschen {
+  background-color: #c62828;
+  color: white;
+}
+.kpi-zeile {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 1.05rem;
+}
+
+.kpi-zeile label {
+  font-weight: 600;
+  color: #333;
+}
+
+.kpi-zeile span {
+  font-weight: 500;
+  color: #222;
+}

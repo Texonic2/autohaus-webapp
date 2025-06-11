@@ -45,6 +45,9 @@
                         {% if session.get('user_role') == 'admin' %}
                             <a href="{{ url_for('admin') }}">Adminbereich</a>
                         {% endif %}
+                    {% if session.get('user_role') == 'admin' %}
+                            <a href="{{ url_for('unternehmenszahlen') }}">KPI</a>
+                        {% endif %}
 
                         <a href="{{ url_for('favorites') }}">Favoriten</a>
                         <a href="{{ url_for('logout') }}">Logout</a>

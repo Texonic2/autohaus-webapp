@@ -139,45 +139,76 @@ def finanzierung(autoid):
 
             except Exception:
                 rate = None  # Fehler bei Eingabe ignorieren
-
         elif aktion == "barzahlung":
-            # Hier ggf. Logik für Barzahlung
-            return redirect(url_for('index'))
+            try:
+                fahrzeugpreis = float(fahrzeug['preis'])
+                anzahlung = 0
+                laufzeit = 0
+                schlussrate = fahrzeugpreis
+                rate = 0  # Monatsrate entfällt
+                # Seite wird erweitert, keine Weiterleitung
+                # Werte werden unten im Template angezeigt
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                return f"Fehler beim Barkauf: {e}", 500
+
 
         elif aktion == "termin":
+
             try:
+
                 fahrzeugpreis = float(request.form['fahrzeugpreis'])
+
                 anzahlung = float(request.form['anzahlung'])
+
                 laufzeit = int(request.form['laufzeit'])
+
                 schlussrate_raw = request.form.get('schlussrate', '').strip()
+
                 schlussrate = float(schlussrate_raw) if schlussrate_raw else 0.0
 
                 rate_raw = request.form.get('rate', '0').strip()
+
                 rate = float(rate_raw) if rate_raw else 0.0
 
                 termin_datum = request.form['termin']
+
                 termin_uhrzeit = request.form['uhrzeit']
+
                 terminwunsch = f"{termin_datum} {termin_uhrzeit}"
 
                 nutzer_id = session.get('user_id')
+
                 if not nutzer_id:
                     return redirect(url_for('Login'))
 
+                info = "Barkauf" if laufzeit == 0 else "Finanzierungsanfrage"
+
                 cursor.execute(
+
                     """INSERT INTO Finanzierungsanfrage 
-                       (Auto_ID, Anzahlung, Monate, Monatliche_Rate, Terminwunsch, Status, Schlussrate, Nutzer_ID) 
-                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
-                    (autoid, anzahlung, laufzeit, rate, terminwunsch, "angefragt", schlussrate, nutzer_id)
+
+                       (Auto_ID, Anzahlung, Monate, Monatliche_Rate, Terminwunsch, Status, Schlussrate, Nutzer_ID, Info) 
+
+                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+
+                    (autoid, anzahlung, laufzeit, rate, terminwunsch, "angefragt", schlussrate, nutzer_id, info)
+
                 )
+
                 g.con.commit()
 
                 return redirect(url_for('index'))
 
-            except Exception as e:
-                import traceback
-                traceback.print_exc()
-                return f"Fehler beim Speichern des Termins: {e}", 500
 
+            except Exception as e:
+
+                import traceback
+
+                traceback.print_exc()
+
+                return f"Fehler beim Speichern des Termins: {e}", 500
     return render_template(
         "finanzierung.html",
         fahrzeug=fahrzeug,
@@ -432,19 +463,6 @@ def benutzer_anlegen():
 
     return render_template("benutzer_anlegen.html")
 
-@app.route('/anfrage_loeschen/<int:anfrage_id>', methods=['POST'])
-def anfrage_loeschen(anfrage_id):
-    if 'user_id' not in session:
-        return redirect(url_for('Login'))   # ey dass ist zweilmal drinn
-
-    user_id = session['user_id']
-    cursor = g.cursor
-
-    # Nur löschen, wenn die Anfrage auch dem eingeloggten Nutzer gehört
-    cursor.execute("DELETE FROM Finanzierungsanfrage WHERE ID = %s AND Nutzer_ID = %s", (anfrage_id, user_id))
-    g.con.commit()
-
-    return redirect(url_for('account'))
 
 @app.route('/admin/anfrage_loeschen/<int:anfrage_id>', methods=['POST'])
 def anfrage_loeschen_admin(anfrage_id):
@@ -452,26 +470,39 @@ def anfrage_loeschen_admin(anfrage_id):
         return "Zugriff verweigert", 403
 
     cursor = g.cursor
+
+    # 1. Kaufvertrag löschen (nur wenn vorhanden – kein Fehler, wenn keiner da ist)
+    cursor.execute("DELETE FROM Kaufvertrag WHERE Finanzierungs_ID = %s", (anfrage_id,))
+
+    # 2. Finanzierungsanfrage löschen
     cursor.execute("DELETE FROM Finanzierungsanfrage WHERE ID = %s", (anfrage_id,))
     g.con.commit()
 
     return redirect(url_for('admin'))
 
 @app.route('/admin/loesche_abgelehnte', methods=['POST'])
-@app.route('/admin/loesche_abgelehnte', methods=['POST'])
 def loesche_abgelehnte_anfragen():
     cursor = g.cursor
 
-    # Anzahl zählen
-    cursor.execute("SELECT COUNT(*) AS anzahl FROM Finanzierungsanfrage WHERE LOWER(Status) = 'abgelehnt'")
-    result = cursor.fetchone()
-    anzahl = result['anzahl'] if result else 0
+    # 1. IDs aller abgelehnten Anfragen sammeln
+    cursor.execute("SELECT ID FROM Finanzierungsanfrage WHERE LOWER(Status) = 'abgelehnt'")
+    ids = [row['ID'] for row in cursor.fetchall()]
+    anzahl = len(ids)
 
-    # Löschen
-    cursor.execute("DELETE FROM Finanzierungsanfrage WHERE LOWER(Status) = 'abgelehnt'")
+    if ids:
+        # 2. Kaufverträge zu diesen Anfragen löschen (nur wenn vorhanden)
+        cursor.execute(
+            "DELETE FROM Kaufvertrag WHERE Finanzierungs_ID IN (%s)" % ",".join(["%s"] * len(ids)),
+            tuple(ids)
+        )
+
+        # 3. Die Anfragen selbst löschen
+        cursor.execute(
+            "DELETE FROM Finanzierungsanfrage WHERE ID IN (%s)" % ",".join(["%s"] * len(ids)),
+            tuple(ids)
+        )
+
     g.con.commit()
-
-    # Weiterleitung + Anzahl mitgeben
     return redirect(url_for('admin', geloescht=anzahl))
 
 @app.route("/auto_verwalten")
@@ -749,9 +780,9 @@ def anfrage_erstellen():
             if result:
                 preis = float(result['preis'])
             else:
-                fehler = "❌ Auto mit dieser ID wurde nicht gefunden."
+                fehler = " Auto mit dieser ID wurde nicht gefunden."
         else:
-            fehler = "❌ Bitte gib eine gültige Auto-ID ein."
+            fehler = " Bitte gib eine gültige Auto-ID ein."
 
         # Finanzierungseingaben holen
         laufzeit_input = request.form.get("laufzeit")
@@ -813,6 +844,123 @@ def anfrage_erstellen():
         auto_id=auto_id
     )
 
+@app.route('/kaufvertraege')
+def kaufvertraege_anzeigen():
+    cursor = g.cursor
+    cursor.execute("""
+        SELECT 
+            k.Kaufvertrag_ID,
+            k.Finanzierungs_ID,
+            k.Datum_Erstellung,
+            k.PDF_Pfad,
+            k.kunde_vorname,
+            k.kunde_nachname,
+            k.kunde_email,
+            k.kunde_adresse,
+            k.kunde_telefon
+        FROM Kaufvertrag k
+        ORDER BY k.Datum_Erstellung DESC
+    """)
+    kaufvertraege = cursor.fetchall()
+    return render_template('kaufvertraege.html', kaufvertraege=kaufvertraege)
+
+@app.route('/kaufvertrag_loeschen/<int:vertrag_id>', methods=['POST'])
+def kaufvertrag_loeschen(vertrag_id):
+    cursor = g.cursor
+    cursor.execute("DELETE FROM Kaufvertrag WHERE Kaufvertrag_ID = %s", (vertrag_id,))
+    g.con.commit()
+    return redirect(url_for('kaufvertraege_anzeigen'))
+
+@app.route('/unternehmenszahlen')
+def unternehmenszahlen():
+    cursor = g.cursor
+
+    # Gesamtanzahl Kaufverträge
+    cursor.execute("SELECT COUNT(*) as anzahl FROM Kaufvertrag")
+    anzahl_vertraege = cursor.fetchone()['anzahl']
+
+    # Barkauf-Umsatz
+    cursor.execute("""
+        SELECT SUM(a.preis) AS barkauf_umsatz
+        FROM Kaufvertrag k
+        JOIN Finanzierungsanfrage f ON k.Finanzierungs_ID = f.ID
+        JOIN auto a ON f.Auto_ID = a.autoid
+        WHERE f.Info = 'Barkauf'
+    """)
+    barkauf_umsatz = cursor.fetchone()['barkauf_umsatz'] or 0
+
+    # Finanzierung-Umsatz
+    cursor.execute("""
+        SELECT SUM(a.preis) AS finanzierungs_umsatz
+        FROM Kaufvertrag k
+        JOIN Finanzierungsanfrage f ON k.Finanzierungs_ID = f.ID
+        JOIN auto a ON f.Auto_ID = a.autoid
+        WHERE f.Info = 'Finanzierung'
+    """)
+    finanzierungs_umsatz = cursor.fetchone()['finanzierungs_umsatz'] or 0
+
+    # Gesamtumsatz
+    gesamtumsatz = barkauf_umsatz + finanzierungs_umsatz
+
+    # Kreditanteil berechnen
+    cursor.execute("""
+        SELECT SUM(a.preis - f.Anzahlung - f.Schlussrate) AS kreditbetrag
+        FROM Kaufvertrag k
+        JOIN Finanzierungsanfrage f ON k.Finanzierungs_ID = f.ID
+        JOIN auto a ON f.Auto_ID = a.autoid
+        WHERE f.Info = 'Finanzierung'
+    """)
+    kredit_summe = cursor.fetchone()['kreditbetrag'] or 0
+    kreditanteil_prozent = round((kredit_summe / gesamtumsatz) * 100, 2) if gesamtumsatz else 0
+
+    # Durchschnittliche Laufzeit
+    cursor.execute("""
+        SELECT AVG(f.Monate) AS avg_laufzeit
+        FROM Kaufvertrag k
+        JOIN Finanzierungsanfrage f ON k.Finanzierungs_ID = f.ID
+        WHERE f.Info = 'Finanzierung'
+    """)
+    durchschnitt_laufzeit = round(cursor.fetchone()['avg_laufzeit'] or 0)
+
+    # Anzahl registrierte Kunden (aus Tabelle 'users' mit Spalte 'role')
+    cursor.execute("SELECT COUNT(*) AS kunden FROM users WHERE role = 'kunde'")
+    kundenanzahl = cursor.fetchone()['kunden'] or 0
+
+    # Gesamtanzahl Anfragen
+    cursor.execute("SELECT COUNT(*) AS gesamt FROM Finanzierungsanfrage")
+    gesamt_anfragen = cursor.fetchone()['gesamt'] or 1
+
+    # Barkauf vs. Finanzierung (Anzahl & Prozent)
+    cursor.execute("SELECT COUNT(*) AS barkaeufe FROM Finanzierungsanfrage WHERE LOWER(info) = 'barkauf'")
+    barkaeufe = cursor.fetchone()['barkaeufe'] or 0
+    finanzierungen = gesamt_anfragen - barkaeufe
+    barkauf_anteil = round((barkaeufe / gesamt_anfragen) * 100, 2)
+    finanzierungs_anteil = 100 - barkauf_anteil
+
+    # Offene Anfragen
+    cursor.execute("SELECT COUNT(*) AS offen FROM Finanzierungsanfrage WHERE Status = 'angefragt'")
+    offene_anfragen = cursor.fetchone()['offen'] or 0
+
+    # Annahmequote
+    cursor.execute("SELECT COUNT(*) AS angenommen FROM Finanzierungsanfrage WHERE Status = 'angenommen'")
+    angenommen = cursor.fetchone()['angenommen'] or 0
+    annahmequote = round((angenommen / gesamt_anfragen) * 100, 2)
+
+    return render_template(
+        "unternehmenszahlen.html",
+        gesamtumsatz=gesamtumsatz,
+        barkauf_umsatz=barkauf_umsatz,
+        finanzierungs_umsatz=finanzierungs_umsatz,
+        kreditanteil_prozent=kreditanteil_prozent,
+        durchschnitt_laufzeit=durchschnitt_laufzeit,
+        anzahl_vertraege=anzahl_vertraege,
+        kundenanzahl=kundenanzahl,
+        offene_anfragen=offene_anfragen,
+        annahmequote=annahmequote,
+        barkauf_anteil=barkauf_anteil,
+        finanzierungs_anteil=finanzierungs_anteil,
+        gesamt_anfragen=gesamt_anfragen
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
