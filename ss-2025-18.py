@@ -25,7 +25,7 @@ def teardown_request(exception):
     if con is not None:
         con.close()
 
-@app.route('/fahrzeugkatalog')
+
 @app.route('/fahrzeugkatalog')
 def fahrzeugkatalog():
     # 1. Session-User-ID holen (None, falls nicht eingeloggt)
@@ -376,7 +376,6 @@ def reviews():
 
 
 @app.route('/termine')
-
 def termine_anzeigen():
     cursor = g.cursor
     cursor.execute("SELECT fa.*, a.marke, a.modell FROM finanzierungsanfrage fa JOIN auto a ON fa.Auto_ID = a.autoid ORDER BY fa.Terminwunsch DESC")
@@ -474,9 +473,6 @@ def loesche_abgelehnte_anfragen():
 
     # Weiterleitung + Anzahl mitgeben
     return redirect(url_for('admin', geloescht=anzahl))
-@app.route("/auto_verwalten", methods=["GET", "POST"])
-
-@app.route("/auto_verwalten")
 
 @app.route("/auto_verwalten")
 def auto_verwalten():
@@ -545,7 +541,6 @@ def auto_bearbeiten(autoid):
 
     return render_template("auto_bearbeiten.html", auto=auto)
 
-
 @app.route('/auto_hinzufuegen', methods=['GET', 'POST'])
 def auto_hinzufuegen():
     if 'user_role' not in session or session['user_role'] != 'admin':
@@ -575,8 +570,18 @@ def auto_hinzufuegen():
         g.con.commit()
 
         return redirect(url_for('auto_verwalten'))
-
     return render_template("auto_hinzufuegen.html")
+
+@app.route('/auto_loeschen/<int:autoid>', methods=['POST'])
+def auto_loeschen(autoid):
+    try:
+        cursor = g.cursor
+        cursor.execute("DELETE FROM auto WHERE autoid = %s", (autoid,))
+        g.con.commit()
+    except Exception as e:
+        # Optional: Logging oder Fehlerbehandlung
+        pass
+    return redirect(url_for('auto_verwalten'))
 
 
 @app.route('/favorite/toggle/<int:autoid>', methods=['POST'])
@@ -607,6 +612,7 @@ def toggle_favorite(autoid):
 
     g.con.commit()
     return redirect(request.referrer or url_for('fahrzeugkatalog'))
+
 
 @app.route('/favorites')
 def favorites():
@@ -807,6 +813,6 @@ def anfrage_erstellen():
         auto_id=auto_id
     )
 
+
 if __name__ == '__main__':
     app.run(debug=True)
-
