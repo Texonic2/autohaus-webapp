@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Passwort ändern – Autohaus Heilbronn{% endblock %}
+
+{% block content %}
+<div class="passwort-container">
+    <h2>🔑 Passwort ändern</h2>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+    {% if success %}
+        <div class="success">{{ success }}</div>
+    {% endif %}
+
+    <form method="post">
+        <label for="altes_passwort">Altes Passwort:</label>
+        <input type="password" name="altes_passwort" required><br><br>
+
+        <label for="neues_passwort">Neues Passwort:</label>
+        <input type="password" name="neues_passwort" required><br><br>
+
+        <label for="bestaetigen">Neues Passwort bestätigen:</label>
+        <input type="password" name="bestaetigen" required><br><br>
+
+        <button type="submit" class="btn">Speichern</button>
+    </form>
+</div>
+{% endblock %}

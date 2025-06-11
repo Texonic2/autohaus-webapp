@@ -1,39 +1,51 @@
 {% extends "base.html" %}
-{% block head %}
 
-{% endblock %}
-{% block title %}Startseite – Autohaus Heilbronn{% endblock %}
+{% block title %}Mein Konto – Autohaus Heilbronn{% endblock %}
 
 {% block content %}
 
+<!-- 👤 Kontobereich -->
+<div class="konto-bereich">
+    <h2>👤 Meine Kontodaten</h2>
+    <div class="account-daten">
+        <p><strong>Vorname:</strong> {{ benutzer.vorname }}</p>
+        <p><strong>Nachname:</strong> {{ benutzer.nachname }}</p>
+        <p><strong>E-Mail:</strong> {{ benutzer.email }}</p>
+        <p><strong>Rolle:</strong> {{ benutzer.role }}</p>
+
+        <a href="{{ url_for('passwort_aendern') }}" class="btn-passwort-aendern">🔑 Passwort ändern</a>
+    </div>
+</div>
+
+<hr>
+
+<!-- 🚗 Finanzierungsanfragen -->
 <div class="finanzierungsanfrage-container">
-    <h2>Meine Finanzierungsanfragen</h2>
-{% for anfrage in finanzierungsanfragen %}
-<div class="finanzierungsanfrage-card">
-    <div class="auto-bild">
-        <img src="{{ url_for('static', filename=anfrage.url) }}" alt="{{ anfrage.marke }} {{ anfrage.modell }}">
+    <h2>🚗 Meine Finanzierungsanfragen</h2>
+
+    {% for anfrage in finanzierungsanfragen %}
+    <div class="finanzierungsanfrage-card">
+        <div class="auto-bild">
+            <img src="{{ url_for('static', filename=anfrage.url) }}" alt="{{ anfrage.marke }} {{ anfrage.modell }}">
+        </div>
+
+        <div class="anfrage-details">
+            <h3>{{ anfrage.marke }} {{ anfrage.modell }}</h3>
+            <p><strong>Termin:</strong> {{ anfrage.Terminwunsch or 'Kein Termin angegeben' }}</p>
+            <p><strong>Finanzierungsdauer:</strong> {{ anfrage.Monate }} Monate</p>
+            <p><strong>Anzahlung:</strong> {{ anfrage.Anzahlung }} €</p>
+            <p><strong>Monatliche Rate:</strong> {{ anfrage.Monatliche_Rate }} €</p>
+            <p><strong>Schlussrate:</strong> {{ anfrage.schlussrate }} €</p>
+            <p><strong>Status:</strong> <span class="status {{ anfrage.Status|lower }}">{{ anfrage.Status }}</span></p>
+
+            <form action="{{ url_for('anfrage_loeschen', anfrage_id=anfrage.ID) }}" method="post" onsubmit="return confirm('Willst du diese Anfrage wirklich löschen?');" style="margin-top: 10px;">
+                <button type="submit" class="btn-anfrage-loeschen">🗑️ Anfrage löschen</button>
+            </form>
+        </div>
     </div>
-
-    <div class="anfrage-details">
-        <h3>{{ anfrage.marke }} {{ anfrage.modell }}</h3>
-        <p><strong>Termin:</strong> {{ anfrage.Terminwunsch or 'Kein Termin angegeben' }}</p>
-        <p><strong>Finanzierungsdauer:</strong> {{ anfrage.Monate }} Monate</p>
-        <p><strong>Anzahlung:</strong> {{ anfrage.Anzahlung }} €</p>
-        <p><strong>Monatliche Rate:</strong> {{ anfrage.Monatliche_Rate }} €</p>
-        <p><strong>Schlussrate:</strong> {{ anfrage.schlussrate }} €</p>
-        <p><strong>Status:</strong> <span class="status {{ anfrage.Status|lower }}">{{ anfrage.Status }}</span></p>
-
-        <form action="{{ url_for('anfrage_loeschen', anfrage_id=anfrage.ID) }}" method="post" onsubmit="return confirm('Willst du diese Anfrage wirklich löschen?');" style="margin-top: 10px;">
-            <button type="submit" class="btn-anfrage-loeschen">🗑️ Anfrage löschen</button>
-        </form>
-    </div>
-</div>
-{% else %}
-<p>Du hast bisher keine Finanzierungsanfragen gestellt.</p>
-{% endfor %}
-
+    {% else %}
+    <p>Du hast bisher keine Finanzierungsanfragen gestellt.</p>
+    {% endfor %}
 </div>
 
-</body>
-</html>
 {% endblock %}

@@ -218,23 +218,21 @@ def finanzierung(autoid):
         laufzeit=laufzeit,
         schlussrate=schlussrate
     )
-
-
-
-
 @app.route('/account')
 def account():
     if 'user_id' not in session:
         return redirect(url_for('Login'))
 
-    # Kein automatisches Redirect mehr für Admins!
-    # Admins und Kunden sehen hier ihre eigene Finanzierungsanfragen.
-
     user_id = session['user_id']
     cursor = g.cursor
 
+    # ➕ Benutzerinfos holen
+    cursor.execute("SELECT vorname, nachname, email, role FROM users WHERE User_ID = %s", (user_id,))
+    benutzer = cursor.fetchone()
+
+    # Finanzierungsanfragen holen
     cursor.execute("""
-        SELECT f.*, a.marke, a.modell, a.url, a.autoid AS ID, f.monatliche_rate, f.schlussrate
+        SELECT f.*, a.marke, a.modell, a.url, a.autoid AS ID
         FROM Finanzierungsanfrage f
         JOIN auto a ON f.Auto_ID = a.autoid
         WHERE f.Nutzer_ID = %s
@@ -242,8 +240,38 @@ def account():
     """, (user_id,))
     anfragen = cursor.fetchall()
 
-    return render_template('account.html', finanzierungsanfragen=anfragen)
+    return render_template('account.html', benutzer=benutzer, finanzierungsanfragen=anfragen)
 
+@app.route("/passwort_aendern", methods=["GET", "POST"])
+def passwort_aendern():
+    if 'user_id' not in session:
+        return redirect(url_for('Login'))
+
+    user_id = session['user_id']
+    cursor = g.cursor
+
+    error = None
+    success = None
+
+    if request.method == "POST":
+        altes = request.form.get("altes_passwort")
+        neues = request.form.get("neues_passwort")
+        bestaetigen = request.form.get("bestaetigen")
+
+        cursor.execute("SELECT passwort FROM users WHERE User_ID = %s", (user_id,))
+        user = cursor.fetchone()
+
+        if not user or not check_password_hash(user['passwort'], altes):
+            error = "Das alte Passwort ist falsch."
+        elif neues != bestaetigen:
+            error = "Die neuen Passwörter stimmen nicht überein."
+        else:
+            neues_gehasht = generate_password_hash(neues)
+            cursor.execute("UPDATE users SET passwort = %s WHERE User_ID = %s", (neues_gehasht, user_id))
+            g.con.commit()
+            success = "Passwort erfolgreich geändert."
+
+    return render_template("passwort_aendern.html", error=error, success=success)
 
 @app.route('/')
 def index():
