@@ -29,6 +29,10 @@
         <td>{{ auto.leistung }}</td>
         <td>
             <a href="{{ url_for('auto_bearbeiten', autoid=auto.autoid) }}" class="btn-bearbeiten-link">Bearbeiten</a>
+
+         <form action="{{ url_for('auto_loeschen', autoid=auto.autoid) }}" method="POST" style="display:inline;">
+  <button type="submit" class="btn-bearbeiten-link" onclick="return confirm('Wirklich löschen?')">Löschen</button>
+</form>
         </td>
       </tr>
       {% endfor %}
