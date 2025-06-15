@@ -10,31 +10,52 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th>Finanzierungs-ID</th>
+        <th>Info</th>
+        <th>Monate</th>
+        <th>Anzahlung</th>
+        <th>Schlussrate</th>
+        <th>Monatliche Rate</th>
         <th>Datum</th>
         <th>PDF</th>
         <th>Vorname</th>
         <th>Nachname</th>
         <th>Email</th>
-        <th>Adresse</th>
-        <th>Telefon</th>
+        <th>Marke</th>
+        <th>Modell</th>
+        <th>Preis</th>
         <th>Aktion</th>
       </tr>
     </thead>
     <tbody>
-      {% for vertrag in kaufvertraege %}
+      {% for vertrag in vertraege %}
       <tr>
-        <td>{{ vertrag.Kaufvertrag_ID }}</td>
-        <td>{{ vertrag.Finanzierungs_ID }}</td>
-        <td>{{ vertrag.Datum_Erstellung }}</td>
-        <td><a href="/static/{{ vertrag.PDF_Pfad }}" target="_blank" class="pdf-link">📄 öffnen</a></td>
-        <td>{{ vertrag.kunde_vorname or '-' }}</td>
-        <td>{{ vertrag.kunde_nachname or '-' }}</td>
-        <td>{{ vertrag.kunde_email or '-' }}</td>
-        <td>{{ vertrag.kunde_adresse or '-' }}</td>
-        <td>{{ vertrag.kunde_telefon or '-' }}</td>
+        <td>{{ vertrag.Kaufvertrag_ID or '-' }}</td>
+        <td>{{ vertrag.Info or '-' }}</td>
+        <td>{{ vertrag.Monate or '-' }}</td>
+        <td>{{ vertrag.Anzahlung if vertrag.Anzahlung is not none else '-' }} €</td>
+        <td>{{ vertrag.Schlussrate if vertrag.Schlussrate is not none else '-' }} €</td>
         <td>
-
+          {% if vertrag.Monatliche_Rate is not none %}
+            {{ vertrag.Monatliche_Rate | round(2) }} €
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        <td>{{ vertrag.Datum_Erstellung or '-' }}</td>
+        <td>
+          {% if vertrag.PDF_Pfad %}
+            <a href="/static/{{ vertrag.PDF_Pfad }}" target="_blank" class="pdf-link">📄 öffnen</a>
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        <td>{{ vertrag.vorname or '-' }}</td>
+        <td>{{ vertrag.nachname or '-' }}</td>
+        <td>{{ vertrag.email or '-' }}</td>
+        <td>{{ vertrag.marke or '-' }}</td>
+        <td>{{ vertrag.modell or '-' }}</td>
+        <td>{{ vertrag.preis or '-' }} €</td>
+        <td>
           <form action="{{ url_for('kaufvertrag_loeschen', vertrag_id=vertrag.Kaufvertrag_ID) }}" method="post" style="display:inline;">
             <button type="submit" class="btn-aktion btn-loeschen" onclick="return confirm('Diesen Kaufvertrag wirklich löschen?')">Löschen</button>
           </form>

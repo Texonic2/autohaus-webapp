@@ -704,7 +704,6 @@ def favorites():
     fahrzeuge = cursor.fetchall()
     return render_template('favorites.html', fahrzeuge=fahrzeuge)
 
-
 @app.route('/admin/kaufvertrag_erstellen/<int:anfrage_id>', methods=['GET', 'POST'])
 def kaufvertrag_erstellen(anfrage_id):
     autohaus_daten = {
@@ -716,8 +715,10 @@ def kaufvertrag_erstellen(anfrage_id):
     }
 
     with g.con.cursor(dictionary=True, buffered=True) as cursor:
+        # 1) Hole Anfrage + User + Auto + Finanzierungsdetails + Info
         cursor.execute("""
-            SELECT fa.ID, fa.Terminwunsch, fa.Monate, fa.Anzahlung, fa.Monatliche_Rate, fa.schlussrate, fa.Status,
+            SELECT fa.ID, fa.Info, fa.Terminwunsch, fa.Monate, fa.Anzahlung, fa.Monatliche_Rate, fa.schlussrate, fa.Status,
+                   fa.Nutzer_ID AS kunde_id, fa.Auto_ID AS auto_id,
                    u.vorname, u.nachname, u.email,
                    a.marke, a.modell, a.url
             FROM Finanzierungsanfrage fa
@@ -730,33 +731,81 @@ def kaufvertrag_erstellen(anfrage_id):
         if not daten:
             return "Anfrage nicht gefunden", 404
 
-        # ⛔ Ablehnen, wenn Status nicht "angenommen"
+        # ⛔ Nur genehmigte Anfragen
         if daten['Status'] != 'genehmigt':
-            flash("Kaufvertrag kann nur für angenommene Anfragen erstellt werden.", "error")
-            return redirect(url_for('admin'))  # <-- Endpunkt für Admin-Übersicht
+            flash("Kaufvertrag kann nur für genehmigte Anfragen erstellt werden.", "error")
+            return redirect(url_for('admin'))
 
         if request.method == "POST":
             try:
-                cursor.execute("SELECT * FROM Kaufvertrag WHERE Finanzierungs_ID = %s", (anfrage_id,))
+                # 2) Prüfen ob Vertrag schon da
+                cursor.execute("""
+                    SELECT * FROM Kaufvertrag 
+                    WHERE kunde_id = %s AND auto_id = %s
+                """, (daten['kunde_id'], daten['auto_id']))
                 vorhanden = cursor.fetchone()
+
                 if not vorhanden:
                     pdf_pfad = f'kaufvertrag_{anfrage_id}.pdf'
+
+                    # ✅ 3) ALLE Daten speichern inkl. Info!
                     cursor.execute("""
-                        INSERT INTO Kaufvertrag (Finanzierungs_ID, Datum_Erstellung, PDF_Pfad)
-                        VALUES (%s, NOW(), %s)
-                    """, (anfrage_id, pdf_pfad))
+                        INSERT INTO Kaufvertrag 
+                        (kunde_id, auto_id, Info, Monate, Anzahlung, Schlussrate, Monatliche_Rate, Datum_Erstellung, PDF_Pfad)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), %s)
+                    """, (
+                        daten['kunde_id'],
+                        daten['auto_id'],
+                        daten['Info'],  # <--- NEU: Barkauf oder Finanzierung
+                        daten['Monate'],
+                        daten['Anzahlung'],
+                        daten['schlussrate'],
+                        daten['Monatliche_Rate'],
+                        pdf_pfad
+                    ))
                     g.con.commit()
-                flash("Kaufvertrag wurde erfolgreich gespeichert!", "success")
+
+                    # 4) Anfrage löschen
+                    cursor.execute("""
+                        DELETE FROM Finanzierungsanfrage WHERE ID = %s
+                    """, (anfrage_id,))
+                    g.con.commit()
+
+                flash("Kaufvertrag wurde erfolgreich gespeichert & Anfrage gelöscht!", "success")
                 return redirect(url_for('kaufvertrag_erfolgreich', anfrage_id=anfrage_id))
+
             except Exception as e:
                 return f"Fehler beim Speichern des Kaufvertrags: {e}", 500
 
+        # GET → zeigt Vorschau an
         return render_template("kaufvertrag.html", kaufvertrag=daten, autohaus=autohaus_daten)
-
 
 @app.route('/admin/kaufvertrag_erfolgreich/<int:anfrage_id>')
 def kaufvertrag_erfolgreich(anfrage_id):
     return render_template("kaufvertrag_erfolgreich.html", anfrage_id=anfrage_id)
+@app.route('/kaufvertraege')
+def kaufvertraege():
+    cursor = g.cursor
+    cursor.execute("""
+        SELECT 
+            k.Kaufvertrag_ID,
+            k.Info,
+            k.Monate,
+            k.Anzahlung,
+            k.Schlussrate,
+            k.Monatliche_Rate,
+            k.Datum_Erstellung,
+            k.PDF_Pfad,
+            u.vorname, u.nachname, u.email,
+            a.marke, a.modell, a.preis
+        FROM Kaufvertrag k
+        JOIN users u ON k.kunde_id = u.User_ID
+        JOIN auto a ON k.auto_id = a.autoid
+    """)
+    vertraege = cursor.fetchall()
+    return render_template("kaufvertraege.html", vertraege=vertraege)
+
+
 
 
 @app.route('/delete_review', methods=['POST'])
@@ -916,74 +965,70 @@ def kaufvertrag_loeschen(vertrag_id):
 def unternehmenszahlen():
     cursor = g.cursor
 
-    # Gesamtanzahl Kaufverträge
+    # ✅ Gesamtanzahl Kaufverträge
     cursor.execute("SELECT COUNT(*) as anzahl FROM Kaufvertrag")
-    anzahl_vertraege = cursor.fetchone()['anzahl']
+    anzahl_vertraege = cursor.fetchone()['anzahl'] or 0
 
-    # Barkauf-Umsatz
+    # ✅ Barkauf-Umsatz basierend auf Kaufverträgen
     cursor.execute("""
         SELECT SUM(a.preis) AS barkauf_umsatz
         FROM Kaufvertrag k
-        JOIN Finanzierungsanfrage f ON k.Finanzierungs_ID = f.ID
-        JOIN auto a ON f.Auto_ID = a.autoid
-        WHERE f.Info = 'Barkauf'
+        JOIN auto a ON k.auto_id = a.autoid
+        WHERE LOWER(k.Info) = 'barkauf'
     """)
     barkauf_umsatz = cursor.fetchone()['barkauf_umsatz'] or 0
 
-    # Finanzierung-Umsatz
+    # ✅ Finanzierung-Umsatz basierend auf Kaufverträgen
     cursor.execute("""
         SELECT SUM(a.preis) AS finanzierungs_umsatz
         FROM Kaufvertrag k
-        JOIN Finanzierungsanfrage f ON k.Finanzierungs_ID = f.ID
-        JOIN auto a ON f.Auto_ID = a.autoid
-        WHERE f.Info = 'Finanzierung'
+        JOIN auto a ON k.auto_id = a.autoid
+        WHERE LOWER(k.Info) = 'finanzierungsanfrage'
     """)
     finanzierungs_umsatz = cursor.fetchone()['finanzierungs_umsatz'] or 0
 
-    # Gesamtumsatz
+    # ✅ Gesamtumsatz
     gesamtumsatz = barkauf_umsatz + finanzierungs_umsatz
 
-    # Kreditanteil berechnen
+    # ✅ Kreditbetrag nur aus Kaufverträgen (Preis - Anzahlung - Schlussrate)
     cursor.execute("""
-        SELECT SUM(a.preis - f.Anzahlung - f.Schlussrate) AS kreditbetrag
+        SELECT SUM(a.preis - k.Anzahlung - k.Schlussrate) AS kreditbetrag
         FROM Kaufvertrag k
-        JOIN Finanzierungsanfrage f ON k.Finanzierungs_ID = f.ID
-        JOIN auto a ON f.Auto_ID = a.autoid
-        WHERE f.Info = 'Finanzierung'
+        JOIN auto a ON k.auto_id = a.autoid
+        WHERE LOWER(k.Info) = 'finanzierungsanfrage'
     """)
     kredit_summe = cursor.fetchone()['kreditbetrag'] or 0
     kreditanteil_prozent = round((kredit_summe / gesamtumsatz) * 100, 2) if gesamtumsatz else 0
 
-    # Durchschnittliche Laufzeit
+    # ✅ Durchschnittliche Laufzeit nur aus Kaufverträgen
     cursor.execute("""
-        SELECT AVG(f.Monate) AS avg_laufzeit
+        SELECT AVG(k.Monate) AS avg_laufzeit
         FROM Kaufvertrag k
-        JOIN Finanzierungsanfrage f ON k.Finanzierungs_ID = f.ID
-        WHERE f.Info = 'Finanzierung'
+        WHERE LOWER(k.Info) = 'finanzierungsanfrage'
     """)
     durchschnitt_laufzeit = round(cursor.fetchone()['avg_laufzeit'] or 0)
 
-    # Anzahl registrierte Kunden (aus Tabelle 'users' mit Spalte 'role')
-    cursor.execute("SELECT COUNT(*) AS kunden FROM users WHERE role = 'customer'")
+    # ✅ Anzahl registrierte Kunden
+    cursor.execute("SELECT COUNT(*) AS kunden FROM users WHERE LOWER(role) = 'customer'")
     kundenanzahl = cursor.fetchone()['kunden'] or 0
-    # Gesamtanzahl Anfragen
-    cursor.execute("SELECT COUNT(*) AS gesamt FROM Finanzierungsanfrage")
-    gesamt_anfragen = cursor.fetchone()['gesamt'] or 1
 
-    # Barkauf vs. Finanzierung (Anzahl & Prozent)
-    cursor.execute("SELECT COUNT(*) AS barkaeufe FROM Finanzierungsanfrage WHERE LOWER(info) = 'barkauf'")
+    # ✅ Barkauf vs. Finanzierung basierend auf Kaufverträgen
+    cursor.execute("SELECT COUNT(*) AS barkaeufe FROM Kaufvertrag WHERE LOWER(Info) = 'barkauf'")
     barkaeufe = cursor.fetchone()['barkaeufe'] or 0
-    finanzierungen = gesamt_anfragen - barkaeufe
-    barkauf_anteil = round((barkaeufe / gesamt_anfragen) * 100, 2)
+    finanzierungen = anzahl_vertraege - barkaeufe
+    barkauf_anteil = round((barkaeufe / anzahl_vertraege) * 100, 2) if anzahl_vertraege else 0
     finanzierungs_anteil = 100 - barkauf_anteil
 
-    # Offene Anfragen
-    cursor.execute("SELECT COUNT(*) AS offen FROM Finanzierungsanfrage WHERE Status = 'angefragt'")
+    # ✅ Offene Anfragen (bleibt bei Finanzierungsanfrage)
+    cursor.execute("SELECT COUNT(*) AS offen FROM Finanzierungsanfrage WHERE LOWER(Status) = 'angefragt'")
     offene_anfragen = cursor.fetchone()['offen'] or 0
 
-    # Annahmequote
-    cursor.execute("SELECT COUNT(*) AS angenommen FROM Finanzierungsanfrage WHERE Status = 'angenommen'")
+    # ✅ Annahmequote (immer noch bei Finanzierungsanfrage)
+    cursor.execute("SELECT COUNT(*) AS angenommen FROM Finanzierungsanfrage WHERE LOWER(Status) = 'angenommen'")
     angenommen = cursor.fetchone()['angenommen'] or 0
+    # Gesamt Anfragen immer aus Anfragen-Tabelle
+    cursor.execute("SELECT COUNT(*) AS gesamt FROM Finanzierungsanfrage")
+    gesamt_anfragen = cursor.fetchone()['gesamt'] or 1
     annahmequote = round((angenommen / gesamt_anfragen) * 100, 2)
 
     return render_template(
@@ -1001,6 +1046,5 @@ def unternehmenszahlen():
         finanzierungs_anteil=finanzierungs_anteil,
         gesamt_anfragen=gesamt_anfragen
     )
-
 if __name__ == '__main__':
     app.run(debug=True)
