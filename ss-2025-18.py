@@ -2,6 +2,7 @@ from flask import Flask, render_template, g, request, redirect, url_for, session
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
 # Import der Verbindungsinformationen zur Datenbank
 from db.db_credentials import DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE
 
@@ -963,9 +964,8 @@ def unternehmenszahlen():
     durchschnitt_laufzeit = round(cursor.fetchone()['avg_laufzeit'] or 0)
 
     # Anzahl registrierte Kunden (aus Tabelle 'users' mit Spalte 'role')
-    cursor.execute("SELECT COUNT(*) AS kunden FROM users WHERE role = 'kunde'")
+    cursor.execute("SELECT COUNT(*) AS kunden FROM users WHERE role = 'customer'")
     kundenanzahl = cursor.fetchone()['kunden'] or 0
-
     # Gesamtanzahl Anfragen
     cursor.execute("SELECT COUNT(*) AS gesamt FROM Finanzierungsanfrage")
     gesamt_anfragen = cursor.fetchone()['gesamt'] or 1
