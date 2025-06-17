@@ -737,8 +737,11 @@ def kaufvertrag_erstellen(anfrage_id):
             return redirect(url_for('admin'))
 
         if request.method == "POST":
+            # Adresse und Telefon vom Formular holen
+            kunde_adresse = request.form.get("adresse")
+            kunde_telefon = request.form.get("telefon")
+
             try:
-                # 2) Prüfen ob Vertrag schon da
                 cursor.execute("""
                     SELECT * FROM Kaufvertrag 
                     WHERE kunde_id = %s AND auto_id = %s
@@ -748,24 +751,28 @@ def kaufvertrag_erstellen(anfrage_id):
                 if not vorhanden:
                     pdf_pfad = f'kaufvertrag_{anfrage_id}.pdf'
 
-                    # ✅ 3) ALLE Daten speichern inkl. Info!
                     cursor.execute("""
                         INSERT INTO Kaufvertrag 
-                        (kunde_id, auto_id, Info, Monate, Anzahlung, Schlussrate, Monatliche_Rate, Datum_Erstellung, PDF_Pfad)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), %s)
+                        (kunde_id, auto_id, Info, Monate, Anzahlung, Schlussrate, Monatliche_Rate, Datum_Erstellung,
+                         vorname, nachname, email, kunde_adresse, kunde_telefon, PDF_Pfad)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, %s, %s)
                     """, (
                         daten['kunde_id'],
                         daten['auto_id'],
-                        daten['Info'],  # <--- NEU: Barkauf oder Finanzierung
+                        daten['Info'],
                         daten['Monate'],
                         daten['Anzahlung'],
                         daten['schlussrate'],
                         daten['Monatliche_Rate'],
+                        daten['vorname'],
+                        daten['nachname'],
+                        daten['email'],
+                        kunde_adresse,
+                        kunde_telefon,
                         pdf_pfad
                     ))
                     g.con.commit()
 
-                    # 4) Anfrage löschen
                     cursor.execute("""
                         DELETE FROM Finanzierungsanfrage WHERE ID = %s
                     """, (anfrage_id,))

@@ -73,49 +73,4 @@
 
 <!-- Flash Message Popup -->
 <div id="flash-message"></div>
-
-<script>
-    // Zeigt den Namen des Käufers im Vertragstext an
-    const vornameInput = document.getElementById('vorname');
-    const nachnameInput = document.getElementById('nachname');
-    const kundeNameSpan = document.getElementById('kunde-name');
-
-    function updateKundeName() {
-        kundeNameSpan.textContent = vornameInput.value + " " + nachnameInput.value;
-    }
-
-    vornameInput.addEventListener('input', updateKundeName);
-    nachnameInput.addEventListener('input', updateKundeName);
-
-    // Direkt initial setzen
-    updateKundeName();
-
-    // Flash message von Flask anzeigen (falls vorhanden)
-    const flashDiv = document.getElementById('flash-message');
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                flashDiv.classList.remove('success', 'error');
-                if ("{{ category }}" === "success") {
-                    flashDiv.classList.add('success');
-                } else if ("{{ category }}" === "error") {
-                    flashDiv.classList.add('error');
-                }
-                flashDiv.textContent = "{{ message }}";
-                flashDiv.style.display = 'block';
-
-                // Automatisch nach 3 Sekunden ausblenden
-                setTimeout(() => {
-                    flashDiv.style.opacity = '0';
-                    setTimeout(() => {
-                        flashDiv.style.display = 'none';
-                        flashDiv.style.opacity = '1'; // für nächste Anzeige zurücksetzen
-                    }, 500);
-                }, 3000);
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-</script>
-
 {% endblock %}
