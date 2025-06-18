@@ -1,52 +1,84 @@
 {% extends "base.html" %}
 
 {% block title %}Fahrzeugkatalog – Autohaus Heilbronn{% endblock %}
- <link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
+
 {% block content %}
 
 <form class="search-bar-horizontal" action="#" method="get">
   <input type="text" value="Mercedes" readonly title="Marke">
-   <input type="text" name="modell" placeholder="Modell (z. B. C-Klasse)" value="{{ request.args.get('modell', '') }}">
+  <input type="text" name="modell" placeholder="Modell (z. B. C-Klasse)" value="{{ request.args.get('modell', '') }}">
   <input type="number" name="preis" placeholder="Maximalpreis (€)" value="{{ request.args.get('preis', '') }}">
   <input type="number" name="baujahr" placeholder="Baujahr ab" value="{{ request.args.get('baujahr', '') }}">
   <input type="number" name="ps" placeholder="Leistung ab (PS)" value="{{ request.args.get('ps', '') }}">
-  <button type="submit"> Suchen</button>
+  <button type="submit">Suchen</button>
 </form>
 
-{% for fahrzeug in fahrzeuge %}
-    <div class="image-container1">
-        <img src="{{ url_for('static', filename=fahrzeug.url) }}" class="header-image"
-             alt="Bild von {{ fahrzeug.marke }} {{ fahrzeug.modell }}">
-    </div>
+<!-- Vergleichsformular -->
+<form action="/vergleich" method="get" id="vergleich-form">
+    {% for fahrzeug in fahrzeuge %}
+        <div class="image-container1">
+            <img src="{{ url_for('static', filename=fahrzeug.url) }}" class="header-image"
+                 alt="Bild von {{ fahrzeug.marke }} {{ fahrzeug.modell }}">
+        </div>
 
-    <div class="text-container" style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; padding-bottom: 60px;">
-    <div class="car-details">
-        <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
-        <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
-        <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
-        <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
-        <p><strong>Hubraum:</strong> {{ fahrzeug.hubraum }} cm³</p>
-        <p><strong>Kraftstoffverbrauch:</strong> {{ fahrzeug.kraftstoffverbrauch }} l/100km</p>
-        <p><strong>Getriebeart:</strong> {{ fahrzeug.getriebeart }}</p>
-        <p><strong>Antriebsart:</strong> {{ fahrzeug.antriebsart }}</p>
-        <p><strong>Umweltplakette:</strong> {{ fahrzeug.umweltplakette }}</p>
-    </div>
+        <div class="text-container" style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; padding-bottom: 60px;">
+            <div class="car-details">
+                <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
+                <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
+                <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
+                <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
+                <p><strong>Hubraum:</strong> {{ fahrzeug.hubraum }} cm³</p>
+                <p><strong>Kraftstoffverbrauch:</strong> {{ fahrzeug.kraftstoffverbrauch }} l/100km</p>
+                <p><strong>Getriebeart:</strong> {{ fahrzeug.getriebeart }}</p>
+                <p><strong>Antriebsart:</strong> {{ fahrzeug.antriebsart }}</p>
+                <p><strong>Umweltplakette:</strong> {{ fahrzeug.umweltplakette }}</p>
+            </div>
 
-    <div class="fahrzeug-actions">
-        <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get" style="display: inline;">
-            <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
-        </form>
+            <div class="fahrzeug-actions">
+                <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get" style="display: inline;">
+                    <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
+                </form>
 
-        <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}" style="display: inline;">
-            {% if fahrzeug.autoid in user_fav_ids %}
-                <button type="submit" name="aktion" value="remove" class="btn-unfav">★ Entfernen</button>
-            {% else %}
-                <button type="submit" name="aktion" value="add" class="btn-fav">☆ Zu Favoriten</button>
-            {% endif %}
-        </form>
-    </div>
-</div>
-    <hr style="margin-top: 40px;">
-{% endfor %}
+                <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}" style="display: inline;">
+                    {% if fahrzeug.autoid in user_fav_ids %}
+                        <button type="submit" name="aktion" value="remove" class="btn-unfav">★ Entfernen</button>
+                    {% else %}
+                        <button type="submit" name="aktion" value="add" class="btn-fav">☆ Zu Favoriten</button>
+                    {% endif %}
+                </form>
+
+                <!-- Checkbox zum Vergleich -->
+                <label>
+                    <input type="checkbox" name="auto" value="{{ fahrzeug.autoid }}">
+                    Zum Vergleich auswählen
+                </label>
+            </div>
+        </div>
+        <hr style="margin-top: 40px;">
+    {% endfor %}
+<div id="vergleich-fehler" style="display: none; color: white; background-color: #dc3545; padding: 10px; margin-top: 10px; border-radius: 5px;"></div>
+
+    <button type="submit" onclick="return validateSelection()">Vergleichen</button>
+</form>
+
+<script>
+function validateSelection() {
+    const selected = document.querySelectorAll('input[name="auto"]:checked');
+    const fehlerDiv = document.getElementById("vergleich-fehler");
+    fehlerDiv.style.display = "none";
+    fehlerDiv.innerText = "";
+
+    if (selected.length !== 2) {
+        fehlerDiv.innerText = "Bitte wähle genau zwei Fahrzeuge aus, um den Vergleich zu starten.";
+        fehlerDiv.style.display = "block";
+        return false;
+    }
+
+    const url = `/vergleich?auto1=${selected[0].value}&auto2=${selected[1].value}`;
+    window.location.href = url;
+    return false;
+}
+</script>
 
 {% endblock %}

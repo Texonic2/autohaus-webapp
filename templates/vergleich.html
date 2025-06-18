@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Autovergleich{% endblock %}
+
+{% block content %}
+<h2 style="color: #831D17;">Vergleich zwischen {{ auto1[2] }} und {{ auto2[2] }}</h2>
+
+<table class="vergleich-tabelle">
+    <tr>
+        <th>Eigenschaft</th>
+        <th>{{ auto1[1] }} {{ auto1[2] }}</th>
+        <th>{{ auto2[1] }} {{ auto2[2] }}</th>
+    </tr>
+    <tr>
+        <td>Baujahr</td>
+        <td>{{ auto1[3] }}</td>
+        <td>{{ auto2[3] }}</td>
+    </tr>
+    <tr>
+        <td>Leistung</td>
+        <td>{{ auto1[4] }} PS</td>
+        <td>{{ auto2[4] }} PS</td>
+    </tr>
+    <tr>
+        <td>Preis</td>
+        <td>{{ auto1[5] }} €</td>
+        <td>{{ auto2[5] }} €</td>
+    </tr>
+    <tr>
+        <td>Hubraum (cm³)</td>
+        <td>{{ auto1[7] }} cm³</td>
+        <td>{{ auto2[7] }} cm³</td>
+    </tr>
+    <tr>
+        <td>Kraftstoffverbrauch (l/100km)</td>
+        <td>{{ auto1[8] }} l/100km</td>
+        <td>{{ auto2[8] }} l/100km</td>
+    </tr>
+    <tr>
+        <td>Getriebeart</td>
+        <td>{{ auto1[9] }}</td>
+        <td>{{ auto2[9] }}</td>
+    </tr>
+    <tr>
+        <td>Antriebsart</td>
+        <td>{{ auto1[10] }}</td>
+        <td>{{ auto2[10] }}</td>
+    </tr>
+    <tr>
+        <td>Umweltplakette</td>
+        <td>{{ auto1[11] }}</td>
+        <td>{{ auto2[11] }}</td>
+    </tr>
+</table>
+
+<h3><strong>Empfehlung:</strong></h3>
+<div>
+{{ empfehlung_html | safe }}
+</div>
+
+{% endblock %}
+
