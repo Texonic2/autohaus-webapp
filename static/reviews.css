@@ -1,4 +1,4 @@
-/* Haupt-Header */
+
 .header-container {
     display: flex;
     justify-content: space-between;
@@ -6,10 +6,10 @@
 }
 
 .header-right a:hover {
-    color: #831D17; /* Hover-Farbe */
+    color: #831D17;
 }
 
-/* Seite Titel */
+
 .page-title {
     text-align: center;
     margin: 20px 0;
@@ -18,7 +18,7 @@
     font-weight: bold;
 }
 
-/* Rezensionen Container */
+
 .review-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -28,7 +28,7 @@
     margin: 0 auto;
 }
 
-/* Box Design für Rezensionen */
+
 .review-card {
     background-color: #fff;
     border-radius: 12px;
@@ -62,7 +62,7 @@
     color: #888;
 }
 
-/* Delete Button */
+
 .delete-review-form button {
     margin-top: 15px;
     padding: 8px 16px;
@@ -80,7 +80,7 @@
     background-color: #a62620;
 }
 
-/* Formular für neue Rezension */
+
 form {
     max-width: 600px;
     margin: 30px auto;

@@ -1113,8 +1113,8 @@ def vergleich():
     else:
         empfehlungspunkte.append(f"⛽ {auto2[1]} {auto2[2]} ist sparsamer im Verbrauch ({auto2[8]} l/100km vs {auto1[8]} l/100km).")
 
-    # Kreative Entscheidungsfazite
-    kreative_fazite = [
+
+    fazite = [
         "🏁 Beide Modelle überzeugen – achte auf Details wie Getriebeart oder Verbrauch.",
         "🎯 Jedes Auto hat seine Vorzüge – die Entscheidung hängt von deinen persönlichen Vorlieben ab.",
         "⚖️ Ausgeglichenes Duell! Schau dir an, was dir wichtiger ist: Komfort, Leistung oder Effizienz.",
@@ -1125,7 +1125,7 @@ def vergleich():
         "🔍 Jetzt kommt es auf die Feinheiten an: Ausstattung, Umweltplakette oder dein Budget."
     ]
 
-    # Logik für individuelle Empfehlung
+
     if auto1[4] > auto2[4] and auto1[5] < auto2[5]:
         fazit = f"🔥 Wenn dir Leistung UND Preis-Leistung wichtig sind, ist der {auto1[1]} {auto1[2]} die klare Empfehlung."
     elif auto2[4] > auto1[4] and auto2[5] < auto1[5]:
@@ -1137,9 +1137,9 @@ def vergleich():
     elif abs(auto1[8] - auto2[8]) > 2:
         fazit = "🌱 Deutlicher Verbrauchsunterschied – langfristig kann das einen Unterschied machen."
     else:
-        fazit = random.choice(kreative_fazite)
+        fazit = random.choice(fazite)
 
-    # HTML zusammenbauen
+
     empfehlung_html = "<ul>" + "".join(f"<li>{punkt}</li>" for punkt in empfehlungspunkte) + "</ul><p><strong>{}</strong></p>".format(fazit)
 
     return render_template('vergleich.html', auto1=auto1, auto2=auto2, empfehlung_html=empfehlung_html)

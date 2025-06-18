@@ -9,7 +9,7 @@
 {% block content %}
 <h1>Rezensionen</h1>
 
-<!-- Rezensionen anzeigen -->
+
 <div>
     {% for review in reviews %}
         <div class="review-card">
@@ -25,14 +25,14 @@
             <p><strong>Kommentar:</strong> {{ review.comment }}</p>
             <small><em>{{ review.created_at }}</em></small>
 
-            <!-- Admin-Antwort anzeigen -->
+
             {% if review.admin_response %}
                 <div class="admin-response">
                     <p><strong>Antwort von NOVA DRIVE Heilbronn:</strong> {{ review.admin_response }}</p>
                 </div>
             {% endif %}
 
-            <!-- Antwortformular für Admins -->
+
             {% if session.get('user_role') == 'admin' %}
                 <form method="POST" action="{{ url_for('reply_to_review') }}" class="admin-reply-form">
                     <input type="hidden" name="review_id" value="{{ review.id }}">
@@ -40,7 +40,7 @@
                     <button type="submit">Antwort speichern</button>
                 </form>
 
-                <!-- Button zum Löschen der Rezension -->
+
                 <form method="POST" action="{{ url_for('delete_review') }}" class="delete-review-form">
                     <input type="hidden" name="review_id" value="{{ review.id }}">
                     <button type="submit">Löschen</button>
@@ -50,7 +50,7 @@
     {% endfor %}
 </div>
 
-<!-- Formular für neue Rezension -->
+
 {% if 'user_id' in session %}
     <h2 style="text-align: center;">Rezension schreiben</h2>
     <form method="POST" action="{{ url_for('reviews') }}">
