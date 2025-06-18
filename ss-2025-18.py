@@ -265,7 +265,7 @@ def passwort_aendern():
         if not user:
             error = "Benutzer nicht gefunden."
         elif not check_password_hash(user['passwort'], altes):
-            error = "Das alte Passwort ist falsch."
+            error = "Das alte Passwort ist falsch!"
         elif neues != bestaetigen:
             error = "Die neuen Passwörter stimmen nicht überein."
         else:
