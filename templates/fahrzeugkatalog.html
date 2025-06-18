@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %}Fahrzeugkatalog – Autohaus Heilbronn{% endblock %}
-<link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
+{% block head %}
+    <link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
+{% endblock %}
 
 {% block content %}
 
@@ -14,8 +16,7 @@
   <button type="submit">Suchen</button>
 </form>
 
-<!-- Vergleichsformular -->
-<form action="/vergleich" method="get" id="vergleich-form">
+<div id="fahrzeugliste">
     {% for fahrzeug in fahrzeuge %}
         <div class="image-container1">
             <img src="{{ url_for('static', filename=fahrzeug.url) }}" class="header-image"
@@ -35,12 +36,12 @@
                 <p><strong>Umweltplakette:</strong> {{ fahrzeug.umweltplakette }}</p>
             </div>
 
-            <div class="fahrzeug-actions">
-                <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get" style="display: inline;">
-                    <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
-                </form>
+            <div class="fahrzeug-actions" style="display: flex; flex-direction: row; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <!-- Finanzieren & Kaufen -->
+                <a href="{{ url_for('finanzierung', autoid=fahrzeug.autoid) }}" class="btn-finanzieren" style="white-space: nowrap;">Finanzieren & Kaufen</a>
 
-                <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}" style="display: inline;">
+                <!-- Favorit hinzufügen/entfernen -->
+                <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}">
                     {% if fahrzeug.autoid in user_fav_ids %}
                         <button type="submit" name="aktion" value="remove" class="btn-unfav">★ Entfernen</button>
                     {% else %}
@@ -48,23 +49,28 @@
                     {% endif %}
                 </form>
 
-                <!-- Checkbox zum Vergleich -->
-                <label>
-                    <input type="checkbox" name="auto" value="{{ fahrzeug.autoid }}">
+                <!-- Vergleichs-Checkbox -->
+                <label style="display: flex; align-items: center;">
+                    <input type="checkbox" name="auto" value="{{ fahrzeug.autoid }}" class="vergleich-checkbox" style="margin-right: 5px;">
                     Zum Vergleich auswählen
                 </label>
             </div>
         </div>
         <hr style="margin-top: 40px;">
     {% endfor %}
+</div>
+
+<!-- Fehleranzeige -->
 <div id="vergleich-fehler" style="display: none; color: white; background-color: #dc3545; padding: 10px; margin-top: 10px; border-radius: 5px;"></div>
 
-    <button type="submit" onclick="return validateSelection()">Vergleichen</button>
-</form>
+<!-- Vergleichsbutton außerhalb des anderen Formulars -->
+<div style="text-align: center; margin-top: 20px;">
+    <button onclick="validateSelection()" class="btn-vergleichen">Vergleichen</button>
+</div>
 
 <script>
 function validateSelection() {
-    const selected = document.querySelectorAll('input[name="auto"]:checked');
+    const selected = document.querySelectorAll('.vergleich-checkbox:checked');
     const fehlerDiv = document.getElementById("vergleich-fehler");
     fehlerDiv.style.display = "none";
     fehlerDiv.innerText = "";
@@ -72,13 +78,13 @@ function validateSelection() {
     if (selected.length !== 2) {
         fehlerDiv.innerText = "Bitte wähle genau zwei Fahrzeuge aus, um den Vergleich zu starten.";
         fehlerDiv.style.display = "block";
-        return false;
+        return;
     }
 
     const url = `/vergleich?auto1=${selected[0].value}&auto2=${selected[1].value}`;
     window.location.href = url;
-    return false;
 }
 </script>
 
 {% endblock %}
+
