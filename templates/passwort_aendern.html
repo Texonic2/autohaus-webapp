@@ -3,27 +3,58 @@
 {% block title %}Passwort ändern – Autohaus Heilbronn{% endblock %}
 
 {% block content %}
-<div class="passwort-container">
-    <h2>🔑 Passwort ändern</h2>
+<div style="max-width: 480px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
 
-    {% if error %}
-        <div class="error">{{ error }}</div>
-    {% endif %}
+    <h2 style="margin-bottom: 25px; font-size: 1.6em;">🔐 Passwort ändern</h2>
+
     {% if success %}
-        <div class="success">{{ success }}</div>
+        <div style="padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 6px; color: #155724; margin-bottom: 20px;">
+            {{ success }}
+        </div>
+    {% elif error %}
+        <div style="padding: 10px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 6px; color: #721c24; margin-bottom: 20px;">
+            {{ error }}
+        </div>
     {% endif %}
 
     <form method="post">
-        <label for="altes_passwort">Altes Passwort:</label>
-        <input type="password" name="altes_passwort" required><br><br>
+        {% for label, name in [('Altes Passwort:', 'old_password'), ('Neues Passwort:', 'new_password'), ('Neues Passwort bestätigen:', 'confirm_password')] %}
+            <label for="{{ name }}" style="display: block; margin-bottom: 6px;"><strong>{{ label }}</strong></label>
+            <div style="position: relative; margin-bottom: 18px;">
+                <input type="password" id="{{ name }}" name="{{ name }}" class="form-input"
+                       style="width: 100%; padding: 10px 38px 10px 10px; box-sizing: border-box; border-radius: 6px; border: 1px solid #ccc;" required>
+                <img src="{{ url_for('static', filename='augenzu.png') }}"
+                     alt="Passwort anzeigen"
+                     id="icon-{{ name }}"
+                     onclick="togglePassword('{{ name }}')"
+                     style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; width: 22px;">
+            </div>
+        {% endfor %}
 
-        <label for="neues_passwort">Neues Passwort:</label>
-        <input type="password" name="neues_passwort" required><br><br>
-
-        <label for="bestaetigen">Neues Passwort bestätigen:</label>
-        <input type="password" name="bestaetigen" required><br><br>
-
-        <button type="submit" class="btn">Speichern</button>
+        <button type="submit" style="background-color: #800000; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+            💾 Speichern
+        </button>
     </form>
 </div>
+
+<script>
+    const openIcon = "{{ url_for('static', filename='augen.png') }}";
+    const closedIcon = "{{ url_for('static', filename='augenzu.png') }}";
+
+    function togglePassword(fieldId) {
+        const input = document.getElementById(fieldId);
+        const icon = document.getElementById("icon-" + fieldId);
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.src = openIcon;
+        } else {
+            input.type = "password";
+            icon.src = closedIcon;
+        }
+    }
+</script>
 {% endblock %}
+
+
+

@@ -273,7 +273,6 @@ def passwort_aendern():
             success = "Passwort erfolgreich geändert."
 
     return render_template("passwort_aendern.html", error=error, success=success)
-
 @app.route('/')
 def index():
     return render_template('index.html')
