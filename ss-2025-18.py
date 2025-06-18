@@ -255,14 +255,16 @@ def passwort_aendern():
     success = None
 
     if request.method == "POST":
-        altes = request.form.get("altes_passwort")
-        neues = request.form.get("neues_passwort")
-        bestaetigen = request.form.get("bestaetigen")
+        altes = request.form.get("old_password")
+        neues = request.form.get("new_password")
+        bestaetigen = request.form.get("confirm_password")
 
         cursor.execute("SELECT passwort FROM users WHERE User_ID = %s", (user_id,))
         user = cursor.fetchone()
 
-        if not user or not check_password_hash(user['passwort'], altes):
+        if not user:
+            error = "Benutzer nicht gefunden."
+        elif not check_password_hash(user['passwort'], altes):
             error = "Das alte Passwort ist falsch."
         elif neues != bestaetigen:
             error = "Die neuen Passwörter stimmen nicht überein."
@@ -273,6 +275,7 @@ def passwort_aendern():
             success = "Passwort erfolgreich geändert."
 
     return render_template("passwort_aendern.html", error=error, success=success)
+
 @app.route('/')
 def index():
     return render_template('index.html')
