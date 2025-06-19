@@ -1,43 +1,52 @@
 {% extends "base.html" %}
 
-{% block title %}Meine Favoriten – Autohaus Heilbronn{% endblock %}
+{% block title %}Mein Konto – Autohaus Heilbronn{% endblock %}
 
 {% block content %}
-<div class="finanzierungsanfrage-container">
-    <h2>Meine Favoriten</h2>
 
-    {% for fahrzeug in fahrzeuge %}
-    <div class="finanzierungsanfrage-card">
-        <!-- Bild links -->
-        <div class="auto-bild">
-            <img src="{{ url_for('static', filename=fahrzeug.url) }}" alt="{{ fahrzeug.marke }} {{ fahrzeug.modell }}">
-        </div>
+<div class="konto-seite-container">
 
-        <!-- Fahrzeugdetails rechts -->
-        <div class="anfrage-details">
-            <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
-            <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
-            <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
-            <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
-            <p><strong>Getriebe:</strong> {{ fahrzeug.getriebeart }}</p>
-            <p><strong>Umweltplakette:</strong> {{ fahrzeug.umweltplakette }}</p>
+    <!-- 🧑 Profildaten -->
+    <div class="kontodaten-box">
+        <h2><span class="icon-konto">👤</span> Meine Kontodaten</h2>
+        <p><strong>Vorname:</strong> {{ benutzer.vorname }}</p>
+        <p><strong>Nachname:</strong> {{ benutzer.nachname }}</p>
+        <p><strong>E-Mail:</strong> {{ benutzer.email }}</p>
+        <p><strong>Rolle:</strong> {{ benutzer.role }}</p>
 
-            <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}" class="admin-aktionen-form">
-                <input type="hidden" name="aktion" value="remove">
-                <button type="submit" class="btn-unfav">★ Aus Favoriten entfernen</button>
-            </form>
+        <a href="{{ url_for('passwort_aendern') }}" class="btn-passwort-aendern">🔑 Passwort ändern</a>
+    </div>
 
-            <div class="admin-aktionen-form" style="margin-top: 10px;">
-                <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get" style="display: inline;">
-                    <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
+    <!-- 🚗 Finanzierungsanfragen -->
+    <div class="finanzierungsanfrage-container">
+        <h2>Meine Finanzierungsanfragen</h2>
+
+        {% for anfrage in finanzierungsanfragen %}
+        <div class="finanzierungsanfrage-card">
+            <div class="auto-bild">
+                <img src="{{ url_for('static', filename=anfrage.url) }}" alt="{{ anfrage.marke }} {{ anfrage.modell }}">
+            </div>
+
+            <div class="anfrage-details">
+                <h3>{{ anfrage.marke }} {{ anfrage.modell }}</h3>
+                <p><strong>Termin:</strong> {{ anfrage.Terminwunsch or 'Kein Termin angegeben' }}</p>
+                <p><strong>Finanzierungsdauer:</strong> {{ anfrage.Monate }} Monate</p>
+                <p><strong>Anzahlung:</strong> {{ anfrage.Anzahlung }} €</p>
+                <p><strong>Monatliche Rate:</strong> {{ anfrage.Monatliche_Rate }} €</p>
+                <p><strong>Schlussrate:</strong> {{ anfrage.schlussrate }} €</p>
+                <p><strong>Status:</strong> <span class="status {{ anfrage.Status|lower }}">{{ anfrage.Status }}</span></p>
+
+                <form action="{{ url_for('anfrage_loeschen', anfrage_id=anfrage.ID) }}" method="post" onsubmit="return confirm('Willst du diese Anfrage wirklich löschen?');">
+                    <button type="submit" class="btn-anfrage-loeschen">🗑️ Anfrage löschen</button>
                 </form>
             </div>
         </div>
+        {% else %}
+        <p>Du hast bisher keine Finanzierungsanfragen gestellt.</p>
+        {% endfor %}
     </div>
-    {% else %}
-        <p>Du hast noch keine Fahrzeuge als Favoriten gespeichert.</p>
-    {% endfor %}
-</div>
-{% endblock %}
 
+</div>
+
+{% endblock %}
 

@@ -1363,3 +1363,31 @@ button {
   font-size: 1em;
 }
 
+.konto-und-anfragen-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.konto-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+}
+
+.konto-ueberschrift {
+    display: flex;
+    align-items: center;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+.btn-passwort-aendern {
+    display: inline-block;
+    margin-top: 10px;
+    color: #b33a3a;
+    font-weight: bold;
+    text-decoration: none;
+}
