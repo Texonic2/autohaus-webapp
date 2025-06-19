@@ -528,23 +528,9 @@ def anfrage_loeschen_admin(anfrage_id):
 def loesche_abgelehnte_anfragen():
     cursor = g.cursor
 
-    # 1. IDs aller abgelehnten Anfragen sammeln
-    cursor.execute("SELECT ID FROM Finanzierungsanfrage WHERE LOWER(Status) = 'abgelehnt'")
-    ids = [row['ID'] for row in cursor.fetchall()]
-    anzahl = len(ids)
-
-    if ids:
-        # 2. Kaufverträge zu diesen Anfragen löschen (nur wenn vorhanden)
-        cursor.execute(
-            "DELETE FROM Kaufvertrag WHERE Finanzierungs_ID IN (%s)" % ",".join(["%s"] * len(ids)),
-            tuple(ids)
-        )
-
-        # 3. Die Anfragen selbst löschen
-        cursor.execute(
-            "DELETE FROM Finanzierungsanfrage WHERE ID IN (%s)" % ",".join(["%s"] * len(ids)),
-            tuple(ids)
-        )
+    # Alle abgelehnten Anfragen direkt löschen
+    cursor.execute("DELETE FROM Finanzierungsanfrage WHERE LOWER(Status) = 'abgelehnt'")
+    anzahl = cursor.rowcount  # gibt Anzahl der gelöschten Zeilen zurück
 
     g.con.commit()
     return redirect(url_for('admin', geloescht=anzahl))
@@ -815,8 +801,6 @@ def kaufvertraege():
     return render_template("kaufvertraege.html", vertraege=vertraege)
 
 
-
-
 @app.route('/delete_review', methods=['POST'])
 def delete_review():
     if 'user_role' not in session or session['user_role'] != 'admin':
@@ -1059,6 +1043,7 @@ def unternehmenszahlen():
     cursor.execute("SELECT COUNT(*) AS angenommen FROM Finanzierungsanfrage WHERE LOWER(Status) = 'angenommen'")
     angenommen = cursor.fetchone()['angenommen'] or 0
     # Gesamt Anfragen immer aus Anfragen-Tabelle
+
     cursor.execute("SELECT COUNT(*) AS gesamt FROM Finanzierungsanfrage")
     gesamt_anfragen = cursor.fetchone()['gesamt'] or 1
     annahmequote = round((angenommen / gesamt_anfragen) * 100, 2)
