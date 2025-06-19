@@ -11,15 +11,19 @@
 
         <!-- Fahrzeugauswahl -->
         <label class="anfrage-label">Fahrzeug auswählen:</label>
-        <select name="auto_id" class="anfrage-input" required>
+        <select name="auto_id" class="anfrage-input" id="auto-select" required>
             <option value="">-- Bitte wählen --</option>
             {% for auto in autos %}
                 <option value="{{ auto.autoid }}"
-                    {% if auto_id == auto.autoid or request.form.auto_id == auto.autoid|string %}selected{% endif %}>
+                        data-preis="{{ auto.preis }}"
+                        {% if auto_id == auto.autoid or request.form.auto_id == auto.autoid|string %}selected{% endif %}>
                     {{ auto.marke }} {{ auto.modell }}
                 </option>
             {% endfor %}
         </select>
+
+        <!-- Dynamische Preis-Anzeige -->
+        <div id="fahrzeug-preis" class="anfrage-info" style="margin-top: 6px; font-weight: bold;"></div>
 
         <!-- Kaufart-Auswahl -->
         <label class="anfrage-label">Kaufart:</label>
@@ -29,7 +33,7 @@
             <option value="Finanzierungsanfrage" {% if kaufart == 'Finanzierungsanfrage' %}selected{% endif %}>Finanzierung</option>
         </select>
 
-        <!-- Finanzierungsfelder (werden per JS ein-/ausgeblendet) -->
+        <!-- Finanzierungsfelder -->
         <div id="finanzierung-felder" style="display: none; margin-top: 10px;">
             <label class="anfrage-label">Finanzierungsdauer (Monate):</label>
             <input type="number" name="laufzeit" min="1" class="anfrage-input"
@@ -74,22 +78,32 @@
     </form>
 </div>
 
-<!-- JavaScript für dynamisches Ein-/Ausblenden der Finanzierungsfelder -->
+
 <script>
   function toggleFinanzierung() {
     const auswahl = document.getElementById("kaufart-select").value;
     const felder = document.getElementById("finanzierung-felder");
+    felder.style.display = auswahl === "Finanzierungsanfrage" ? "block" : "none";
+  }
 
-    if (auswahl === "Finanzierungsanfrage") {
-      felder.style.display = "block";
+  function zeigePreis() {
+    const select = document.getElementById("auto-select");
+    const preisDiv = document.getElementById("fahrzeug-preis");
+    const selectedOption = select.options[select.selectedIndex];
+
+    const preis = selectedOption.getAttribute("data-preis");
+    if (preis) {
+      preisDiv.textContent = `💰 Fahrzeugpreis: ${parseFloat(preis).toLocaleString('de-DE')} €`;
     } else {
-      felder.style.display = "none";
+      preisDiv.textContent = "";
     }
   }
 
   document.addEventListener("DOMContentLoaded", function () {
     toggleFinanzierung();
+    zeigePreis();
     document.getElementById("kaufart-select").addEventListener("change", toggleFinanzierung);
+    document.getElementById("auto-select").addEventListener("change", zeigePreis);
   });
 </script>
 {% endblock %}
