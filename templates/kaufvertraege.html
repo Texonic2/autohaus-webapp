@@ -16,7 +16,6 @@
         <th>Schlussrate</th>
         <th>Monatliche Rate</th>
         <th>Datum</th>
-        <th>PDF</th>
         <th>Vorname</th>
         <th>Nachname</th>
         <th>Email</th>
@@ -42,13 +41,7 @@
           {% endif %}
         </td>
         <td>{{ vertrag.Datum_Erstellung or '-' }}</td>
-        <td>
-          {% if vertrag.PDF_Pfad %}
-            <a href="/static/{{ vertrag.PDF_Pfad }}" target="_blank" class="pdf-link">📄 öffnen</a>
-          {% else %}
-            -
-          {% endif %}
-        </td>
+
         <td>{{ vertrag.vorname or '-' }}</td>
         <td>{{ vertrag.nachname or '-' }}</td>
         <td>{{ vertrag.email or '-' }}</td>

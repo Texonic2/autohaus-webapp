@@ -752,13 +752,13 @@ def kaufvertrag_erstellen(anfrage_id):
                 vorhanden = cursor.fetchone()
 
                 if not vorhanden:
-                    pdf_pfad = f'kaufvertrag_{anfrage_id}.pdf'
+
 
                     cursor.execute("""
                         INSERT INTO Kaufvertrag 
                         (kunde_id, auto_id, Info, Monate, Anzahlung, Schlussrate, Monatliche_Rate, Datum_Erstellung,
-                         vorname, nachname, email, kunde_adresse, kunde_telefon, PDF_Pfad)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, %s, %s)
+                         vorname, nachname, email, kunde_adresse, kunde_telefon)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, %s)
                     """, (
                         daten['kunde_id'],
                         daten['auto_id'],
@@ -772,7 +772,7 @@ def kaufvertrag_erstellen(anfrage_id):
                         daten['email'],
                         kunde_adresse,
                         kunde_telefon,
-                        pdf_pfad
+
                     ))
                     g.con.commit()
 
@@ -805,7 +805,6 @@ def kaufvertraege():
             k.Schlussrate,
             k.Monatliche_Rate,
             k.Datum_Erstellung,
-            k.PDF_Pfad,
             u.vorname, u.nachname, u.email,
             a.marke, a.modell, a.preis
         FROM Kaufvertrag k
@@ -952,7 +951,6 @@ def kaufvertraege_anzeigen():
             k.Kaufvertrag_ID,
             k.Finanzierungs_ID,
             k.Datum_Erstellung,
-            k.PDF_Pfad,
             k.kunde_vorname,
             k.kunde_nachname,
             k.kunde_email,
@@ -961,6 +959,7 @@ def kaufvertraege_anzeigen():
         FROM Kaufvertrag k
         ORDER BY k.Datum_Erstellung DESC
     """)
+
     kaufvertraege = cursor.fetchall()
     return render_template('kaufvertraege.html', kaufvertraege=kaufvertraege)
 
