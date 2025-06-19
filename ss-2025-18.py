@@ -508,6 +508,7 @@ def anfrage_loeschen(anfrage_id):
     g.con.commit()
 
     return redirect(url_for('account'))
+
 @app.route('/admin/anfrage_loeschen/<int:anfrage_id>', methods=['POST'])
 def anfrage_loeschen_admin(anfrage_id):
     if 'user_role' not in session or session['user_role'] != 'admin':
@@ -515,8 +516,7 @@ def anfrage_loeschen_admin(anfrage_id):
 
     cursor = g.cursor
 
-    # 1. Kaufvertrag löschen (nur wenn vorhanden – kein Fehler, wenn keiner da ist)
-    cursor.execute("DELETE FROM Kaufvertrag WHERE Finanzierungs_ID = %s", (anfrage_id,))
+
 
     # 2. Finanzierungsanfrage löschen
     cursor.execute("DELETE FROM Finanzierungsanfrage WHERE ID = %s", (anfrage_id,))
@@ -859,6 +859,10 @@ def reply_to_review():
 def anfrage_erstellen():
     cursor = g.cursor
 
+    # Autos für Dropdown
+    cursor.execute("SELECT autoid, marke, modell, preis FROM auto")
+    autos = cursor.fetchall()
+
     # Initialwerte
     preis = None
     rate = None
@@ -868,6 +872,7 @@ def anfrage_erstellen():
     fehler = None
     auto_id = None
     terminwunsch = None
+    kaufart = request.form.get("kaufart")  # ← Barkauf oder Finanzierung
 
     if request.method == "POST":
         # Auto-ID prüfen
@@ -879,17 +884,16 @@ def anfrage_erstellen():
             if result:
                 preis = float(result['preis'])
             else:
-                fehler = " Auto mit dieser ID wurde nicht gefunden."
+                fehler = "Auto mit dieser ID wurde nicht gefunden."
         else:
-            fehler = " Bitte gib eine gültige Auto-ID ein."
+            fehler = "Bitte gib eine gültige Auto-ID ein."
 
-        # Finanzierungseingaben holen
+        # Eingaben holen
         laufzeit_input = request.form.get("laufzeit")
         anzahlung_input = request.form.get("anzahlung")
         schlussrate_input = request.form.get("schlussrate")
         terminwunsch_input = request.form.get("terminwunsch")
 
-        # Terminwunsch in DATETIME-Format für MySQL umwandeln
         if terminwunsch_input:
             try:
                 terminwunsch = terminwunsch_input.replace("T", " ") + ":00"
@@ -897,23 +901,32 @@ def anfrage_erstellen():
                 fehler = "❌ Ungültiges Datumsformat beim Terminwunsch."
 
         try:
-            if preis and laufzeit_input and anzahlung_input and schlussrate_input:
-                laufzeit = int(laufzeit_input)
-                anzahlung = float(anzahlung_input)
-                schlussrate = float(schlussrate_input)
+            if kaufart == "Finanzierungsanfrage":
+                if preis and laufzeit_input and anzahlung_input and schlussrate_input:
+                    laufzeit = int(laufzeit_input)
+                    anzahlung = float(anzahlung_input)
+                    schlussrate = float(schlussrate_input)
 
-                if laufzeit > 0:
-                    finanzierungsbetrag = preis - anzahlung - schlussrate
-                    zinsen = finanzierungsbetrag * 0.02
-                    rate = round((finanzierungsbetrag + zinsen) / laufzeit, 2)
-                else:
-                    fehler = "❌ Laufzeit muss größer als 0 sein."
+                    if laufzeit > 0:
+                        finanzierungsbetrag = preis - anzahlung - schlussrate
+                        zinsen = finanzierungsbetrag * 0.02
+                        rate = round((finanzierungsbetrag + zinsen) / laufzeit, 2)
+                    else:
+                        fehler = "❌ Laufzeit muss größer als 0 sein."
+                elif request.method == "POST":
+                    fehler = "❌ Bitte alle Finanzierungsfelder ausfüllen."
+            else:
+                laufzeit = 0
+                anzahlung = 0
+                schlussrate = preis
+                rate = 0.0
+
         except ValueError:
             fehler = "❌ Ungültige Zahlen bei Laufzeit, Anzahlung oder Schlussrate."
 
         # Kunden-E-Mail prüfen & Anfrage speichern
         email = request.form.get("email")
-        if not fehler and preis and rate and email and terminwunsch:
+        if not fehler and preis and email and terminwunsch:
             cursor.execute("SELECT User_ID FROM users WHERE email = %s", (email,))
             kunde = cursor.fetchone()
 
@@ -921,26 +934,36 @@ def anfrage_erstellen():
                 fehler = "❌ Kunde nicht gefunden. Bitte Kundenkonto erstellen."
             else:
                 benutzer_id = kunde['User_ID']
-
                 try:
                     cursor.execute("""
                         INSERT INTO Finanzierungsanfrage 
-                        (Nutzer_ID, Auto_ID, Monate, Anzahlung, Schlussrate, Monatliche_Rate, Terminwunsch, Status, erstellt_am)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, 'offen', NOW())
-                    """, (benutzer_id, auto_id, laufzeit, anzahlung, schlussrate, rate, terminwunsch))
+                        (Nutzer_ID, Auto_ID, Monate, Anzahlung, Schlussrate, Monatliche_Rate, Terminwunsch, Status, erstellt_am, info)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, 'angefragt', NOW(), %s)
+                    """, (
+                        benutzer_id,
+                        auto_id,
+                        laufzeit,
+                        anzahlung,
+                        schlussrate,
+                        rate,
+                        terminwunsch,
+                        kaufart
+                    ))
                     g.con.commit()
                     return redirect(url_for("admin"))
                 except Exception as e:
                     fehler = f"❌ Fehler beim Speichern: {e}"
 
     return render_template("anfrage_erstellen.html",
+        autos=autos,
         preis=preis,
         rate=rate,
         laufzeit=laufzeit,
         anzahlung=anzahlung,
         schlussrate=schlussrate,
         fehler=fehler,
-        auto_id=auto_id
+        auto_id=auto_id,
+        kaufart=kaufart
     )
 
 @app.route('/kaufvertraege')
