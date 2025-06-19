@@ -1,90 +1,52 @@
 {% extends "base.html" %}
 
 {% block title %}Fahrzeugkatalog – Autohaus Heilbronn{% endblock %}
-{% block head %}
-    <link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
-{% endblock %}
-
+ <link rel="icon" href="{{ url_for('static', filename='nova.png') }}" type="image/x-icon">
 {% block content %}
 
 <form class="search-bar-horizontal" action="#" method="get">
   <input type="text" value="Mercedes" readonly title="Marke">
-  <input type="text" name="modell" placeholder="Modell (z. B. C-Klasse)" value="{{ request.args.get('modell', '') }}">
+   <input type="text" name="modell" placeholder="Modell (z. B. C-Klasse)" value="{{ request.args.get('modell', '') }}">
   <input type="number" name="preis" placeholder="Maximalpreis (€)" value="{{ request.args.get('preis', '') }}">
   <input type="number" name="baujahr" placeholder="Baujahr ab" value="{{ request.args.get('baujahr', '') }}">
   <input type="number" name="ps" placeholder="Leistung ab (PS)" value="{{ request.args.get('ps', '') }}">
-  <button type="submit">Suchen</button>
+  <button type="submit"> Suchen</button>
 </form>
 
-<div id="fahrzeugliste">
-    {% for fahrzeug in fahrzeuge %}
-        <div class="image-container1">
-            <img src="{{ url_for('static', filename=fahrzeug.url) }}" class="header-image"
-                 alt="Bild von {{ fahrzeug.marke }} {{ fahrzeug.modell }}">
-        </div>
+{% for fahrzeug in fahrzeuge %}
+    <div class="image-container1">
+        <img src="{{ url_for('static', filename=fahrzeug.url) }}" class="header-image"
+             alt="Bild von {{ fahrzeug.marke }} {{ fahrzeug.modell }}">
+    </div>
 
-        <div class="text-container" style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; padding-bottom: 60px;">
-            <div class="car-details">
-                <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
-                <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
-                <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
-                <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
-                <p><strong>Hubraum:</strong> {{ fahrzeug.hubraum }} cm³</p>
-                <p><strong>Kraftstoffverbrauch:</strong> {{ fahrzeug.kraftstoffverbrauch }} l/100km</p>
-                <p><strong>Getriebeart:</strong> {{ fahrzeug.getriebeart }}</p>
-                <p><strong>Antriebsart:</strong> {{ fahrzeug.antriebsart }}</p>
-                <p><strong>Umweltplakette:</strong> {{ fahrzeug.umweltplakette }}</p>
-            </div>
+    <div class="text-container" style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; padding-bottom: 60px;">
+    <div class="car-details">
+        <h3>{{ fahrzeug.marke }} {{ fahrzeug.modell }}</h3>
+        <p><strong>Baujahr:</strong> {{ fahrzeug.baujahr }}</p>
+        <p><strong>Leistung:</strong> {{ fahrzeug.leistung }} PS</p>
+        <p><strong>Preis:</strong> {{ fahrzeug.preis }} €</p>
+        <p><strong>Hubraum:</strong> {{ fahrzeug.hubraum }} cm³</p>
+        <p><strong>Kraftstoffverbrauch:</strong> {{ fahrzeug.kraftstoffverbrauch }} l/100km</p>
+        <p><strong>Getriebeart:</strong> {{ fahrzeug.getriebeart }}</p>
+        <p><strong>Antriebsart:</strong> {{ fahrzeug.antriebsart }}</p>
+        <p><strong>Umweltplakette:</strong> {{ fahrzeug.umweltplakette }}</p>
+    </div>
 
-            <div class="fahrzeug-actions" style="display: flex; flex-direction: row; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <!-- Finanzieren & Kaufen -->
-                <a href="{{ url_for('finanzierung', autoid=fahrzeug.autoid) }}" class="btn-finanzieren" style="white-space: nowrap;">Finanzieren & Kaufen</a>
+    <div class="fahrzeug-actions">
+        <form action="/finanzierung/{{ fahrzeug.autoid }}" method="get" style="display: inline;">
+            <button type="submit" class="btn-finanzieren">Finanzieren & Kaufen</button>
+        </form>
 
-                <!-- Favorit hinzufügen/entfernen -->
-                <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}">
-                    {% if fahrzeug.autoid in user_fav_ids %}
-                        <button type="submit" name="aktion" value="remove" class="btn-unfav">★ Entfernen</button>
-                    {% else %}
-                        <button type="submit" name="aktion" value="add" class="btn-fav">☆ Zu Favoriten</button>
-                    {% endif %}
-                </form>
-
-                <!-- Vergleichs-Checkbox -->
-                <label style="display: flex; align-items: center;">
-                    <input type="checkbox" name="auto" value="{{ fahrzeug.autoid }}" class="vergleich-checkbox" style="margin-right: 5px;">
-                    Zum Vergleich auswählen
-                </label>
-            </div>
-        </div>
-        <hr style="margin-top: 40px;">
-    {% endfor %}
+        <form method="post" action="{{ url_for('toggle_favorite', autoid=fahrzeug.autoid) }}" style="display: inline;">
+            {% if fahrzeug.autoid in user_fav_ids %}
+                <button type="submit" name="aktion" value="remove" class="btn-unfav">★ Entfernen</button>
+            {% else %}
+                <button type="submit" name="aktion" value="add" class="btn-fav">☆ Zu Favoriten</button>
+            {% endif %}
+        </form>
+    </div>
 </div>
-
-<!-- Fehleranzeige -->
-<div id="vergleich-fehler" style="display: none; color: white; background-color: #dc3545; padding: 10px; margin-top: 10px; border-radius: 5px;"></div>
-
-<!-- Vergleichsbutton außerhalb des anderen Formulars -->
-<div style="text-align: center; margin-top: 20px;">
-    <button onclick="validateSelection()" class="btn-vergleichen">Vergleichen</button>
-</div>
-
-<script>
-function validateSelection() {
-    const selected = document.querySelectorAll('.vergleich-checkbox:checked');
-    const fehlerDiv = document.getElementById("vergleich-fehler");
-    fehlerDiv.style.display = "none";
-    fehlerDiv.innerText = "";
-
-    if (selected.length !== 2) {
-        fehlerDiv.innerText = "Bitte wähle genau zwei Fahrzeuge aus, um den Vergleich zu starten.";
-        fehlerDiv.style.display = "block";
-        return;
-    }
-
-    const url = `/vergleich?auto1=${selected[0].value}&auto2=${selected[1].value}`;
-    window.location.href = url;
-}
-</script>
+    <hr style="margin-top: 40px;">
+{% endfor %}
 
 {% endblock %}
-

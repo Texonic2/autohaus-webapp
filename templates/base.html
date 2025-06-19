@@ -16,7 +16,7 @@
     <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='dropdown_konto.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='darkmode.css') }}">
+
 
     {% block head %}{% endblock %}
 </head>
@@ -69,25 +69,7 @@
         | <a href="{{ url_for('datenschutz') }}">Datenschutz</a>
     </div>
 
-    <!-- Dark Mode Toggle Button -->
-    <button id="theme-toggle" class="theme-toggle">🌙 Dark Mode</button>
 
-    <script>
-        const toggleBtn = document.getElementById('theme-toggle');
-        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDark)) {
-            document.body.classList.add('dark-mode');
-            toggleBtn.textContent = '☀️ Light Mode';
-        }
-
-        toggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            toggleBtn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
-        });
-    </script>
 
 </body>
 </html>

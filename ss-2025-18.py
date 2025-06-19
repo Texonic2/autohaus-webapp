@@ -1,7 +1,7 @@
 from flask import Flask, render_template, g, request, redirect, url_for, session, flash
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
-import random
+
 
 
 # Import der Verbindungsinformationen zur Datenbank
@@ -1056,93 +1056,6 @@ def unternehmenszahlen():
         finanzierungs_anteil=finanzierungs_anteil,
         gesamt_anfragen=gesamt_anfragen
     )
-
-
-from flask import render_template, request
-import random
-import mysql.connector
-
-@app.route('/vergleich', methods=['GET'])
-def vergleich():
-    auto1_id = request.args.get('auto1')
-    auto2_id = request.args.get('auto2')
-
-    if not auto1_id or not auto2_id:
-        return "Bitte zwei Autos auswählen.", 400
-
-    conn = mysql.connector.connect(
-        host=DB_HOST,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        database=DB_DATABASE
-    )
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM auto WHERE autoid = %s", (auto1_id,))
-    auto1 = cursor.fetchone()
-
-    cursor.execute("SELECT * FROM auto WHERE autoid = %s", (auto2_id,))
-    auto2 = cursor.fetchone()
-
-    cursor.close()
-    conn.close()
-
-    if not auto1 or not auto2:
-        return "Eines oder beide Autos wurden nicht gefunden.", 404
-
-    # Empfehlungspunkte sammeln
-    empfehlungspunkte = []
-
-    if auto1[5] < auto2[5]:
-        empfehlungspunkte.append(f"✅ {auto1[1]} {auto1[2]} ist günstiger ({auto1[5]}€ vs {auto2[5]}€).")
-    else:
-        empfehlungspunkte.append(f"✅ {auto2[1]} {auto2[2]} ist günstiger ({auto2[5]}€ vs {auto1[5]}€).")
-
-    if auto1[4] > auto2[4]:
-        empfehlungspunkte.append(f"💪 {auto1[1]} {auto1[2]} hat mehr Leistung ({auto1[4]} PS vs {auto2[4]} PS).")
-    else:
-        empfehlungspunkte.append(f"💪 {auto2[1]} {auto2[2]} hat mehr Leistung ({auto2[4]} PS vs {auto1[4]} PS).")
-
-    if auto1[3] > auto2[3]:
-        empfehlungspunkte.append(f"🆕 {auto1[1]} {auto1[2]} ist das neuere Modell ({auto1[3]} vs {auto2[3]}).")
-    else:
-        empfehlungspunkte.append(f"🆕 {auto2[1]} {auto2[2]} ist das neuere Modell ({auto2[3]} vs {auto1[3]}).")
-
-    if auto1[8] < auto2[8]:
-        empfehlungspunkte.append(f"⛽ {auto1[1]} {auto1[2]} ist sparsamer im Verbrauch ({auto1[8]} l/100km vs {auto2[8]} l/100km).")
-    else:
-        empfehlungspunkte.append(f"⛽ {auto2[1]} {auto2[2]} ist sparsamer im Verbrauch ({auto2[8]} l/100km vs {auto1[8]} l/100km).")
-
-
-    fazite = [
-        "🏁 Beide Modelle überzeugen – achte auf Details wie Getriebeart oder Verbrauch.",
-        "🎯 Jedes Auto hat seine Vorzüge – die Entscheidung hängt von deinen persönlichen Vorlieben ab.",
-        "⚖️ Ausgeglichenes Duell! Schau dir an, was dir wichtiger ist: Komfort, Leistung oder Effizienz.",
-        "💡 Beide Fahrzeuge sind solide – willst du mehr Power oder lieber sparsamer unterwegs sein?",
-        "📊 Kein klarer Gewinner – am besten eine Probefahrt machen und Gefühl entscheiden lassen!",
-        "🤝 Beide Kandidaten sind stark – technische Feinheiten oder Preis könnten den Ausschlag geben.",
-        "🚘 Geschmackssache! Ein Modell ist vielleicht sportlicher, das andere praktischer – du entscheidest.",
-        "🔍 Jetzt kommt es auf die Feinheiten an: Ausstattung, Umweltplakette oder dein Budget."
-    ]
-
-
-    if auto1[4] > auto2[4] and auto1[5] < auto2[5]:
-        fazit = f"🔥 Wenn dir Leistung UND Preis-Leistung wichtig sind, ist der {auto1[1]} {auto1[2]} die klare Empfehlung."
-    elif auto2[4] > auto1[4] and auto2[5] < auto1[5]:
-        fazit = f"🚀 Der {auto2[1]} {auto2[2]} bietet mehr Power zum besseren Preis – starke Kombination!"
-    elif abs(auto1[5] - auto2[5]) < 1000:
-        fazit = "💸 Preislich fast gleich – schau auf Details wie Ausstattung oder Verbrauch."
-    elif abs(auto1[4] - auto2[4]) > 50:
-        fazit = "🏎️ Deutlicher Leistungsunterschied – willst du sportlich fahren oder effizient unterwegs sein?"
-    elif abs(auto1[8] - auto2[8]) > 2:
-        fazit = "🌱 Deutlicher Verbrauchsunterschied – langfristig kann das einen Unterschied machen."
-    else:
-        fazit = random.choice(fazite)
-
-
-    empfehlung_html = "<ul>" + "".join(f"<li>{punkt}</li>" for punkt in empfehlungspunkte) + "</ul><p><strong>{}</strong></p>".format(fazit)
-
-    return render_template('vergleich.html', auto1=auto1, auto2=auto2, empfehlung_html=empfehlung_html)
 
 
 
