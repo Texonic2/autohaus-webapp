@@ -699,16 +699,21 @@ def favorites():
 
     user_id = session['user_id']
     cursor = g.con.cursor(dictionary=True)
+
+    # ✅ Korrekt: User_ID (nicht ID)
+    cursor.execute("SELECT * FROM users WHERE User_ID = %s", (user_id,))
+    benutzer = cursor.fetchone()
+
     cursor.execute("""
         SELECT a.*
         FROM favorites f
         JOIN auto a ON f.autoid = a.autoid
         WHERE f.User_ID = %s
         ORDER BY a.autoid DESC
-
     """, (user_id,))
     fahrzeuge = cursor.fetchall()
-    return render_template('favorites.html', fahrzeuge=fahrzeuge)
+
+    return render_template('favorites.html', fahrzeuge=fahrzeuge, benutzer=benutzer)
 
 @app.route('/admin/kaufvertrag_erstellen/<int:anfrage_id>', methods=['GET', 'POST'])
 def kaufvertrag_erstellen(anfrage_id):
@@ -788,6 +793,7 @@ def kaufvertrag_erstellen(anfrage_id):
 @app.route('/admin/kaufvertrag_erfolgreich/<int:anfrage_id>')
 def kaufvertrag_erfolgreich(anfrage_id):
     return render_template("kaufvertrag_erfolgreich.html", anfrage_id=anfrage_id)
+
 @app.route('/kaufvertraege')
 def kaufvertraege():
     cursor = g.cursor
@@ -848,7 +854,7 @@ def reply_to_review():
 
     return redirect(url_for('reviews'))
 
-@app.route("/anfrage_erstellen", methods=["GET", "POST"])
+@app.route("/anfrage_erstellen", methods=["GET", "POST"])# Ali Yenil
 def anfrage_erstellen():
     cursor = g.cursor
 
@@ -856,7 +862,7 @@ def anfrage_erstellen():
     cursor.execute("SELECT autoid, marke, modell, preis FROM auto")
     autos = cursor.fetchall()
 
-    # Initialwerte
+    # Initialwerte es gibt die werte sie werden so bestimmt damit man später es ändern kann und und Kunde noch nichts ausgefüllt hat
     preis = None
     rate = None
     laufzeit = None
@@ -865,12 +871,12 @@ def anfrage_erstellen():
     fehler = None
     auto_id = None
     terminwunsch = None
-    kaufart = request.form.get("kaufart")  # ← Barkauf oder Finanzierung
+    kaufart = request.form.get("kaufart")  # ← Barkauf oder Finanzierung Hier ist es nicht none weil hier muss ausgewählt werden was für eine Kaufart
 
-    if request.method == "POST":
+    if request.method == "POST": # Wie machen hier lieber mit ID und nicht mit Name weiter, weil es sicherer ist, um Auto nicht zu verwechseln
         # Auto-ID prüfen
-        auto_id_input = request.form.get("auto_id")
-        if auto_id_input and auto_id_input.isdigit():
+        auto_id_input = request.form.get("auto_id") #entnimmt aus dem Formular Auto ID wenn der Kunde ein Auto auswählt, entnimmt es im Hintergrund die Auto ID davon und schickt es hier rein
+        if auto_id_input and auto_id_input.isdigit():# hat der Kunde etwas eingetragen und existiert diese ID? mit isdigit wird nur zahl überrüft
             auto_id = int(auto_id_input)
             cursor.execute("SELECT preis FROM auto WHERE autoid = %s", (auto_id,))
             result = cursor.fetchone()
@@ -990,11 +996,11 @@ def kaufvertrag_loeschen(vertrag_id):
 def unternehmenszahlen():
     cursor = g.cursor
 
-    # ✅ Gesamtanzahl Kaufverträge
+    #  Gesamtanzahl Kaufverträge
     cursor.execute("SELECT COUNT(*) as anzahl FROM Kaufvertrag")
     anzahl_vertraege = cursor.fetchone()['anzahl'] or 0
 
-    # ✅ Barkauf-Umsatz basierend auf Kaufverträgen
+    # Barkauf-Umsatz basierend auf Kaufverträgen
     cursor.execute("""
         SELECT SUM(a.preis) AS barkauf_umsatz
         FROM Kaufvertrag k
@@ -1003,7 +1009,7 @@ def unternehmenszahlen():
     """)
     barkauf_umsatz = cursor.fetchone()['barkauf_umsatz'] or 0
 
-    # ✅ Finanzierung-Umsatz basierend auf Kaufverträgen
+    # Finanzierung-Umsatz basierend auf Kaufverträgen
     cursor.execute("""
         SELECT SUM(a.preis) AS finanzierungs_umsatz
         FROM Kaufvertrag k
@@ -1012,10 +1018,10 @@ def unternehmenszahlen():
     """)
     finanzierungs_umsatz = cursor.fetchone()['finanzierungs_umsatz'] or 0
 
-    # ✅ Gesamtumsatz
+    #  Gesamtumsatz
     gesamtumsatz = barkauf_umsatz + finanzierungs_umsatz
 
-    # ✅ Kreditbetrag nur aus Kaufverträgen (Preis - Anzahlung - Schlussrate)
+    #  Kreditbetrag nur aus Kaufverträgen (Preis - Anzahlung - Schlussrate)
     cursor.execute("""
         SELECT SUM(a.preis - k.Anzahlung - k.Schlussrate) AS kreditbetrag
         FROM Kaufvertrag k
@@ -1025,7 +1031,7 @@ def unternehmenszahlen():
     kredit_summe = cursor.fetchone()['kreditbetrag'] or 0
     kreditanteil_prozent = round((kredit_summe / gesamtumsatz) * 100, 2) if gesamtumsatz else 0
 
-    # ✅ Durchschnittliche Laufzeit nur aus Kaufverträgen
+    #  Durchschnittliche Laufzeit nur aus Kaufverträgen
     cursor.execute("""
         SELECT AVG(k.Monate) AS avg_laufzeit
         FROM Kaufvertrag k
@@ -1033,22 +1039,22 @@ def unternehmenszahlen():
     """)
     durchschnitt_laufzeit = round(cursor.fetchone()['avg_laufzeit'] or 0)
 
-    # ✅ Anzahl registrierte Kunden
+    # Anzahl registrierte Kunden
     cursor.execute("SELECT COUNT(*) AS kunden FROM users WHERE LOWER(role) = 'customer'")
     kundenanzahl = cursor.fetchone()['kunden'] or 0
 
-    # ✅ Barkauf vs. Finanzierung basierend auf Kaufverträgen
+    #  Barkauf vs. Finanzierung basierend auf Kaufverträgen
     cursor.execute("SELECT COUNT(*) AS barkaeufe FROM Kaufvertrag WHERE LOWER(Info) = 'barkauf'")
     barkaeufe = cursor.fetchone()['barkaeufe'] or 0
     finanzierungen = anzahl_vertraege - barkaeufe
     barkauf_anteil = round((barkaeufe / anzahl_vertraege) * 100, 2) if anzahl_vertraege else 0
     finanzierungs_anteil = 100 - barkauf_anteil
 
-    # ✅ Offene Anfragen (bleibt bei Finanzierungsanfrage)
+    #  Offene Anfragen (bleibt bei Finanzierungsanfrage)
     cursor.execute("SELECT COUNT(*) AS offen FROM Finanzierungsanfrage WHERE LOWER(Status) = 'angefragt'")
     offene_anfragen = cursor.fetchone()['offen'] or 0
 
-    # ✅ Annahmequote (immer noch bei Finanzierungsanfrage)
+    #  Annahmequote (immer noch bei Finanzierungsanfrage)
     cursor.execute("SELECT COUNT(*) AS angenommen FROM Finanzierungsanfrage WHERE LOWER(Status) = 'angenommen'")
     angenommen = cursor.fetchone()['angenommen'] or 0
     # Gesamt Anfragen immer aus Anfragen-Tabelle
