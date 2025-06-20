@@ -1,13 +1,20 @@
-<!-- templates/kaufvertrag_erfolgreich.html -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Kaufvertrag erfolgreich</title>
+    <!-- Einbinden der spezifischen CSS-Datei für diese Seite -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Der Kaufvertrag wurde erfolgreich erstellt!</h1>
-    <p>Anfrage-ID: {{ anfrage_id }}</p>
-    <a href="/admin">Zurück zum Adminbereich</a>
+    <!-- Hauptcontainer mit spezieller Klasse für Styling -->
+    <div class="kaufvertrag-erfolg-wrapper">
+        <!-- Überschrift mit eigener Klasse -->
+        <h1 class="kv-title">Der Kaufvertrag wurde erfolgreich erstellt!</h1>
+        <!-- Anzeige der Anfrage-ID mit eigener Klasse -->
+        <p class="kv-info">Anfrage-ID: {{ anfrage_id }}</p>
+        <!-- Button-Link zurück zum Adminbereich mit eigener Klasse -->
+        <a class="kv-backlink" href="{{ url_for('admin') }}">Zurück zum Adminbereich</a>
+    </div>
 </body>
 </html>

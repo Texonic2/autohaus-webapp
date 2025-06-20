@@ -299,12 +299,7 @@ def Login():
             error_message = "Das Passwort ist falsch. Bitte versuche es erneut."
         else:
             session['user_id'] = user['User_ID']
-
-            # Rollenlogik: Admin, wenn @novadrive.hn
-            if email.endswith('@novadrive.hn'):
-                session['user_role'] = 'admin'
-            else:
-                session['user_role'] = 'customer'
+            session['user_role'] = user['role']
 
             return redirect(url_for('index'))
 
@@ -328,7 +323,7 @@ def registration():
         if existing_user:
             error_message = "E-Mail bereits registriert. Bitte benutze eine andere."
         else:
-            rolle = 'admin' if email.endswith('@novadrive.hn') else 'customer'
+            rolle = 'customer'
             hashed_password = generate_password_hash(passwort)
 
             sql = "INSERT INTO users (vorname, nachname, email, passwort, role) VALUES (%s, %s, %s, %s, %s)"
@@ -466,11 +461,14 @@ def benutzer_verwalten():
             cursor.execute("UPDATE users SET role = %s WHERE User_ID = %s", (neue_rolle, user_id))
             g.con.commit()
 
+            # 🔄 Wichtig: Weiterleitung nach Verarbeitung
+            return redirect(url_for('benutzer_verwalten'))
+
     # Benutzerliste anzeigen
     cursor.execute("SELECT * FROM users ORDER BY User_ID ASC")
     benutzerliste = cursor.fetchall()
 
-    return render_template("benutzer_verwalten.html", benutzerliste=benutzerliste)
+    return render_template("admin/benutzer.html", benutzerliste=benutzerliste)
 @app.route("/benutzer_anlegen", methods=["GET", "POST"])
 
 def benutzer_anlegen():
@@ -731,41 +729,33 @@ def kaufvertrag_erstellen(anfrage_id):
             kunde_telefon = request.form.get("telefon")
 
             try:
+
                 cursor.execute("""
-                    SELECT * FROM Kaufvertrag 
-                    WHERE kunde_id = %s AND auto_id = %s
-                """, (daten['kunde_id'], daten['auto_id']))
-                vorhanden = cursor.fetchone()
-
-                if not vorhanden:
-
-
-                    cursor.execute("""
-                        INSERT INTO Kaufvertrag 
-                        (kunde_id, auto_id, Info, Monate, Anzahlung, Schlussrate, Monatliche_Rate, Datum_Erstellung,
-                         vorname, nachname, email, kunde_adresse, kunde_telefon)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, %s)
+                    INSERT INTO Kaufvertrag 
+                    (kunde_id, auto_id, Info, Monate, Anzahlung, Schlussrate, Monatliche_Rate, Datum_Erstellung, 
+                    vorname, nachname, email, kunde_adresse, kunde_telefon)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, NOW(), %s, %s, %s, %s, %s)
                     """, (
-                        daten['kunde_id'],
-                        daten['auto_id'],
-                        daten['Info'],
-                        daten['Monate'],
-                        daten['Anzahlung'],
-                        daten['schlussrate'],
-                        daten['Monatliche_Rate'],
-                        daten['vorname'],
-                        daten['nachname'],
-                        daten['email'],
-                        kunde_adresse,
-                        kunde_telefon,
+                    daten['kunde_id'],
+                    daten['auto_id'],
+                    daten['Info'],
+                    daten['Monate'],
+                    daten['Anzahlung'],
+                    daten['schlussrate'],
+                    daten['Monatliche_Rate'],
+                    daten['vorname'],
+                    daten['nachname'],
+                    daten['email'],
+                    kunde_adresse,
+                    kunde_telefon,
 
-                    ))
-                    g.con.commit()
+                ))
+                g.con.commit()
 
-                    cursor.execute("""
-                        DELETE FROM Finanzierungsanfrage WHERE ID = %s
-                    """, (anfrage_id,))
-                    g.con.commit()
+                cursor.execute("""
+                    DELETE FROM Finanzierungsanfrage WHERE ID = %s
+                """, (anfrage_id,))
+                g.con.commit()
 
                 flash("Kaufvertrag wurde erfolgreich gespeichert & Anfrage gelöscht!", "success")
                 return redirect(url_for('kaufvertrag_erfolgreich', anfrage_id=anfrage_id))

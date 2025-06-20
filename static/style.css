@@ -1391,3 +1391,71 @@ button {
     font-weight: bold;
     text-decoration: none;
 }
+
+
+/* Wrapper für die gesamte Seite, um alle Styles nur hier anzuwenden */
+.kaufvertrag-erfolg-wrapper {
+    /* Schriftart für die gesamte Seite */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Hintergrundfarbe der Seite */
+    background-color: #f9f9f9;
+    /* Textfarbe */
+    color: #333;
+    /* Zentriert Inhalte vertikal und horizontal */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Höhe der Seite auf volle Viewport-Höhe setzen */
+    height: 100vh;
+    /* Kein Außenabstand */
+    margin: 0;
+    /* Innenabstand rundherum */
+    padding: 20px;
+}
+
+/* Überschrift (h1) mit spezieller Klasse für individuelle Gestaltung */
+.kaufvertrag-erfolg-wrapper h1.kv-title {
+    /* Grüner Farbton für die Überschrift */
+    color: #2d8659;
+    /* Abstand nach unten */
+    margin-bottom: 0.5em;
+    /* Fett gedruckt */
+    font-weight: 700;
+    /* Größere Schriftgröße */
+    font-size: 2.5rem;
+}
+
+/* Absatz mit Anfrage-ID */
+.kaufvertrag-erfolg-wrapper p.kv-info {
+    /* Etwas größere Schrift */
+    font-size: 1.2em;
+    /* Abstand nach unten */
+    margin-bottom: 2em;
+}
+
+/* Link zurück zum Adminbereich, als Button gestylt */
+.kaufvertrag-erfolg-wrapper a.kv-backlink {
+    /* Hintergrundfarbe grün */
+    background-color: #2d8659;
+    /* Weißer Text */
+    color: white;
+    /* Innenabstand für Button-Größe */
+    padding: 0.75em 1.5em;
+    /* Kein Unterstrich */
+    text-decoration: none;
+    /* Abgerundete Ecken */
+    border-radius: 5px;
+    /* Fett gedruckt */
+    font-weight: bold;
+    /* Leichter Schatten für Tiefe */
+    box-shadow: 0 4px 8px rgba(45, 134, 89, 0.3);
+    /* Übergang für Farbe beim Hover */
+    transition: background-color 0.3s ease;
+}
+
+/* Hover-Effekt für den Button */
+.kaufvertrag-erfolg-wrapper a.kv-backlink:hover {
+    /* Dunkleres Grün beim Überfahren mit der Maus */
+    background-color: #246942;
+}
