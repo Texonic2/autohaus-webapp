@@ -18,29 +18,31 @@
     {% for user in benutzerliste %}
     <tr>
       <td>{{ user.User_ID }}</td>
-      <td>{{ user.vorname }}</td>
-      <td>{{ user.nachname }}</td>
-      <td>{{ user.email }}</td>
-      <td>
-        <form method="post" style="display: flex; gap: 6px;">
-          <input type="hidden" name="user_id" value="{{ user.User_ID }}">
+      <form method="post" style="display: contents;">
+        <input type="hidden" name="user_id" value="{{ user.User_ID }}">
+
+        <td><input type="text" name="vorname" value="{{ user.vorname }}" required></td>
+        <td><input type="text" name="nachname" value="{{ user.nachname }}" required></td>
+        <td>{{ user.email }}</td>
+
+        <td>
           <select name="rolle">
             <option value="customer" {% if user.role == 'customer' %}selected{% endif %}>Kunde</option>
             <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
           </select>
-          <button type="submit" name="aktion" value="rolle_aendern">Rolle speichern</button>
-        </form>
-      </td>
-      <td>
-        <form method="post">
-          <input type="hidden" name="user_id" value="{{ user.User_ID }}">
+        </td>
+
+        <td>
+          <button type="submit" name="aktion" value="daten_aendern">Speichern</button>
           <button type="submit" name="aktion" value="loeschen" onclick="return confirm('Benutzer wirklich löschen?')">Löschen</button>
-        </form>
-      </td>
+        </td>
+      </form>
     </tr>
     {% endfor %}
-  <a href="{{ url_for('benutzer_anlegen') }}">
-  <button>➕ Benutzer anlegen</button>
   </tbody>
 </table>
+
+<a href="{{ url_for('benutzer_anlegen') }}">
+  <button>➕ Benutzer anlegen</button>
+</a>
 {% endblock %}

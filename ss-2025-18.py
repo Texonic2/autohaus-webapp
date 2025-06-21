@@ -460,7 +460,6 @@ def benutzer_verwalten():
 
     cursor = g.cursor
 
-    # Benutzer löschen
     if request.method == "POST":
         user_id = request.form.get("user_id")
         action = request.form.get("aktion")
@@ -468,21 +467,29 @@ def benutzer_verwalten():
         if action == "loeschen":
             cursor.execute("DELETE FROM users WHERE User_ID = %s", (user_id,))
             g.con.commit()
-        elif action == "rolle_aendern":
+
+        elif action == "daten_aendern":
+            vorname = request.form.get("vorname")
+            nachname = request.form.get("nachname")
             neue_rolle = request.form.get("rolle")
-            cursor.execute("UPDATE users SET role = %s WHERE User_ID = %s", (neue_rolle, user_id))
+
+            cursor.execute("""
+                UPDATE users
+                SET vorname = %s, nachname = %s, role = %s
+                WHERE User_ID = %s
+            """, (vorname, nachname, neue_rolle, user_id))
             g.con.commit()
 
-            # 🔄 Wichtig: Weiterleitung nach Verarbeitung
-            return redirect(url_for('benutzer_verwalten'))
+        return redirect(url_for('benutzer_verwalten'))
 
     # Benutzerliste anzeigen
     cursor.execute("SELECT * FROM users ORDER BY User_ID ASC")
     benutzerliste = cursor.fetchall()
 
     return render_template("admin/benutzer.html", benutzerliste=benutzerliste)
-@app.route("/benutzer_anlegen", methods=["GET", "POST"])
 
+
+@app.route("/benutzer_anlegen", methods=["GET", "POST"])
 def benutzer_anlegen():
     if 'user_role' not in session or session['user_role'] != 'admin':
         return "Zugriff verweigert", 403
