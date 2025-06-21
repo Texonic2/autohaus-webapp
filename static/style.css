@@ -1461,3 +1461,44 @@ button {
     /* Dunkleres Grün beim Überfahren mit der Maus */
     background-color: #246942;
 }
+
+
+/* Tooltip-Wrapper: Hält das Icon, auf das man mit der Maus zeigen kann */
+.auto-info-tooltip {
+  position: relative;               /* Ermöglicht das absolute Positionieren des Tooltip-Inhalts relativ zu diesem Element */
+  cursor: pointer;                 /* Cursor wird zur Hand bei Hover */
+  display: inline-block;          /* Ermöglicht korrekte Platzierung nebeneinander */
+  font-weight: bold;              /* Macht das ℹ️-Symbol etwas fetter */
+}
+
+/* Tooltip-Inhalt: Das eigentliche Info-Feld */
+.auto-info-tooltip-text {
+  visibility: hidden;             /* Standardmäßig unsichtbar */
+  opacity: 0;                     /* Unsichtbar mit Übergang */
+  transition: opacity 0.3s;       /* Weicher Einblend-Effekt */
+  width: max-content;             /* Breite richtet sich nach Inhalt */
+  max-width: 300px;               /* Begrenzte Maximalbreite für Lesbarkeit */
+  background-color: #f9f9f9;      /* Heller Hintergrund */
+  color: #000;                    /* Schwarzer Text */
+  text-align: left;              /* Linksbündig */
+  border-radius: 8px;             /* Abgerundete Ecken */
+  padding: 12px;                  /* Innenabstand */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15); /* Schatten für Tiefe */
+  position: absolute;            /* Absolut innerhalb des Wrappers */
+  z-index: 10;                    /* Überlappt andere Inhalte */
+  top: 120%;                      /* Unterhalb des Symbols */
+  left: 0;                        /* Am linken Rand ausgerichtet */
+  font-size: 0.9rem;              /* Etwas kleinere Schrift für Details */
+}
+
+/* Sichtbarkeit des Tooltips bei Hover auf das Symbol */
+.auto-info-tooltip:hover .auto-info-tooltip-text {
+  visibility: visible;            /* Wird sichtbar */
+  opacity: 1;                     /* Vollständig eingeblendet */
+}
+
+/* Optional: Symbol wird bei Hover leicht farbig hervorgehoben */
+.auto-info-tooltip:hover {
+  color: #007BFF;                 /* Bläuliche Farbe beim Hover */
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.3); /* Leichter Schatteneffekt */
+}

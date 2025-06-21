@@ -3,10 +3,9 @@
 {% block title %}Mein Konto – Autohaus Heilbronn{% endblock %}
 
 {% block content %}
-
 <div class="konto-und-anfragen-container">
 
-    <!-- 👤 Kontodaten -->
+    <!-- 👤 Benutzerkonto-Daten -->
     <div class="konto-card">
         <h2 class="konto-ueberschrift"><span class="emoji">👤</span> Meine Kontodaten</h2>
         <p><strong>Vorname:</strong> {{ benutzer.vorname }}</p>
@@ -14,9 +13,7 @@
         <p><strong>E-Mail:</strong> {{ benutzer.email }}</p>
         <p><strong>Rolle:</strong> {{ benutzer.role }}</p>
 
-        <a href="{{ url_for('passwort_aendern') }}" class="btn-passwort-aendern">
-            🔑 Passwort ändern
-        </a>
+        <a href="{{ url_for('passwort_aendern') }}" class="btn-passwort-aendern">🔑 Passwort ändern</a>
     </div>
 
     <!-- 🚗 Finanzierungsanfragen -->
@@ -24,9 +21,11 @@
         <h2>🚗 Meine Finanzierungsanfragen</h2>
         {% for anfrage in finanzierungsanfragen %}
         <div class="finanzierungsanfrage-card">
+            <!-- Fahrzeugbild -->
             <div class="auto-bild">
                 <img src="{{ url_for('static', filename=anfrage.url) }}" alt="{{ anfrage.marke }} {{ anfrage.modell }}">
             </div>
+            <!-- Details zur Anfrage -->
             <div class="anfrage-details">
                 <h3>{{ anfrage.marke }} {{ anfrage.modell }}</h3>
                 <p><strong>Termin:</strong> {{ anfrage.Terminwunsch or 'Kein Termin angegeben' }}</p>
@@ -36,7 +35,9 @@
                 <p><strong>Schlussrate:</strong> {{ "{:,.0f}".format(anfrage.schlussrate).replace(",", ".") }} €</p>
                 <p><strong>Status:</strong> <span class="status {{ anfrage.Status|lower }}">{{ anfrage.Status }}</span></p>
 
-                <form action="{{ url_for('anfrage_loeschen', anfrage_id=anfrage.ID) }}" method="post" onsubmit="return confirm('Willst du diese Anfrage wirklich löschen?');">
+                <!-- Anfrage löschen -->
+                <form action="{{ url_for('anfrage_loeschen', anfrage_id=anfrage.ID) }}" method="post"
+                      onsubmit="return confirm('Willst du diese Anfrage wirklich löschen?');">
                     <button type="submit" class="btn-anfrage-loeschen">🗑️ Anfrage löschen</button>
                 </form>
             </div>
@@ -45,16 +46,38 @@
         <p>Du hast bisher keine Finanzierungsanfragen gestellt.</p>
         {% endfor %}
     </div>
+
     <!-- 📄 Kaufverträge -->
     <div class="finanzierungsanfrage-container">
         <h2>📄 Meine Kaufverträge</h2>
         {% for vertrag in kaufvertraege %}
         <div class="finanzierungsanfrage-card">
+            <!-- Fahrzeugbild -->
             <div class="auto-bild">
                 <img src="{{ url_for('static', filename=vertrag.url) }}" alt="{{ vertrag.marke }} {{ vertrag.modell }}">
             </div>
             <div class="anfrage-details">
-                <h3>{{ vertrag.marke }} {{ vertrag.modell }}</h3>
+                <h3>
+                    {{ vertrag.marke }} {{ vertrag.modell }}
+                    <!-- ℹ️ Tooltip -->
+                    <span class="auto-info-tooltip">
+                        ℹ️
+                        <span class="auto-info-tooltip-text">
+                            <table>
+                                <tbody>
+                                    <tr><td><strong>Baujahr:</strong></td><td>{{ vertrag.baujahr }}</td></tr>
+                                    <tr><td><strong>Leistung:</strong></td><td>{{ vertrag.leistung }} PS</td></tr>
+                                    <tr><td><strong>Preis:</strong></td><td>{{ "{:,.0f}".format(vertrag.preis).replace(",", ".") }} €</td></tr>
+                                    <tr><td><strong>Hubraum:</strong></td><td>{{ vertrag.hubraum or '-' }}</td></tr>
+                                    <tr><td><strong>Verbrauch:</strong></td><td>{{ vertrag.kraftstoffverbrauch or '-' }} l/100km</td></tr>
+                                    <tr><td><strong>Getriebe:</strong></td><td>{{ vertrag.getriebeart or '-' }}</td></tr>
+                                    <tr><td><strong>Antrieb:</strong></td><td>{{ vertrag.antriebsart or '-' }}</td></tr>
+                                    <tr><td><strong>Plakette:</strong></td><td>{{ vertrag.umweltplakette or '-' }}</td></tr>
+                                </tbody>
+                            </table>
+                        </span>
+                    </span>
+                </h3>
                 <p><strong>Erstellt am:</strong> {{ vertrag.Datum_Erstellung.strftime("%d.%m.%Y") }}</p>
                 <p><strong>Adresse:</strong> {{ vertrag.kunde_adresse }}</p>
                 <p><strong>Telefon:</strong> {{ vertrag.kunde_telefon }}</p>
@@ -62,9 +85,6 @@
                 <p><strong>Anzahlung:</strong> {{ vertrag.Anzahlung }} €</p>
                 <p><strong>Monatliche Rate:</strong> {{ vertrag.Monatliche_Rate }} €</p>
                 <p><strong>Schlussrate:</strong> {{ vertrag.Schlussrate }} €</p>
-                {% if vertrag.Info %}
-                <p><strong>Info:</strong> {{ vertrag.Info }}</p>
-                {% endif %}
             </div>
         </div>
         {% else %}
@@ -73,5 +93,4 @@
     </div>
 
 </div>
-
 {% endblock %}

@@ -220,6 +220,11 @@ def finanzierung(autoid):
         laufzeit=laufzeit,
         schlussrate=schlussrate
     )
+
+from flask import Flask, render_template, session, redirect, url_for, g
+
+from flask import render_template, session, redirect, url_for, request, g
+
 @app.route('/account')
 def account():
     if 'user_id' not in session:
@@ -228,23 +233,18 @@ def account():
     user_id = session['user_id']
     cursor = g.cursor
 
-    # ➕ Benutzerinfos holen
-    cursor.execute("SELECT vorname, nachname, email, role FROM users WHERE User_ID = %s", (user_id,))
+    # 🔐 Benutzerinfos laden
+    cursor.execute("""
+        SELECT vorname, nachname, email, role 
+        FROM users 
+        WHERE User_ID = %s
+    """, (user_id,))
     benutzer = cursor.fetchone()
 
-    # Finanzierungsanfragen holen
+    # 📄 Kaufverträge inkl. Auto-Details
     cursor.execute("""
-        SELECT f.*, a.marke, a.modell, a.url, a.autoid AS ID
-        FROM Finanzierungsanfrage f
-        JOIN auto a ON f.Auto_ID = a.autoid
-        WHERE f.Nutzer_ID = %s
-        ORDER BY f.erstellt_am DESC
-    """, (user_id,))
-    anfragen = cursor.fetchall()
-
-    # Kaufverträge holen
-    cursor.execute("""
-        SELECT k.*, a.marke, a.modell, a.url, a.autoid AS ID
+        SELECT k.*, a.marke, a.modell, a.url, a.autoid, a.baujahr, a.leistung, a.preis, a.hubraum,
+               a.kraftstoffverbrauch, a.getriebeart, a.antriebsart, a.umweltplakette
         FROM Kaufvertrag k
         JOIN auto a ON k.auto_id = a.autoid
         WHERE k.kunde_id = %s
@@ -252,8 +252,23 @@ def account():
     """, (user_id,))
     kaufvertraege = cursor.fetchall()
 
-    return render_template('account.html', benutzer=benutzer, finanzierungsanfragen=anfragen,
-                           kaufvertraege=kaufvertraege)
+    # 🚗 Finanzierungsanfragen
+    cursor.execute("""
+        SELECT f.*, a.marke, a.modell, a.url 
+        FROM Finanzierungsanfrage f
+        JOIN auto a ON f.auto_id = a.autoid
+        WHERE f.Nutzer_ID = %s
+        ORDER BY f.erstellt_am DESC
+    """, (user_id,))
+    finanzierungsanfragen = cursor.fetchall()
+
+    return render_template(
+        'account.html',
+        benutzer=benutzer,
+        kaufvertraege=kaufvertraege,
+        finanzierungsanfragen=finanzierungsanfragen
+    )
+
 
 
 @app.route("/passwort_aendern", methods=["GET", "POST"])
