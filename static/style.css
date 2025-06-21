@@ -1374,7 +1374,9 @@ button {
     border-radius: 12px;
     padding: 25px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    margin-bottom: 40px;
+    margin: 40px auto;
+    width: 95%;   /* Fast volle Breite */
+    max-width: 1200px; /* Optional: maximale Breite, damit es auf großen Bildschirmen nicht zu breit wird */
 }
 
 .konto-ueberschrift {

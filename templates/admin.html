@@ -39,9 +39,9 @@
         <h3>{{ eintrag.marke }} {{ eintrag.modell }}</h3>
         <p><strong>Termin:</strong> {{ eintrag.Terminwunsch.strftime('%d.%m.%Y, %H:%M Uhr') }}</p>
         <p><strong>Finanzierungsdauer:</strong> {{ eintrag.Monate }} Monate</p>
-        <p><strong>Anzahlung:</strong> {{ eintrag.Anzahlung }} €</p>
+        <p><strong>Anzahlung:</strong> {{ "{:,.0f}".format(eintrag.Anzahlung).replace(",", ".") }} €</p>
         <p><strong>Monatliche Rate:</strong> {{ eintrag.Monatliche_Rate }} €</p>
-        <p><strong>Schlussrate:</strong> {{ eintrag.schlussrate }} €</p>
+        <p><strong>Schlussrate:</strong> {{ "{:,.0f}".format(eintrag.schlussrate).replace(",", ".") }} €</p>
         <p><strong>Status:</strong> <span class="status {{ eintrag.Status|lower }}">{{ eintrag.Status|capitalize }}</span></p>
         <p><strong>Info:</strong> {{ eintrag.info or '–' }}</p>
 

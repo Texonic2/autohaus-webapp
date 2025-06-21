@@ -9,7 +9,7 @@
 
 
 
-<h3 style="margin-top: 40px;">📊 Umsatzverteilung gesamt ({{ gesamtumsatz }} €)</h3>
+<h3 style="margin-top: 40px;">📊 Umsatzverteilung gesamt ({{ "{:,.0f}".format(gesamtumsatz).replace(",", ".") }} €)</h3>
 
 <div class="umsatz-balken-wrapper">
   <div class="umsatz-balken">
@@ -18,21 +18,23 @@
   </div>
 
   <div class="umsatz-legende">
-    <span class="barkauf-label">💶 Barkauf:</span>
-    {{ barkauf_umsatz }} € ({{ (barkauf_umsatz / gesamtumsatz * 100) | round(1) if gesamtumsatz else 0 }}%)
-  </div>
+  <span class="barkauf-label">💶 Barkauf:</span>
+  {{ "{:,.0f}".format(barkauf_umsatz).replace(",", ".") }} €
+  ({{ "{:.1f}".format(barkauf_umsatz / gesamtumsatz * 100).replace(".", ",") if gesamtumsatz else 0 }}%)
+</div>
 
   <div class="umsatz-legende">
-    <span class="finanzierung-label">💳 Finanzierung:</span>
-    {{ finanzierungs_umsatz }} € ({{ (finanzierungs_umsatz / gesamtumsatz * 100) | round(1) if gesamtumsatz else 0 }}%)
-  </div>
+  <span class="finanzierung-label">💳 Finanzierung:</span>
+  {{ "{:,.0f}".format(finanzierungs_umsatz).replace(",", ".") }} €
+  ({{ "{:.1f}".format(finanzierungs_umsatz / gesamtumsatz * 100).replace(".", ",") if gesamtumsatz else 0 }}%)
+</div>
 </div>
 
 
   <div class="kpi-zeile">
-    <label>📈 Gesamtumsatz:</label>
-    <span>{{ gesamtumsatz }} €</span>
-  </div>
+  <label>📈 Gesamtumsatz:</label>
+  <span>{{ "{:,.0f}".format(gesamtumsatz).replace(",", ".") }} €</span>
+</div>
 
 
   <div class="kpi-zeile">

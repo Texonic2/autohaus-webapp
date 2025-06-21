@@ -54,7 +54,7 @@
   <ul>
     <li><strong>Fahrzeug:</strong> {{ fahrzeug.marke }} {{ fahrzeug.modell }}</li>
     <li><strong>Leistung:</strong> {{ fahrzeug.leistung or '–' }} PS</li>
-    <li><strong>Fahrzeugpreis:</strong> {{ fahrzeugpreis }} €</li>
+    <li><strong>Fahrzeugpreis:</strong> {{ "{:,.0f}".format(fahrzeugpreis).replace(",", ".") }} €</li>
     <li><strong>Anzahlung:</strong> {{ anzahlung }} €</li>
     <li><strong>Laufzeit:</strong> {{ laufzeit }} Monate</li>
     {% if schlussrate %}
