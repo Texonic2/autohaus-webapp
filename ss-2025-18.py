@@ -242,7 +242,19 @@ def account():
     """, (user_id,))
     anfragen = cursor.fetchall()
 
-    return render_template('account.html', benutzer=benutzer, finanzierungsanfragen=anfragen)
+    # Kaufverträge holen
+    cursor.execute("""
+        SELECT k.*, a.marke, a.modell, a.url, a.autoid AS ID
+        FROM Kaufvertrag k
+        JOIN auto a ON k.auto_id = a.autoid
+        WHERE k.kunde_id = %s
+        ORDER BY k.Datum_Erstellung DESC
+    """, (user_id,))
+    kaufvertraege = cursor.fetchall()
+
+    return render_template('account.html', benutzer=benutzer, finanzierungsanfragen=anfragen,
+                           kaufvertraege=kaufvertraege)
+
 
 @app.route("/passwort_aendern", methods=["GET", "POST"])
 def passwort_aendern():
