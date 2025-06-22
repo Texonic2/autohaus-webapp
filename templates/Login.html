@@ -3,30 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
-
-
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
-  <script>
-    function togglePassword() {
-      const password = document.getElementById("password");
-      const icon = document.getElementById("toggle-icon");
-      if (password.type === "password") {
-        password.type = "text";
-        icon.src = "https://img.icons8.com/ios-filled/50/000000/visible.png";
-      } else {
-        password.type = "password";
-        icon.src = "https://img.icons8.com/ios-filled/50/000000/invisible.png";
-      }
-    }
-  </script>
 </head>
 <body>
   <div class="login-container">
     <h2>Login</h2>
 
-    <!-- Fehlermeldung wird hier angezeigt, wenn vorhanden -->
     {% if error_message %}
       <div class="error-message">{{ error_message }}</div>
     {% endif %}
@@ -36,10 +19,7 @@
       <input type="email" id="email" name="email" placeholder="deine@email.de" required>
 
       <label for="password">Passwort</label>
-      <div class="password-wrapper">
-        <input type="password" id="password" name="passwort" placeholder="********" required>
-        <img id="toggle-icon" class="toggle-icon" onclick="togglePassword()" src="https://img.icons8.com/ios-filled/50/000000/invisible.png" alt="Passwort anzeigen">
-      </div>
+      <input type="password" id="password" name="passwort" placeholder="********" required>
 
       <button type="submit">Einloggen</button>
     </form>

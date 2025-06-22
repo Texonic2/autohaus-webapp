@@ -11,50 +11,54 @@
 
         <!-- Fahrzeugauswahl -->
         <label class="anfrage-label">Fahrzeug auswählen:</label>
-        <select name="auto_id" class="anfrage-input" id="auto-select" required>
+        <select name="auto_id" class="anfrage-input" required onchange="this.form.submit()">
             <option value="">-- Bitte wählen --</option>
             {% for auto in autos %}
                 <option value="{{ auto.autoid }}"
-                        data-preis="{{ auto.preis }}"
-                        {% if auto_id == auto.autoid or request.form.auto_id == auto.autoid|string %}selected{% endif %}>
+                        {% if auto_id == auto.autoid %}selected{% endif %}>
                     {{ auto.marke }} {{ auto.modell }}
                 </option>
             {% endfor %}
         </select>
 
-        <!-- Dynamische Preis-Anzeige -->
-        <div id="fahrzeug-preis" class="anfrage-info" style="margin-top: 6px; font-weight: bold;"></div>
+        <!-- Fahrzeugpreis -->
+        {% if preis %}
+            <div class="anfrage-info" style="margin-top: 6px; font-weight: bold;">
+                💰 Fahrzeugpreis: {{ preis | float | round(2) }} €
+            </div>
+        {% endif %}
 
         <!-- Kaufart-Auswahl -->
         <label class="anfrage-label">Kaufart:</label>
-        <select name="kaufart" class="anfrage-input" id="kaufart-select" required>
+        <select name="kaufart" class="anfrage-input" required onchange="this.form.submit()">
             <option value="">-- Bitte wählen --</option>
             <option value="Barkauf" {% if kaufart == 'Barkauf' %}selected{% endif %}>Barkauf</option>
             <option value="Finanzierungsanfrage" {% if kaufart == 'Finanzierungsanfrage' %}selected{% endif %}>Finanzierung</option>
         </select>
 
         <!-- Finanzierungsfelder -->
-        <div id="finanzierung-felder" style="display: none; margin-top: 10px;">
+        {% if kaufart == 'Finanzierungsanfrage' %}
             <label class="anfrage-label">Finanzierungsdauer (Monate):</label>
             <input type="number" name="laufzeit" min="1" class="anfrage-input"
-                   value="{{ laufzeit or request.form.laufzeit or '' }}">
+                   value="{{ laufzeit or '' }}">
 
             <label class="anfrage-label">Startzahlung (€):</label>
             <input type="number" name="anzahlung" step="0.01" class="anfrage-input"
-                   value="{{ anzahlung or request.form.anzahlung or '' }}">
+                   value="{{ anzahlung or '' }}">
 
             <label class="anfrage-label">Endzahlung (Schlussrate) (€):</label>
             <input type="number" name="schlussrate" step="0.01" class="anfrage-input"
-                   value="{{ schlussrate or request.form.schlussrate or '' }}">
-        </div>
+                   value="{{ schlussrate or '' }}">
+        {% endif %}
 
+        <!-- Monatliche Rate -->
         {% if rate is not none %}
             <div class="anfrage-info">
-                Monatliche Rate: {{ rate }} €
+                📆 Monatliche Rate: {{ rate }} €
             </div>
         {% endif %}
 
-        <!-- Kunden-E-Mail -->
+        <!-- E-Mail -->
         <label class="anfrage-label">Kunden-E-Mail-Adresse:</label>
         <input type="email" name="email" class="anfrage-input"
                value="{{ request.form.email or '' }}" required>
@@ -64,12 +68,14 @@
         <input type="datetime-local" name="terminwunsch" class="anfrage-input"
                value="{{ request.form.terminwunsch or '' }}" required>
 
+        <!-- Fehlermeldung -->
         {% if fehler %}
             <p class="anfrage-error">{{ fehler }}</p>
         {% endif %}
 
+        <!-- Submit-Button -->
         <button type="submit" class="anfrage-button">
-            {% if rate and preis %}
+            {% if rate is not none or kaufart == 'Barkauf' %}
                 ✅ Anfrage abschicken
             {% else %}
                 Weiter
@@ -77,33 +83,4 @@
         </button>
     </form>
 </div>
-
-
-<script>
-  function toggleFinanzierung() {
-    const auswahl = document.getElementById("kaufart-select").value;
-    const felder = document.getElementById("finanzierung-felder");
-    felder.style.display = auswahl === "Finanzierungsanfrage" ? "block" : "none";
-  }
-
-  function zeigePreis() {
-    const select = document.getElementById("auto-select");
-    const preisDiv = document.getElementById("fahrzeug-preis");
-    const selectedOption = select.options[select.selectedIndex];
-
-    const preis = selectedOption.getAttribute("data-preis");
-    if (preis) {
-      preisDiv.textContent = `💰 Fahrzeugpreis: ${parseFloat(preis).toLocaleString('de-DE')} €`;
-    } else {
-      preisDiv.textContent = "";
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    toggleFinanzierung();
-    zeigePreis();
-    document.getElementById("kaufart-select").addEventListener("change", toggleFinanzierung);
-    document.getElementById("auto-select").addEventListener("change", zeigePreis);
-  });
-</script>
 {% endblock %}
