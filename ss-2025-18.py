@@ -486,6 +486,10 @@ def benutzer_verwalten():
         action = request.form.get("aktion")
 
         if action == "loeschen":
+            cursor.execute("DELETE FROM Finanzierungsanfrage WHERE Nutzer_ID = %s", (user_id,))
+            cursor.execute("DELETE FROM Kaufvertrag WHERE kunde_id = %s", (user_id,))
+            cursor.execute("DELETE FROM favorites WHERE User_ID = %s", (user_id,))
+            cursor.execute("DELETE FROM reviews WHERE user_id = %s", (user_id,))  # ✅ korrekt!
             cursor.execute("DELETE FROM users WHERE User_ID = %s", (user_id,))
             g.con.commit()
 
@@ -511,6 +515,7 @@ def benutzer_verwalten():
 
 
 @app.route("/benutzer_anlegen", methods=["GET", "POST"])
+
 def benutzer_anlegen():
     if 'user_role' not in session or session['user_role'] != 'admin':
         return "Zugriff verweigert", 403
