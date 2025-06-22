@@ -1,14 +1,28 @@
 from flask import Flask, render_template, g, request, redirect, url_for, session, flash
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
-
-
+from werkzeug.utils import secure_filename  # 🔑 Neu für Upload
+import os  # 🔑 Neu für Upload
 
 # Import der Verbindungsinformationen zur Datenbank
 from db.db_credentials import DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE
 
+# ✅ Flask-App erstellen (nur EINMAL!)
 app = Flask(__name__)
 app.secret_key = 'dein_geheimes_schluessel'  # Geheimen Schlüssel für Sessions setzen
+
+# ✅ Upload-Konfiguration
+UPLOAD_FOLDER = os.path.join('static')  # Oder z.B. os.path.join('static', 'uploads')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  # Speichert Upload-Ordner in der Config
+
+# ✅ Hilfsfunktion: Prüft, ob die Datei-Endung erlaubt ist
+def allowed_file(filename):
+    """
+    Prüft, ob Dateiname eine erlaubte Bild-Endung hat.
+    Beispiel: 'auto.jpg' ist erlaubt, 'auto.exe' NICHT erlaubt.
+    """
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.before_request
 def before_request():
@@ -636,33 +650,71 @@ def auto_bearbeiten(autoid):
 
 @app.route('/auto_hinzufuegen', methods=['GET', 'POST'])
 def auto_hinzufuegen():
+    # Zugriff prüfen: Nur Admin darf Auto hinzufügen
     if 'user_role' not in session or session['user_role'] != 'admin':
         return "Zugriff verweigert", 403
 
     if request.method == 'POST':
+        # 📋 Formulardaten auslesen
+        marke = request.form['marke']
+        modell = request.form['modell']
+        baujahr = request.form['baujahr']
+        leistung = request.form['leistung']
+        preis = request.form['preis']
+        kraftstoffverbrauch = request.form['kraftstoffverbrauch']
+        hubraum = request.form['hubraum']
+        getriebeart = request.form['getriebeart']
+        antriebsart = request.form['antriebsart']
+        umweltplakette = request.form['umweltplakette']
+
+        # 📸 Bilddatei verarbeiten
+        if 'bilddatei' not in request.files:
+            flash("Keine Bilddatei gefunden!")
+            return redirect(request.url)
+
+        file = request.files['bilddatei']
+
+        if file.filename == '':
+            flash("Keine Datei ausgewählt!")
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            # Sicheren Dateinamen erstellen
+            filename = secure_filename(file.filename)
+            # Datei im static/ Ordner speichern
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        else:
+            flash("Ungültiger Dateityp!")
+            return redirect(request.url)
+
+        # ✅ ALLE Daten inkl. Bild-Dateiname in die DB eintragen
         daten = (
-            request.form['marke'],
-            request.form['modell'],
-            request.form['baujahr'],
-            request.form['leistung'],
-            request.form['preis'],
-            request.form['url'],
-            request.form['kraftstoffverbrauch'],
-            request.form['hubraum'],
-            request.form['getriebeart'],
-            request.form['antriebsart'],
-            request.form['umweltplakette']
+            marke,
+            modell,
+            baujahr,
+            leistung,
+            preis,
+            filename,  # <- HIER kommt der Dateiname vom Bild
+            kraftstoffverbrauch,
+            hubraum,
+            getriebeart,
+            antriebsart,
+            umweltplakette
         )
 
         cursor = g.cursor
         cursor.execute("""
-            INSERT INTO auto (marke, modell, baujahr, leistung, preis, url,
-                kraftstoffverbrauch, hubraum, getriebeart, antriebsart, umweltplakette)
+            INSERT INTO auto 
+            (marke, modell, baujahr, leistung, preis, url,
+             kraftstoffverbrauch, hubraum, getriebeart, antriebsart, umweltplakette)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, daten)
         g.con.commit()
 
+        flash("Fahrzeug erfolgreich hinzugefügt!")
         return redirect(url_for('auto_verwalten'))
+
+    # GET: Formular anzeigen
     return render_template("auto_hinzufuegen.html")
 
 @app.route('/auto_loeschen/<int:autoid>', methods=['POST'])

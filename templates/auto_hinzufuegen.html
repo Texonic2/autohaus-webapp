@@ -5,7 +5,8 @@
 <div class="form-container">
   <h2 class="form-title">➕ Neues Fahrzeug eintragen</h2>
 
-  <form method="post" class="form-styled">
+  <!-- 👉 enctype hinzugefügt und name="bilddatei" -->
+  <form method="post" enctype="multipart/form-data" class="form-styled">
     <label for="marke">Marke:</label>
     <input type="text" id="marke" name="marke" required>
 
@@ -21,8 +22,10 @@
     <label for="preis">Preis (€):</label>
     <input type="number" id="preis" name="preis" required>
 
-    <label for="url">Bild-Dateiname (static/ Ordner) Bitte in Staticordner manuel hinzufügen !:</label>
-    <input type="text" id="url" name="url" required>
+    <!-- ❌ ALT: Manuelles Textfeld -->
+    <!-- ✅ NEU: Datei-Upload-Feld -->
+    <label for="bilddatei">Bild hochladen:</label>
+    <input type="file" id="bilddatei" name="bilddatei" accept="image/*" required>
 
     <label for="kraftstoffverbrauch">Kraftstoffverbrauch (l/100km):</label>
     <input type="text" id="kraftstoffverbrauch" name="kraftstoffverbrauch">
