@@ -7,10 +7,10 @@
 {% block title %}Rezensionen – Autohaus Heilbronn{% endblock %}
 
 {% block content %}
-<h1>Rezensionen</h1>
+<h1 class="page-title">Rezensionen</h1>
 
 
-<div>
+<div class="review-container">
     {% for review in reviews %}
         <div class="review-card">
             <h3>{{ review.vorname }} {{ review.nachname }}</h3>
@@ -25,21 +25,18 @@
             <p><strong>Kommentar:</strong> {{ review.comment }}</p>
             <small><em>{{ review.created_at }}</em></small>
 
-
             {% if review.admin_response %}
                 <div class="admin-response">
                     <p><strong>Antwort von NOVA DRIVE Heilbronn:</strong> {{ review.admin_response }}</p>
                 </div>
             {% endif %}
 
-
             {% if session.get('user_role') == 'admin' %}
                 <form method="POST" action="{{ url_for('reply_to_review') }}" class="admin-reply-form">
                     <input type="hidden" name="review_id" value="{{ review.id }}">
-                    <textarea name="admin_response" rows="2" placeholder="Antwort hinzufügen..." required>{{ review.admin_response or '' }}</textarea>
+                    <textarea name="admin_response" rows="2" placeholder="Antwort hinzufügen..." required></textarea>
                     <button type="submit">Antwort speichern</button>
                 </form>
-
 
                 <form method="POST" action="{{ url_for('delete_review') }}" class="delete-review-form">
                     <input type="hidden" name="review_id" value="{{ review.id }}">

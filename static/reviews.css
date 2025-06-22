@@ -127,3 +127,12 @@ form button:hover {
 h1, h2 {
     color: #831D17;
 }
+
+.review-container {
+    display: flex;
+    flex-direction: column;
+    gap: 70px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
