@@ -31,7 +31,7 @@
                 <p><strong>Termin:</strong> {{ anfrage.Terminwunsch or 'Kein Termin angegeben' }}</p>
                 <p><strong>Finanzierungsdauer:</strong> {{ anfrage.Monate }} Monate</p>
                 <p><strong>Anzahlung:</strong> {{ "{:,.0f}".format(anfrage.Anzahlung).replace(",", ".") }} €</p>
-                <p><strong>Monatliche Rate:</strong> {{ anfrage.Monatliche_Rate }} €</p>
+                <p><strong>Monatliche Rate:</strong> {{ "{:,.0f}".format(anfrage.Monatliche_Rate|float).replace(",", "X").replace(".", ",").replace("X", ".") }} €</p>
                 <p><strong>Schlussrate:</strong> {{ "{:,.0f}".format(anfrage.schlussrate).replace(",", ".") }} €</p>
                 <p><strong>Status:</strong> <span class="status {{ anfrage.Status|lower }}">{{ anfrage.Status }}</span></p>
 
@@ -82,8 +82,8 @@
                 <p><strong>Adresse:</strong> {{ vertrag.kunde_adresse }}</p>
                 <p><strong>Telefon:</strong> {{ vertrag.kunde_telefon }}</p>
                 <p><strong>Monate:</strong> {{ vertrag.Monate }}</p>
-                <p><strong>Anzahlung:</strong> {{ vertrag.Anzahlung }} €</p>
-                <p><strong>Monatliche Rate:</strong> {{ vertrag.Monatliche_Rate }} €</p>
+                <p><strong>Anzahlung:</strong> {{ "{:,.0f}".format(vertrag.Anzahlung|float).replace(",", "X").replace(".", ",").replace("X", ".") }} €</p>
+                <p><strong>Monatliche Rate:</strong> {{ "{:,.0f}".format(vertrag.Monatliche_Rate|float).replace(",", "X").replace(".", ",").replace("X", ".") }} €</p>
                 <p><strong>Schlussrate:</strong> {{ vertrag.Schlussrate }} €</p>
             </div>
         </div>

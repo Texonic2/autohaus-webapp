@@ -121,17 +121,19 @@ def finanzierungbsp():
 
 @app.route('/finanzierung/<int:autoid>', methods=['GET', 'POST'])
 def finanzierung(autoid):
+    # 👉 Prüfen, ob User eingeloggt ist
     if 'user_id' not in session:
         return redirect(url_for('Login'))
 
     cursor = g.cursor
 
-    # Fahrzeugdaten laden (nur für Anzeige)
+    # 👉 Fahrzeug aus DB laden
     cursor.execute("SELECT * FROM auto WHERE autoid = %s", (autoid,))
     fahrzeug = cursor.fetchone()
     if not fahrzeug:
         return "Fahrzeug nicht gefunden", 404
 
+    # 👉 Variablen initialisieren
     rate = None
     fahrzeugpreis = None
     anzahlung = None
@@ -150,81 +152,76 @@ def finanzierung(autoid):
                 schlussrate = float(schlussrate_raw) if schlussrate_raw else 0.0
 
                 kreditbetrag = fahrzeugpreis - anzahlung - schlussrate
-                zins = 0.02  # 2%
+                zins = 0.02  # 2 %
                 rate = round((kreditbetrag * (1 + zins)) / laufzeit, 2)
 
-            except Exception:
-                rate = None  # Fehler bei Eingabe ignorieren
+            except Exception as e:
+                print(f"Fehler bei Berechnung: {e}")
+                rate = None
+
         elif aktion == "barzahlung":
             try:
                 fahrzeugpreis = float(fahrzeug['preis'])
                 anzahlung = 0
                 laufzeit = 0
                 schlussrate = fahrzeugpreis
-                rate = 0  # Monatsrate entfällt
-                # Seite wird erweitert, keine Weiterleitung
-                # Werte werden unten im Template angezeigt
+                rate = 0  # Bei Barzahlung keine Rate
+
             except Exception as e:
                 import traceback
                 traceback.print_exc()
                 return f"Fehler beim Barkauf: {e}", 500
 
-
         elif aktion == "termin":
-
             try:
-
                 fahrzeugpreis = float(request.form['fahrzeugpreis'])
-
                 anzahlung = float(request.form['anzahlung'])
-
                 laufzeit = int(request.form['laufzeit'])
-
                 schlussrate_raw = request.form.get('schlussrate', '').strip()
-
                 schlussrate = float(schlussrate_raw) if schlussrate_raw else 0.0
-
                 rate_raw = request.form.get('rate', '0').strip()
-
                 rate = float(rate_raw) if rate_raw else 0.0
 
                 termin_datum = request.form['termin']
-
                 termin_uhrzeit = request.form['uhrzeit']
-
                 terminwunsch = f"{termin_datum} {termin_uhrzeit}"
 
+                # ✅ User-ID sicher aus Session holen & prüfen
                 nutzer_id = session.get('user_id')
-
                 if not nutzer_id:
                     return redirect(url_for('Login'))
+                nutzer_id = int(nutzer_id)
+
+                # ✅ FK-Prüfung: Nutzer muss existieren
+                cursor.execute("SELECT User_ID FROM users WHERE User_ID = %s", (nutzer_id,))
+                check_user = cursor.fetchone()
+                if not check_user:
+                    return "Benutzer existiert nicht mehr — bitte erneut einloggen.", 400
+
+                # ✅ FK-Prüfung: Auto muss existieren
+                cursor.execute("SELECT autoid FROM auto WHERE autoid = %s", (autoid,))
+                check_auto = cursor.fetchone()
+                if not check_auto:
+                    return "Auto nicht gefunden.", 400
 
                 info = "Barkauf" if laufzeit == 0 else "Finanzierungsanfrage"
 
-                cursor.execute(
-
-                    """INSERT INTO Finanzierungsanfrage 
-
-                       (Auto_ID, Anzahlung, Monate, Monatliche_Rate, Terminwunsch, Status, Schlussrate, Nutzer_ID, Info) 
-
-                       VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-
-                    (autoid, anzahlung, laufzeit, rate, terminwunsch, "angefragt", schlussrate, nutzer_id, info)
-
-                )
+                # ✅ Anfrage speichern
+                cursor.execute("""
+                    INSERT INTO Finanzierungsanfrage 
+                    (Nutzer_ID, Auto_ID, Monate, Anzahlung, Monatliche_Rate, Terminwunsch, Status, schlussrate, info)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (nutzer_id, autoid, laufzeit, anzahlung, rate, terminwunsch, "angefragt", schlussrate, info))
 
                 g.con.commit()
 
                 return redirect(url_for('index'))
 
-
             except Exception as e:
-
                 import traceback
-
                 traceback.print_exc()
-
                 return f"Fehler beim Speichern des Termins: {e}", 500
+
     return render_template(
         "finanzierung.html",
         fahrzeug=fahrzeug,
@@ -234,11 +231,6 @@ def finanzierung(autoid):
         laufzeit=laufzeit,
         schlussrate=schlussrate
     )
-
-from flask import Flask, render_template, session, redirect, url_for, g
-
-from flask import render_template, session, redirect, url_for, request, g
-
 @app.route('/account')
 def account():
     if 'user_id' not in session:
