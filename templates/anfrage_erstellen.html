@@ -9,7 +9,6 @@
     <h2>📄 Finanzierungs- oder Barkaufanfrage</h2>
     <form method="POST">
 
-
         <label class="anfrage-label">Fahrzeug auswählen:</label>
         <select name="auto_id" class="anfrage-input" required>
             <option value="">-- Bitte wählen --</option>
@@ -21,14 +20,12 @@
             {% endfor %}
         </select>
 
-
         <label class="anfrage-label">Kaufart:</label>
         <select name="kaufart" class="anfrage-input" required>
             <option value="">-- Bitte wählen --</option>
             <option value="Barkauf" {% if kaufart == 'Barkauf' %}selected{% endif %}>Barkauf</option>
             <option value="Finanzierungsanfrage" {% if kaufart == 'Finanzierungsanfrage' %}selected{% endif %}>Finanzierung</option>
         </select>
-
 
         {% if kaufart == 'Finanzierungsanfrage' or request.form.kaufart == 'Finanzierungsanfrage' %}
             <div style="margin-top: 10px;">
@@ -52,11 +49,16 @@
             </div>
         {% endif %}
 
-
         <label class="anfrage-label">Kunden-E-Mail-Adresse:</label>
-        <input type="email" name="email" class="anfrage-input"
-               value="{{ request.form.email or '' }}" required>
-
+        <select name="email" class="anfrage-input" required>
+            <option value="">-- Bitte wählen --</option>
+            {% for kunde in kunden %}
+                <option value="{{ kunde.email }}"
+                        {% if request.form.email == kunde.email %}selected{% endif %}>
+                    {{ kunde.vorname }} {{ kunde.nachname }} – {{ kunde.email }}
+                </option>
+            {% endfor %}
+        </select>
 
         <label class="anfrage-label">Terminwunsch (Datum & Uhrzeit):</label>
         <input type="datetime-local" name="terminwunsch" class="anfrage-input"

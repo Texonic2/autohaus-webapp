@@ -869,15 +869,19 @@ def reply_to_review():
 
     return redirect(url_for('reviews'))
 
-@app.route("/anfrage_erstellen", methods=["GET", "POST"])# Ali Yenil
+@app.route("/anfrage_erstellen", methods=["GET", "POST"])  # Ali Yenil
 def anfrage_erstellen():
     cursor = g.cursor
 
-    # Autos für Dropdown
+
     cursor.execute("SELECT autoid, marke, modell, preis FROM auto")
     autos = cursor.fetchall()
 
-    # Initialwerte es gibt die werte sie werden so bestimmt damit man später es ändern kann und und Kunde noch nichts ausgefüllt hat
+
+    cursor.execute("SELECT User_ID, email, vorname, nachname FROM users")
+    kunden = cursor.fetchall()
+
+    # Initialwerte
     preis = None
     rate = None
     laufzeit = None
@@ -886,12 +890,11 @@ def anfrage_erstellen():
     fehler = None
     auto_id = None
     terminwunsch = None
-    kaufart = request.form.get("kaufart")  # ← Barkauf oder Finanzierung Hier ist es nicht none weil hier muss ausgewählt werden was für eine Kaufart
+    kaufart = request.form.get("kaufart")
 
-    if request.method == "POST": # Wie machen hier lieber mit ID und nicht mit Name weiter, weil es sicherer ist, um Auto nicht zu verwechseln
-        # Auto-ID prüfen
-        auto_id_input = request.form.get("auto_id") #entnimmt aus dem Formular Auto ID wenn der Kunde ein Auto auswählt, entnimmt es im Hintergrund die Auto ID davon und schickt es hier rein
-        if auto_id_input and auto_id_input.isdigit():# hat der Kunde etwas eingetragen und existiert diese ID? mit isdigit wird nur zahl überrüft
+    if request.method == "POST":
+        auto_id_input = request.form.get("auto_id")
+        if auto_id_input and auto_id_input.isdigit():
             auto_id = int(auto_id_input)
             cursor.execute("SELECT preis FROM auto WHERE autoid = %s", (auto_id,))
             result = cursor.fetchone()
@@ -902,7 +905,6 @@ def anfrage_erstellen():
         else:
             fehler = "Bitte gib eine gültige Auto-ID ein."
 
-        # Eingaben holen
         laufzeit_input = request.form.get("laufzeit")
         anzahlung_input = request.form.get("anzahlung")
         schlussrate_input = request.form.get("schlussrate")
@@ -927,14 +929,13 @@ def anfrage_erstellen():
                         rate = round((finanzierungsbetrag + zinsen) / laufzeit, 2)
                     else:
                         fehler = "❌ Laufzeit muss größer als 0 sein."
-                elif request.method == "POST":
+                else:
                     fehler = "❌ Bitte alle Finanzierungsfelder ausfüllen."
             else:
                 laufzeit = 0
                 anzahlung = 0
                 schlussrate = preis
                 rate = 0.0
-
         except ValueError:
             fehler = "❌ Ungültige Zahlen bei Laufzeit, Anzahlung oder Schlussrate."
 
@@ -977,7 +978,8 @@ def anfrage_erstellen():
         schlussrate=schlussrate,
         fehler=fehler,
         auto_id=auto_id,
-        kaufart=kaufart
+        kaufart=kaufart,
+        kunden=kunden
     )
 
 @app.route('/kaufvertraege')
