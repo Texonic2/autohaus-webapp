@@ -1195,7 +1195,7 @@ button {
 }
 
 .table-container {
-  max-width: 100%;
+  max-width: 95%;
   margin: 0 auto 40px auto;
   overflow-x: auto;
   background: #fff;
@@ -1393,7 +1393,6 @@ button {
     font-weight: bold;
     text-decoration: none;
 }
-
 
 
 /* Wrapper für die gesamte Seite, um alle Styles nur hier anzuwenden */

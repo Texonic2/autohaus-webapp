@@ -9,73 +9,61 @@
     <h2>📄 Finanzierungs- oder Barkaufanfrage</h2>
     <form method="POST">
 
-        <!-- Fahrzeugauswahl -->
+
         <label class="anfrage-label">Fahrzeug auswählen:</label>
-        <select name="auto_id" class="anfrage-input" required onchange="this.form.submit()">
+        <select name="auto_id" class="anfrage-input" required>
             <option value="">-- Bitte wählen --</option>
             {% for auto in autos %}
                 <option value="{{ auto.autoid }}"
-                        {% if auto_id == auto.autoid %}selected{% endif %}>
-                    {{ auto.marke }} {{ auto.modell }}
+                        {% if auto_id == auto.autoid or request.form.auto_id == auto.autoid|string %}selected{% endif %}>
+                    {{ auto.marke }} {{ auto.modell }} – {{ '{:,.2f}'.format(auto.preis|float).replace(',', 'X').replace('.', ',').replace('X', '.') }} €
                 </option>
             {% endfor %}
         </select>
 
-        <!-- Fahrzeugpreis -->
-        {% if preis %}
-            <div class="anfrage-info" style="margin-top: 6px; font-weight: bold;">
-                💰 Fahrzeugpreis: {{ preis | float | round(2) }} €
-            </div>
-        {% endif %}
 
-        <!-- Kaufart-Auswahl -->
         <label class="anfrage-label">Kaufart:</label>
-        <select name="kaufart" class="anfrage-input" required onchange="this.form.submit()">
+        <select name="kaufart" class="anfrage-input" required>
             <option value="">-- Bitte wählen --</option>
             <option value="Barkauf" {% if kaufart == 'Barkauf' %}selected{% endif %}>Barkauf</option>
             <option value="Finanzierungsanfrage" {% if kaufart == 'Finanzierungsanfrage' %}selected{% endif %}>Finanzierung</option>
         </select>
 
-        <!-- Finanzierungsfelder -->
-        {% if kaufart == 'Finanzierungsanfrage' %}
-            <label class="anfrage-label">Finanzierungsdauer (Monate):</label>
-            <input type="number" name="laufzeit" min="1" class="anfrage-input"
-                   value="{{ laufzeit or '' }}">
 
-            <label class="anfrage-label">Startzahlung (€):</label>
-            <input type="number" name="anzahlung" step="0.01" class="anfrage-input"
-                   value="{{ anzahlung or '' }}">
+        {% if kaufart == 'Finanzierungsanfrage' or request.form.kaufart == 'Finanzierungsanfrage' %}
+            <div style="margin-top: 10px;">
+                <label class="anfrage-label">Finanzierungsdauer (Monate):</label>
+                <input type="number" name="laufzeit" min="1" class="anfrage-input"
+                       value="{{ laufzeit or request.form.laufzeit or '' }}">
 
-            <label class="anfrage-label">Endzahlung (Schlussrate) (€):</label>
-            <input type="number" name="schlussrate" step="0.01" class="anfrage-input"
-                   value="{{ schlussrate or '' }}">
-        {% endif %}
+                <label class="anfrage-label">Startzahlung (€):</label>
+                <input type="number" name="anzahlung" step="0.01" class="anfrage-input"
+                       value="{{ anzahlung or request.form.anzahlung or '' }}">
 
-        <!-- Monatliche Rate -->
-        {% if rate is not none %}
-            <div class="anfrage-info">
-                📆 Monatliche Rate: {{ rate }} €
+                <label class="anfrage-label">Endzahlung (Schlussrate) (€):</label>
+                <input type="number" name="schlussrate" step="0.01" class="anfrage-input"
+                       value="{{ schlussrate or request.form.schlussrate or '' }}">
             </div>
         {% endif %}
 
-        <!-- E-Mail -->
+        {% if rate is not none %}
+            <div class="anfrage-info">
+                Monatliche Rate: {{ rate }} €
+            </div>
+        {% endif %}
+
+
         <label class="anfrage-label">Kunden-E-Mail-Adresse:</label>
         <input type="email" name="email" class="anfrage-input"
                value="{{ request.form.email or '' }}" required>
 
-        <!-- Termin -->
+
         <label class="anfrage-label">Terminwunsch (Datum & Uhrzeit):</label>
         <input type="datetime-local" name="terminwunsch" class="anfrage-input"
                value="{{ request.form.terminwunsch or '' }}" required>
 
-        <!-- Fehlermeldung -->
-        {% if fehler %}
-            <p class="anfrage-error">{{ fehler }}</p>
-        {% endif %}
-
-        <!-- Submit-Button -->
         <button type="submit" class="anfrage-button">
-            {% if rate is not none or kaufart == 'Barkauf' %}
+            {% if rate and preis %}
                 ✅ Anfrage abschicken
             {% else %}
                 Weiter
