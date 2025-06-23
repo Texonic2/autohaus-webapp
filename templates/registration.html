@@ -4,49 +4,82 @@
   <meta charset="UTF-8" />
   <title>Registrieren</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}" />
-  <style>
-    /* Optional: Falls du ein Passwort-Icon als reine Deko möchtest */
-    .password-wrapper {
-      position: relative;
-    }
-    .password-wrapper input[type="password"] {
-      width: 100%;
-      padding-right: 10px; /* Platz lassen, falls Icon gewünscht */
-      box-sizing: border-box;
-    }
-  </style>
+  <!-- Link zur CSS Datei -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
-<body>
-  <div class="login-container">
-    <h2>Registrieren</h2>
+<body class="reg-page"><!-- Haupt-Body mit spezieller Klasse für Registrierung -->
 
+  <!-- Container für das Registrierungsformular -->
+  <div class="reg-container-box">
+
+    <!-- Formular Überschrift -->
+    <h2 class="reg-title">Registrieren</h2>
+
+    <!-- Fehlermeldung (wird nur angezeigt wenn Variable gesetzt ist) -->
     {% if error_message %}
-      <p class="error-message">{{ error_message }}</p>
+      <p class="reg-error-message">{{ error_message }}</p>
     {% endif %}
 
+    <!-- Registrierungsformular -->
     <form action="{{ url_for('registration') }}" method="POST">
+
+      <!-- Vorname -->
       <label for="firstname">Vorname</label>
-      <input type="text" id="firstname" name="firstname" placeholder="Max" required />
+      <input
+        type="text"
+        id="firstname"
+        name="firstname"
+        placeholder="Max"
+        required
+        class="reg-input"
+      />
 
+      <!-- Nachname -->
       <label for="lastname">Nachname</label>
-      <input type="text" id="lastname" name="lastname" placeholder="Mustermann" required />
+      <input
+        type="text"
+        id="lastname"
+        name="lastname"
+        placeholder="Mustermann"
+        required
+        class="reg-input"
+      />
 
+      <!-- E-Mail Adresse -->
       <label for="email">E-Mail</label>
-      <input type="email" id="email" name="email" placeholder="deine@email.de" required />
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="deine@email.de"
+        required
+        class="reg-input"
+      />
 
+      <!-- Passwort -->
       <label for="password">Passwort</label>
-      <div class="password-wrapper">
-        <input type="password" id="password" name="password" placeholder="********" required
-          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$"
-          title="Das Passwort muss mindestens 6 Zeichen lang sein, einen Großbuchstaben, einen Kleinbuchstaben und eine Zahl enthalten." />
-      </div>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="********"
+        required
+        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$"
+        title="Das Passwort muss mindestens 6 Zeichen lang sein, einen Großbuchstaben, einen Kleinbuchstaben und eine Zahl enthalten."
+        class="reg-input"
+      />
 
+      <!-- Verstecktes Feld für Benutzerrolle -->
       <input type="hidden" name="role" value="user" id="role" />
 
+      <!-- Absenden Button -->
       <button type="submit">Registrieren</button>
     </form>
-    <p class="note">Bereits registriert? <a href="{{ url_for('Login') }}">Zum Login</a></p>
+
+    <!-- Hinweistext mit Link zur Login-Seite -->
+    <p class="reg-note">
+      Bereits registriert? <a href="{{ url_for('Login') }}">Zum Login</a>
+    </p>
   </div>
 </body>
 </html>
