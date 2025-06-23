@@ -415,7 +415,7 @@ def registration():
             # Nach erfolgreicher Registrierung Weiterleitung zur Login-Seite
             return redirect(url_for('Login'))
         # Rendern der Registrierungsseite, ggf. mit Fehlermeldung
-        return render_template('registration.html', error_message=error_message)
+    return render_template('registration.html', error_message=error_message)
 
 @app.route('/logout')
 def logout():
