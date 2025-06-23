@@ -1417,52 +1417,109 @@ button {
     padding: 20px;
 }
 
-/* Überschrift (h1) mit spezieller Klasse für individuelle Gestaltung */
-.kaufvertrag-erfolg-wrapper h1.kv-title {
-    /* Grüner Farbton für die Überschrift */
-    color: #2d8659;
-    /* Abstand nach unten */
+/* Markenname "Nova Drive" */
+.kv-branding {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: #831D17;  /* Hauptfarbe */
+    margin-bottom: 0;
+    text-align: center;
+}
+
+/* Slogan darunter */
+.kv-slogan {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: #b84127;  /* Sekundärfarbe */
+    margin-top: 0.2em;
+    margin-bottom: 1.5em;
+    text-align: center;
+}
+
+/* Hauptüberschrift etwas kleiner, damit Branding dominiert */
+.kv-title {
+    color: #2d8659;  /* Optional kannst du hier eine andere Farbe nutzen */
     margin-bottom: 0.5em;
-    /* Fett gedruckt */
     font-weight: 700;
-    /* Größere Schriftgröße */
-    font-size: 2.5rem;
+    font-size: 2rem;
+    text-align: center;
 }
 
 /* Absatz mit Anfrage-ID */
 .kaufvertrag-erfolg-wrapper p.kv-info {
-    /* Etwas größere Schrift */
     font-size: 1.2em;
-    /* Abstand nach unten */
     margin-bottom: 2em;
+    text-align: center;
 }
 
 /* Link zurück zum Adminbereich, als Button gestylt */
 .kaufvertrag-erfolg-wrapper a.kv-backlink {
-    /* Hintergrundfarbe grün */
-    background-color: #2d8659;
-    /* Weißer Text */
+    background-color: #831D17;  /* Hauptfarbe */
     color: white;
-    /* Innenabstand für Button-Größe */
     padding: 0.75em 1.5em;
-    /* Kein Unterstrich */
     text-decoration: none;
-    /* Abgerundete Ecken */
     border-radius: 5px;
-    /* Fett gedruckt */
     font-weight: bold;
-    /* Leichter Schatten für Tiefe */
-    box-shadow: 0 4px 8px rgba(45, 134, 89, 0.3);
-    /* Übergang für Farbe beim Hover */
+    box-shadow: 0 4px 8px rgba(131, 29, 23, 0.3);
     transition: background-color 0.3s ease;
+    text-align: center;
 }
 
 /* Hover-Effekt für den Button */
 .kaufvertrag-erfolg-wrapper a.kv-backlink:hover {
-    /* Dunkleres Grün beim Überfahren mit der Maus */
-    background-color: #246942;
+    background-color: #b84127;  /* Sekundärfarbe */
 }
 
+
+/* Wrapper für die gesamte Kaufvertrag-Erfolgsseite */
+.kaufvertrag-erfolg-wrapper {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9; /* Heller Hintergrund */
+    color: #831D17; /* Hauptfarbe NovaDrive dunkelrot */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Vollbildhöhe */
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Überschrift mit NovaDrive Hauptfarbe */
+.kv-title {
+    color: #831D17; /* Dunkelrot */
+    margin-bottom: 0.5em;
+    font-weight: 700;
+    font-size: 2.5rem;
+}
+
+/* Info Text */
+.kv-info {
+    font-size: 1.2em;
+    margin-bottom: 2em;
+    color: #b84127; /* Helleres Rot für Akzent */
+}
+
+/* Button-Link zurück */
+.kv-backlink {
+    background-color: #831D17;
+    color: white;
+    padding: 0.75em 1.5em;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(184, 65, 39, 0.3);
+    transition: background-color 0.3s ease;
+}
+
+/* Hover Effekt für Button */
+.kv-backlink:hover {
+    background-color: #b84127; /* Hellerer Rot-Ton bei Hover */
+}
 
 /* Tooltip-Wrapper: Hält das Icon, auf das man mit der Maus zeigen kann */
 .auto-info-tooltip {

@@ -963,6 +963,10 @@ def kaufvertrag_erstellen(anfrage_id):
 
 @app.route('/admin/kaufvertrag_erfolgreich/<int:anfrage_id>')
 def kaufvertrag_erfolgreich(anfrage_id):
+    # Optional: Admin-Check, wenn benötigt
+    # if 'user_role' not in session or session['user_role'] != 'admin':
+    #     return redirect(url_for('Login'))
+
     return render_template("kaufvertrag_erfolgreich.html", anfrage_id=anfrage_id)
 
 @app.route('/kaufvertraege')

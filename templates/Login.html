@@ -4,17 +4,22 @@
   <meta charset="UTF-8" />
   <title>Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Verlinkung zum CSS-Stylesheet -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body class="login-page">
   <div class="login-container-box">
+    <!-- Überschrift Login -->
     <h2 class="login-title">Login</h2>
 
+    <!-- Fehleranzeige, falls Fehler beim Login vorhanden -->
     {% if error_message %}
       <div class="login-error">{{ error_message }}</div>
     {% endif %}
 
+    <!-- Login-Formular -->
     <form action="{{ url_for('Login') }}" method="post">
+      <!-- Eingabefeld für E-Mail -->
       <label for="email" class="login-label">E-Mail</label>
       <input
         type="email"
@@ -25,6 +30,7 @@
         required
       />
 
+      <!-- Eingabefeld für Passwort -->
       <label for="password" class="login-label">Passwort</label>
       <input
         type="password"
@@ -35,9 +41,11 @@
         required
       />
 
+      <!-- Absende-Button -->
       <button type="submit" class="login-button">Einloggen</button>
     </form>
 
+    <!-- Hinweis und Link zur Registrierung -->
     <p class="login-note">
       Noch keinen Account? <a href="{{ url_for('registration') }}">Registrieren</a>
     </p>

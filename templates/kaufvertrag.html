@@ -3,15 +3,16 @@
 {% block title %}Kaufvertrag – Autohaus Heilbronn{% endblock %}
 
 {% block head %}
-
-
+<!-- Hier können zusätzliche CSS- oder Skript-Dateien eingefügt werden -->
 {% endblock %}
 
 {% block content %}
 <div class="kaufvertrag-container">
 
+    <!-- Überschrift -->
     <h2>Kaufvertrag erstellen</h2>
 
+    <!-- Autohaus-Informationen anzeigen -->
     <div class="autohaus-info">
         <h3>{{ autohaus.name }}</h3>
         <p>{{ autohaus.adresse }}</p>
@@ -22,6 +23,7 @@
 
     <hr>
 
+    <!-- Fahrzeugdaten anzeigen -->
     <h3>Fahrzeugdaten</h3>
     <p><strong>Marke:</strong> {{ kaufvertrag.marke }}</p>
     <p><strong>Modell:</strong> {{ kaufvertrag.modell }}</p>
@@ -33,6 +35,7 @@
 
     <hr>
 
+    <!-- Formular für die Eingabe der Kundendaten -->
     <h3>Kundendaten eingeben</h3>
     <form method="post">
         <label for="vorname">Vorname:</label><br>
@@ -50,6 +53,7 @@
         <label for="telefon">Telefon:</label><br>
         <input type="tel" id="telefon" name="telefon" required><br><br>
 
+        <!-- Text des Kaufvertrags mit dynamischen Daten -->
         <fieldset>
             <legend>Kaufvertragstext</legend>
             <p>
@@ -67,10 +71,11 @@
         </fieldset>
 
         <br>
+        <!-- Absende-Button zum Speichern des Kaufvertrags -->
         <button type="submit" class="kaufvertrag-submit-button">Kaufvertrag speichern</button>
     </form>
 </div>
 
-<!-- Flash Message Popup -->
+<!-- Bereich für Flash-Nachrichten (z.B. Bestätigungsmeldungen) -->
 <div id="flash-message"></div>
 {% endblock %}
