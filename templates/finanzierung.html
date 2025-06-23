@@ -11,7 +11,7 @@
 <section class="finanz-section">
     <div class="finanz-container">
       <h1 class="finanz-title">Finanzierung berechnen</h1>
-      <p class="finanz-sub">Effektiver Jahreszins: <strong>2 %</strong> – fair & transparent</p>
+      <p class="finanz-sub">Effektiver Jahreszins: <strong>0 % !!</strong> – fair & transparent bis zu 10 Jahre Finanzierung</p>
 
 <form method="post" class="finanz-form">
 
@@ -25,7 +25,7 @@
   </div>
 
   <div class="finanz-row">
-    <input type="number" name="laufzeit" placeholder="Laufzeit (Monate)" required>
+    <input type="number" name="laufzeit" placeholder="Laufzeit (Monate)" required min="1" max="120">
     <input type="number" name="schlussrate" placeholder="Schlussrate (€ – optional)">
   </div>
 
@@ -97,9 +97,17 @@
       <input type="date" id="termin" name="termin" required>
     </div>
     <div class="termin-row">
-      <label for="uhrzeit">Gewünschte Uhrzeit:</label>
-      <input type="time" id="uhrzeit" name="uhrzeit" required>
-    </div>
+  <label for="uhrzeit">Gewünschte Uhrzeit:</label>
+  <select id="uhrzeit" name="uhrzeit" required>
+    {% for stunde in range(8, 18) %}
+      <option value="{{ '%02d:00' % stunde }}">{{ '%02d:00' % stunde }}</option>
+      <option value="{{ '%02d:15' % stunde }}">{{ '%02d:15' % stunde }}</option>
+      <option value="{{ '%02d:30' % stunde }}">{{ '%02d:30' % stunde }}</option>
+      <option value="{{ '%02d:45' % stunde }}">{{ '%02d:45' % stunde }}</option>
+    {% endfor %}
+    <option value="18:00">18:00</option>
+  </select>
+</div>
     <button type="submit" class="finanz-button">Termin anfragen</button>
   </form>
 </div>
