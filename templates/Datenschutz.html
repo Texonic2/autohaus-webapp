@@ -1,15 +1,19 @@
+{# Verwendet das gemeinsame Grundlayout (z. B. Header, Footer, Navigation) #}
 {% extends "base.html" %}
 
+{# Setzt den Seitentitel für den Browser-Tab #}
 {% block title %}Datenschutz – NovaDrive{% endblock %}
 
+{# Zusätzliche Inhalte im <head>-Bereich, z. B. Stylesheets #}
 {% block head %}
-
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 {% endblock %}
 
+{# Hauptinhalt der Seite beginnt hier #}
 {% block content %}
 <h1>Datenschutzerklärung</h1>
 
+{# Abschnitt 1: Allgemeine Hinweise zum Datenschutzverständnis des Unternehmens #}
 <section>
     <h2><p><span style="color: #831D17;">1. Allgemeine Hinweise</span></p></h2>
     <p>
@@ -17,6 +21,7 @@
     </p>
 </section>
 
+{# Abschnitt 2: Angaben zum datenschutzrechtlich Verantwortlichen (gem. DSGVO Art. 4 Abs. 7) #}
 <section>
     <h2> <p><span style="color: #831D17;">2. Verantwortlicher</span></p></h2>
     <p>
@@ -30,6 +35,7 @@
     </p>
 </section>
 
+{# Abschnitt 3: Informationen darüber, welche personenbezogenen Daten erhoben werden und wie #}
 <section>
     <h2><p><span style="color: #831D17;">3. Erhebung und Verarbeitung personenbezogener Daten</span></p></h2>
     <p>
@@ -37,6 +43,7 @@
     </p>
 </section>
 
+{# Abschnitt 4: Auflistung der Rechte, die Nutzer laut DSGVO haben (z. B. Auskunft, Löschung) #}
 <section>
     <h2><p><span style="color: #831D17;">4. Ihre Rechte</span></p></h2>
     <p>
@@ -44,6 +51,7 @@
     </p>
 </section>
 
+{# Abschnitt 5: Informationen über die Verwendung von Cookies auf der Website #}
 <section>
     <h2><p><span style="color: #831D17;">5. Nutzung von Cookies</span></p></h2>
     <p>
@@ -51,6 +59,7 @@
     </p>
 </section>
 
+{# Abschnitt 6: Hinweis auf Analyse- und Tracking-Tools sowie deren anonyme Auswertung #}
 <section>
     <h2><p><span style="color: #831D17;">6. Analyse-Tools und Tools von Drittanbietern</span></p></h2>
     <p>
@@ -58,5 +67,6 @@
     </p>
 </section>
 
+{# Link zurück zur Startseite der Website #}
 <p><a href="{{ url_for('index') }}">Zurück zur Startseite</a></p>
 {% endblock %}

@@ -1,15 +1,19 @@
+{# Basis-Layout erweitern – nutzt die Struktur aus base.html #}
 {% extends "base.html" %}
 
+{# Titel, der im <title>-Tag im Browser erscheint #}
 {% block title %}Impressum – NovaDrive{% endblock %}
 
+{# Einbindung zusätzlicher Inhalte im <head>, z. B. CSS-Datei #}
 {% block head %}
-
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 {% endblock %}
 
+{# Hauptinhalt der Seite #}
 {% block content %}
 <h1>Impressum</h1>
 
+{# Abschnitt mit den gesetzlich vorgeschriebenen Anbieterinformationen (§ 5 TMG) #}
 <section>
     <h2><p><span style="color: #831D17;">Angaben gemäß § 5 TMG</span></p></h2>
     <p>
@@ -20,11 +24,13 @@
     </p>
 </section>
 
+{# Vertretungsberechtigter der Firma #}
 <section>
     <h2><p><span style="color: #831D17;">Vertreten durch</span></p></h2>
     <p>Lebron James</p>
 </section>
 
+{# Kontaktinformationen wie Telefon und E-Mail-Adresse #}
 <section>
     <h2><p><span style="color: #831D17;">Kontakt</span></p></h2>
     <p>
@@ -33,6 +39,7 @@
     </p>
 </section>
 
+{# Angaben zum Handelsregistereintrag #}
 <section>
     <h2><p><span style="color: #831D17;">Handelsregister</span></p></h2>
     <p>
@@ -42,6 +49,7 @@
     </p>
 </section>
 
+{# Umsatzsteuer-ID gemäß deutschem Steuerrecht #}
 <section>
     <h2><p><span style="color: #831D17;">Umsatzsteuer-ID</span></p></h2>
     <p>
@@ -51,6 +59,7 @@
     </p>
 </section>
 
+{# Zuständige Aufsichtsbehörde (z. B. für Kfz) #}
 <section>
     <h2><p><span style="color: #831D17;">Aufsichtsbehörde</span></p></h2>
     <p>
@@ -60,12 +69,15 @@
     </p>
 </section>
 
+{# Haftungsausschluss für Inhalte auf der Website #}
 <section>
-    <h2><p><span style="color: #831D17;">Hatungsausschluss</span></p></h2>
+    <h2><p><span style="color: #831D17;">Haftungsausschluss</span></p></h2>
     <p>
         Die Inhalte dieser Website werden mit größtmöglicher Sorgfalt erstellt. Der Anbieter übernimmt jedoch keine Gewähr für die Richtigkeit, Vollständigkeit und Aktualität der bereitgestellten Inhalte. Die Nutzung der Inhalte der Website erfolgt auf eigene Gefahr des Nutzers. Namentlich gekennzeichnete Beiträge geben die Meinung des jeweiligen Autors und nicht immer die Meinung des Anbieters wieder. Mit der reinen Nutzung der Website des Anbieters kommt keinerlei Vertragsverhältnis zwischen dem Nutzer und dem Anbieter zustande.
     </p>
 </section>
 
+{# Link zurück zur Startseite #}
 <p><a href="{{ url_for('index') }}">Zurück zur Startseite</a></p>
 {% endblock %}
+
