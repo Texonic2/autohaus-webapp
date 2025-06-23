@@ -303,130 +303,170 @@ def account():
 
 @app.route("/passwort_aendern", methods=["GET", "POST"])
 def passwort_aendern():
+    # Zugriffsschutz: Nur eingeloggte Benutzer dürfen ihr Passwort ändern
     if 'user_id' not in session:
         return redirect(url_for('Login'))
 
     user_id = session['user_id']
-    cursor = g.cursor
+    cursor = g.cursor  # Cursor für DB-Zugriffe
 
     error = None
-    success = None
+    success = None  # Platzhalter für Rückmeldungen im Template
 
     if request.method == "POST":
+        # Eingaben aus dem Formular abholen
         altes = request.form.get("old_password")
         neues = request.form.get("new_password")
         bestaetigen = request.form.get("confirm_password")
 
+        # Altes Passwort aus der Datenbank holen
         cursor.execute("SELECT passwort FROM users WHERE User_ID = %s", (user_id,))
         user = cursor.fetchone()
 
+        # Prüfen, ob Benutzer gefunden wurde
         if not user:
             error = "Benutzer nicht gefunden."
+
+        # Prüfen, ob das alte Passwort korrekt ist
         elif not check_password_hash(user['passwort'], altes):
             error = "Das alte Passwort ist falsch!"
+
+        # Prüfen, ob die neuen Passwörter übereinstimmen
         elif neues != bestaetigen:
             error = "Die neuen Passwörter stimmen nicht überein."
+
+        # Wenn alles korrekt ist: Passwort in DB aktualisieren
         else:
-            neues_gehasht = generate_password_hash(neues)
+            neues_gehasht = generate_password_hash(neues)  # Hashing aus Sicherheitsgründen
             cursor.execute("UPDATE users SET passwort = %s WHERE User_ID = %s", (neues_gehasht, user_id))
             g.con.commit()
             success = "Passwort erfolgreich geändert."
 
+    # Seite rendern – mit möglicher Fehlermeldung oder Erfolgsmeldung
     return render_template("passwort_aendern.html", error=error, success=success)
+
 
 @app.route('/')
 def index():
+    # Startseite der Website anzeigen
+    # Rendert die HTML-Datei 'index.html' als Antwort auf einen GET-Request auf die Root-URL
     return render_template('index.html')
 
 @app.route('/Login', methods=['GET', 'POST'])
 def Login():
-    error_message = None
+    error_message = None        # Variable zum Speichern von Fehlermeldungen
 
     if request.method == 'POST':
+        # Benutzereingaben aus dem Login-Formular auslesen
         email = request.form['email']
         passwort = request.form['passwort']
 
         cursor = g.cursor
+        # Benutzer mit der angegebenen E-Mail aus der Datenbank abrufen
         cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
         user = cursor.fetchone()
 
+        # Überprüfen, ob Benutzer existiert
         if user is None:
             error_message = "Diese E-Mail-Adresse ist noch nicht registriert."
+        # Passwort überprüfen (gehasht in DB)
         elif not check_password_hash(user['passwort'], passwort):
             error_message = "Das Passwort ist falsch. Bitte versuche es erneut."
         else:
+            # Login erfolgreich, Benutzerdaten in der Session speichern
             session['user_id'] = user['User_ID']
             session['user_role'] = user['role']
-
+            # Weiterleitung zur Startseite nach erfolgreichem Login
             return redirect(url_for('index'))
-
+    # Rendern der Login-Seite mit evtl. Fehlermeldung
     return render_template('Login.html', error_message=error_message)
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
-    error_message = None
+    error_message = None      # Variable für mögliche Fehlermeldungen
 
     if request.method == 'POST':
+        # Benutzereingaben aus dem Registrierungsformular auslesen
         vorname = request.form['firstname']
         nachname = request.form['lastname']
         email = request.form['email']
         passwort = request.form['password']
 
         cursor = g.cursor
-
+        # Prüfen, ob die E-Mail bereits registriert ist
         cursor.execute("SELECT * FROM users WHERE email = %s", (email,))
         existing_user = cursor.fetchone()
 
         if existing_user:
+            # Fehlermeldung bei bereits registrierter E-Mail
             error_message = "E-Mail bereits registriert. Bitte benutze eine andere."
         else:
+            # Standardrolle für neue Benutzer setzen
             rolle = 'customer'
+            # Passwort sicher hashen
             hashed_password = generate_password_hash(passwort)
 
+            # Neuen Benutzer in die Datenbank einfügen
             sql = "INSERT INTO users (vorname, nachname, email, passwort, role) VALUES (%s, %s, %s, %s, %s)"
             val = (vorname, nachname, email, hashed_password, rolle)
             cursor.execute(sql, val)
             g.con.commit()
 
+            # Nach erfolgreicher Registrierung Weiterleitung zur Login-Seite
             return redirect(url_for('Login'))
-
-    return render_template('registration.html', error_message=error_message)
+        # Rendern der Registrierungsseite, ggf. mit Fehlermeldung
+        return render_template('registration.html', error_message=error_message)
 
 @app.route('/logout')
 def logout():
+    # Entfernt die Benutzer-ID aus der Session, um den Benutzer auszuloggen
     session.pop('user_id', None)
+    # Entfernt die Benutzerrolle aus der Session
     session.pop('user_role', None)
+    # Leitet den Benutzer zurück zur Startseite weiter
     return redirect(url_for('index'))
 
+# Route für die Impressum-Seite
+# Wenn der Benutzer die URL /impressum aufruft, wird die impressum.html-Seite angezeigt.
 @app.route('/impressum')
 def impressum():
     return render_template('impressum.html')
 
+
+# Route für die Datenschutz-Seite
+# Wenn der Benutzer die URL /Datenschutz aufruft, wird die datenschutz.html-Seite angezeigt.
 @app.route('/Datenschutz')
 def datenschutz():
     return render_template('datenschutz.html')
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    geloescht = request.args.get("geloescht") #
+    # Liest den Query-Parameter "geloescht" aus, z.B. um Löschbestätigungen anzuzeigen
+    geloescht = request.args.get("geloescht")
+    # Überprüft, ob der Benutzer eingeloggt ist und die Rolle "admin" besitzt
     if 'user_role' not in session or session['user_role'] != 'admin':
-        return "Zugriff verweigert", 403
+        return "Zugriff verweigert", 403   # Zugriff verweigert, wenn keine Admin-Rechte vorhanden
 
     cursor = g.cursor
 
     if request.method == "POST":
+        # Liest die Aktion und die ID der Finanzierungsanfrage aus dem Formular aus
         aktion = request.form.get("aktion")
         anfrage_id = request.form.get("anfrage_id")
 
+        # Führt die entsprechende Datenbankaktion je nach Aktionstyp aus
         if aktion == "ablehnen":
             cursor.execute("UPDATE Finanzierungsanfrage SET Status = 'abgelehnt' WHERE ID = %s", (anfrage_id,))
         elif aktion == "annehmen":
             cursor.execute("UPDATE Finanzierungsanfrage SET Status = 'angenommen' WHERE ID = %s", (anfrage_id,))
         elif aktion == "kaufvertrag":
+            # Fügt einen Kaufvertrag für die Finanzierungsanfrage hinzu
             cursor.execute("INSERT INTO Kaufvertrag (Finanzierungs_ID, Datum_Erstellung, PDF_Pfad) VALUES (%s, NOW(), 'kaufvertrag.pdf')", (anfrage_id,))
 
+        # Speichert die Änderungen in der Datenbank
         g.con.commit()
 
+    # Holt alle Finanzierungsanfragen mit zugehörigen Auto- und Benutzerinformationen, sortiert nach Erstellungsdatum absteigend
     cursor.execute("""
         SELECT f.*, a.marke, a.modell, a.url, f.info, u.vorname, u.nachname, u.email
         FROM Finanzierungsanfrage f
@@ -436,65 +476,102 @@ def admin():
     """)
     anfragen = cursor.fetchall()
 
+    # Rendert die Admin-Seite und übergibt die Anfragen und den optionalen Lösch-Parameter an das Template
     return render_template("admin.html", anfragen=anfragen, geloescht=geloescht)
 
-@app.route('/admin/action', methods=['POST'])
+
+# Route für Admin-Aktionen (z.B. Anfragen annehmen, ablehnen, Kaufvertrag erstellen)
+# Diese Route akzeptiert nur POST-Anfragen
+@app.route('/admin/action', methods=['POST']) # Enes Bülkü und Benjamin David
 def admin_action():
+    # Überprüfen, ob der Benutzer eingeloggt ist und die Rolle 'admin' hat
     if 'user_role' not in session or session['user_role'] != 'admin':
-        return "Keine Berechtigung", 403
+        return "Keine Berechtigung", 403  # Zugriff verweigert, wenn keine Adminrechte
 
-    aktion = request.form.get('aktion')
-    anfrage_id = request.form.get('anfrage_id')
+    # Abfrage der übermittelten Formulardaten
+    aktion = request.form.get('aktion')           # Welche Aktion soll ausgeführt werden?
+    anfrage_id = request.form.get('anfrage_id')   # Auf welche Finanzierungsanfrage bezieht sich die Aktion?
 
-    cursor = g.cursor
+    cursor = g.cursor  # Zugriff auf die Datenbank über das globale Cursor-Objekt
 
+    # Überprüfung, ob eine Anfrage-ID übermittelt wurde
     if not anfrage_id:
-        return "Anfrage-ID fehlt", 400
+        return "Anfrage-ID fehlt", 400  # Bad Request, wenn keine ID angegeben wurde
 
+    # Verschiedene mögliche Aktionen je nach übermitteltem Formularwert
     if aktion == "ablehnen":
+        # Setzt den Status der Anfrage auf 'abgelehnt'
         cursor.execute("UPDATE Finanzierungsanfrage SET Status = 'abgelehnt' WHERE ID = %s", (anfrage_id,))
     elif aktion == "annehmen":
+        # Setzt den Status der Anfrage auf 'genehmigt'
         cursor.execute("UPDATE Finanzierungsanfrage SET Status = 'genehmigt' WHERE ID = %s", (anfrage_id,))
     elif aktion == "kaufvertrag":
-        # Optional: prüfen, ob Kaufvertrag für die Anfrage schon existiert, um Duplikate zu vermeiden
+        # Prüfen, ob bereits ein Kaufvertrag für diese Anfrage existiert
         cursor.execute("SELECT * FROM Kaufvertrag WHERE Finanzierungs_ID = %s", (anfrage_id,))
         vorhandener_vertrag = cursor.fetchone()
         if not vorhandener_vertrag:
-            cursor.execute("INSERT INTO Kaufvertrag (Finanzierungs_ID, Datum_Erstellung, PDF_Pfad) VALUES (%s, NOW(), 'kaufvertrag.pdf')", (anfrage_id,))
+            # Wenn kein Vertrag vorhanden ist, wird ein neuer erstellt
+            cursor.execute(
+                "INSERT INTO Kaufvertrag (Finanzierungs_ID, Datum_Erstellung, PDF_Pfad) VALUES (%s, NOW(), 'kaufvertrag.pdf')",
+                (anfrage_id,)
+            )
 
+    # Änderungen an der Datenbank dauerhaft speichern
     g.con.commit()
 
+    # Zurückleitung zur Admin-Seite nach Ausführung der Aktion
     return redirect(url_for('admin'))
 
+
+# Route für die Bewertungsseite (Reviews)
+# Unterstützt sowohl GET- als auch POST-Anfragen
 @app.route('/reviews', methods=['GET', 'POST'])
-
 def reviews():
+    # Wenn ein Formular abgeschickt wurde (POST-Methode)
     if request.method == 'POST':
-        user_id = session.get('user_id')
-        rating = request.form['rating']
-        comment = request.form['comment']
+        user_id = session.get('user_id')      # ID des eingeloggten Nutzers aus der Session
+        rating = request.form['rating']       # Bewertung (z. B. Sterne) aus dem Formular
+        comment = request.form['comment']     # Kommentartext aus dem Formular
 
-        cursor = g.cursor
+        cursor = g.cursor  # Zugriff auf den Datenbank-Cursor
+
+        # Einfügen einer neuen Bewertung in die Datenbank
         cursor.execute("""
             INSERT INTO reviews (user_id, rating, comment) 
             VALUES (%s, %s, %s)
         """, (user_id, rating, comment))
+
+        # Änderungen speichern
         g.con.commit()
 
+        # Nach erfolgreichem Einfügen zur Bewertungsseite weiterleiten (um erneute POST-Anfragen bei Refresh zu vermeiden)
         return redirect(url_for('reviews'))
 
+    # Wenn die Seite normal aufgerufen wird (GET-Methode)
     cursor = g.cursor
-    cursor.execute("SELECT r.*, u.vorname, u.nachname FROM reviews r LEFT JOIN users u ON r.user_id = u.User_ID")
-    reviews = cursor.fetchall()
 
+    # Alle Bewertungen aus der Datenbank abrufen, inkl. Vor- und Nachnamen des Nutzers
+    cursor.execute("""
+        SELECT r.*, u.vorname, u.nachname 
+        FROM reviews r 
+        LEFT JOIN users u ON r.user_id = u.User_ID
+    """)
+
+    reviews = cursor.fetchall()  # Alle Bewertungen als Liste von Einträgen holen
+
+    # Die Bewertungen an das HTML-Template übergeben und anzeigen
     return render_template('reviews.html', reviews=reviews)
+
 
 
 @app.route('/termine')
 def termine_anzeigen():
     cursor = g.cursor
+    # Holt alle Finanzierungsanfragen zusammen mit Auto-Marke und Modell,
+    # sortiert nach dem gewünschten Termin absteigend
     cursor.execute("SELECT fa.*, a.marke, a.modell FROM finanzierungsanfrage fa JOIN auto a ON fa.Auto_ID = a.autoid ORDER BY fa.Terminwunsch DESC")
     termine = cursor.fetchall()
+    # Übergibt die Termine an das Template zur Anzeige
     return render_template('termine.html', termine=termine)
 
 
@@ -541,31 +618,37 @@ def benutzer_verwalten():
 @app.route("/benutzer_anlegen", methods=["GET", "POST"])
 
 def benutzer_anlegen():
+    # Nur Admins dürfen Benutzer anlegen
     if 'user_role' not in session or session['user_role'] != 'admin':
         return "Zugriff verweigert", 403
 
     if request.method == "POST":
+        # Formulardaten auslesen
         vorname = request.form.get("vorname")
         nachname = request.form.get("nachname")
         email = request.form.get("email")
         passwort = request.form.get("passwort")
         rolle = request.form.get("rolle")
 
+        # Passwort hashen für sichere Speicherung
         hashed_pw = generate_password_hash(passwort)
 
         cursor = g.cursor
+        # Neuen Benutzer in Datenbank einfügen
         cursor.execute("INSERT INTO users (vorname, nachname, email, passwort, role) VALUES (%s, %s, %s, %s, %s)",
                        (vorname, nachname, email, hashed_pw, rolle))
         g.con.commit()
 
+        # Nach dem Anlegen zurück zur Benutzerverwaltung
         return redirect(url_for('benutzer_verwalten'))
 
+    # GET-Request: Formular zum Benutzer anlegen anzeigen
     return render_template("benutzer_anlegen.html")
 
 @app.route('/anfrage_loeschen/<int:anfrage_id>', methods=['POST'])
 def anfrage_loeschen(anfrage_id):
     if 'user_id' not in session:
-        return redirect(url_for('Login'))   # ey dass ist zweilmal drinn
+        return redirect(url_for('Login'))
 
     user_id = session['user_id']
     cursor = g.cursor
@@ -904,57 +987,77 @@ def kaufvertraege():
     return render_template("kaufvertraege.html", vertraege=vertraege)
 
 
+# Route zum Löschen einer Bewertung
+# Diese Route ist nur per POST-Methode erreichbar
 @app.route('/delete_review', methods=['POST'])
 def delete_review():
+    # Überprüfen, ob der Nutzer eingeloggt ist und die Rolle 'admin' hat
     if 'user_role' not in session or session['user_role'] != 'admin':
-        return "Keine Berechtigung", 403
+        return "Keine Berechtigung", 403  # Zugriff verweigert bei fehlender Admin-Berechtigung
 
+    # ID der zu löschenden Bewertung aus dem Formular holen
     review_id = request.form.get('review_id')
 
+    # Sicherstellen, dass eine review_id übermittelt wurde
     if not review_id:
-        return "Rezension-ID fehlt", 400
+        return "Rezension-ID fehlt", 400  # Bad Request, wenn keine ID vorhanden ist
 
-    cursor = g.cursor
+    cursor = g.cursor  # Datenbank-Cursor holen
+
+    # Bewertung mit der übergebenen ID aus der Datenbank löschen
     cursor.execute("DELETE FROM reviews WHERE id = %s", (review_id,))
-    g.con.commit()
+    g.con.commit()  # Änderungen speichern
 
+    # Nach dem Löschen zurück zur Bewertungsseite
     return redirect(url_for('reviews'))
 
 
+
+# Route zum Beantworten einer Bewertung durch einen Admin
+# Diese Route ist nur per POST-Methode erreichbar
 @app.route('/reply_to_review', methods=['POST'])
 def reply_to_review():
+    # Prüfen, ob der Nutzer eingeloggt ist und Adminrechte hat
     if 'user_role' not in session or session['user_role'] != 'admin':
-        return "Keine Berechtigung", 403
+        return "Keine Berechtigung", 403  # Zugriff verweigert, wenn kein Admin
 
+    # Formularwerte abrufen: ID der Bewertung und die Admin-Antwort
     review_id = request.form.get('review_id')
     reply = request.form.get('admin_response')
 
+    # Sicherstellen, dass beide Werte übermittelt wurden
     if not review_id or not reply:
-        return "Fehlende Daten", 400
+        return "Fehlende Daten", 400  # Bad Request, wenn Daten fehlen
 
-    cursor = g.cursor
+    cursor = g.cursor  # Datenbank-Cursor holen
+
+    # Bewertung in der Datenbank aktualisieren: Antwort des Admins speichern
     cursor.execute("""
         UPDATE reviews 
         SET admin_response = %s 
         WHERE id = %s
     """, (reply, review_id))
-    g.con.commit()
 
+    g.con.commit()  # Änderungen speichern
+
+    # Zurückleitung zur Bewertungsseite nach dem Speichern der Antwort
     return redirect(url_for('reviews'))
 
-@app.route("/anfrage_erstellen", methods=["GET", "POST"])  # Ali Yenil
+
+# Route zum Erstellen einer Finanzierungs- oder Barkaufanfrage
+@app.route("/anfrage_erstellen", methods=["GET", "POST"])  # Ali Yenil und Benjamin David
 def anfrage_erstellen():
-    cursor = g.cursor
+    cursor = g.cursor  # Datenbank-Cursor holen
 
-
+    # Alle Autos aus der Datenbank abfragen
     cursor.execute("SELECT autoid, marke, modell, preis FROM auto")
     autos = cursor.fetchall()
 
-
+    # Alle registrierten Benutzer (Kunden) abfragen
     cursor.execute("SELECT User_ID, email, vorname, nachname FROM users")
     kunden = cursor.fetchall()
 
-    # Initialwerte
+    # Initialisierung der Variablen, die später im Template verwendet werden
     preis = None
     rate = None
     laufzeit = None
@@ -963,9 +1066,11 @@ def anfrage_erstellen():
     fehler = None
     auto_id = None
     terminwunsch = None
-    kaufart = request.form.get("kaufart")
+    kaufart = request.form.get("kaufart")  # Barkauf oder Finanzierung
 
+    # Wenn das Formular abgeschickt wurde
     if request.method == "POST":
+        # Abfrage der Auto-ID und Preisermittlung
         auto_id_input = request.form.get("auto_id")
         if auto_id_input and auto_id_input.isdigit():
             auto_id = int(auto_id_input)
@@ -979,17 +1084,20 @@ def anfrage_erstellen():
         else:
             fehler = "Bitte gib eine gültige Auto-ID ein."
 
+        # Weitere Eingabefelder aus dem Formular abrufen
         laufzeit_input = request.form.get("laufzeit")
         anzahlung_input = request.form.get("anzahlung")
         schlussrate_input = request.form.get("schlussrate")
         terminwunsch_input = request.form.get("terminwunsch")
 
+        # Terminwunsch in ein datetime-Format umwandeln
         if terminwunsch_input:
             try:
                 terminwunsch = terminwunsch_input.replace("T", " ") + ":00"
             except Exception:
                 fehler = "❌ Ungültiges Datumsformat beim Terminwunsch."
 
+        # Berechnung der monatlichen Rate bei Finanzierungsanfrage
         try:
             if kaufart == "Finanzierungsanfrage":
                 if preis and laufzeit_input and anzahlung_input and schlussrate_input:
@@ -999,13 +1107,14 @@ def anfrage_erstellen():
 
                     if laufzeit > 0:
                         finanzierungsbetrag = preis - anzahlung - schlussrate
-                        zinsen = finanzierungsbetrag * 0.02
+                        zinsen = finanzierungsbetrag * 0.02  # 2 % Zinsen
                         rate = round((finanzierungsbetrag + zinsen) / laufzeit, 2)
                     else:
                         fehler = "❌ Laufzeit muss größer als 0 sein."
                 else:
                     fehler = "❌ Bitte alle Finanzierungsfelder ausfüllen."
             else:
+                # Barkauf – keine Rate nötig
                 laufzeit = 0
                 anzahlung = 0
                 schlussrate = preis
@@ -1013,7 +1122,7 @@ def anfrage_erstellen():
         except ValueError:
             fehler = "❌ Ungültige Zahlen bei Laufzeit, Anzahlung oder Schlussrate."
 
-        # Kunden-E-Mail prüfen & Anfrage speichern
+        # Prüfung ob Kunde existiert, anhand der E-Mail-Adresse
         email = request.form.get("email")
         if not fehler and preis and email and terminwunsch:
             cursor.execute("SELECT User_ID FROM users WHERE email = %s", (email,))
@@ -1024,6 +1133,7 @@ def anfrage_erstellen():
             else:
                 benutzer_id = kunde['User_ID']
                 try:
+                    # Eintrag der Anfrage in die Datenbank
                     cursor.execute("""
                         INSERT INTO Finanzierungsanfrage 
                         (Nutzer_ID, Auto_ID, Monate, Anzahlung, Schlussrate, Monatliche_Rate, Terminwunsch, Status, erstellt_am, info)
@@ -1038,11 +1148,12 @@ def anfrage_erstellen():
                         terminwunsch,
                         kaufart
                     ))
-                    g.con.commit()
-                    return redirect(url_for("admin"))
+                    g.con.commit()  # Änderungen speichern
+                    return redirect(url_for("admin"))  # Weiterleitung zur Admin-Seite
                 except Exception as e:
                     fehler = f"❌ Fehler beim Speichern: {e}"
 
+    # Rendern des Anfrageformulars mit allen benötigten Variablen
     return render_template("anfrage_erstellen.html",
         autos=autos,
         preis=preis,
@@ -1055,6 +1166,7 @@ def anfrage_erstellen():
         kaufart=kaufart,
         kunden=kunden
     )
+
 
 @app.route('/kaufvertraege')
 def kaufvertraege_anzeigen():
