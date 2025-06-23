@@ -94,28 +94,39 @@ def fahrzeugkatalog():
 
 @app.route("/finanzierungbsp", methods=["GET", "POST"])
 def finanzierungbsp():
-    rate = None
+    rate = None  # Ergebnis-Variable für die Monatsrate
 
     if request.method == "POST":
         try:
+            # 🟢 Werte aus dem Formular auslesen und in richtige Typen umwandeln
             fahrzeugpreis = float(request.form["fahrzeugpreis"])
             anzahlung = float(request.form["anzahlung"])
             laufzeit = int(request.form["laufzeit"])
             schlussrate = float(request.form["schlussrate"])
 
-            # Effektivzins: 2 % jährlich → monatlich:
-            zinssatz = 0.02 / 12
-            kreditbetrag = fahrzeugpreis - anzahlung - schlussrate
+            # 🟢 Plausibilitätsprüfungen (wie bei deiner Haupt-Route)
+            if anzahlung < 0 or schlussrate < 0:
+                rate = "Anzahlung oder Schlussrate dürfen nicht negativ sein."
 
-            if laufzeit > 0 and kreditbetrag > 0:
-                rate = kreditbetrag * zinssatz / (1 - (1 + zinssatz) ** -laufzeit)
-                rate = round(rate, 2)
+            elif anzahlung > fahrzeugpreis:
+                rate = "Anzahlung darf nicht höher sein als der Fahrzeugpreis."
+
+            elif laufzeit <= 0 or laufzeit > 120:
+                rate = "Laufzeit muss zwischen 1 und 120 Monaten liegen."
+
+            elif (fahrzeugpreis - anzahlung - schlussrate) < 0:
+                rate = "Kombination aus Anzahlung und Schlussrate ist zu hoch."
+
             else:
-                rate = "Ungültige Eingaben"
+                # 🟢 ZINS = 0% → einfach Restbetrag durch Laufzeit teilen
+                kreditbetrag = fahrzeugpreis - anzahlung - schlussrate
+                rate = round(kreditbetrag / laufzeit, 2)
 
         except (ValueError, ZeroDivisionError):
+            # 🟢 Fehler beim Umwandeln oder Division durch 0 → klare Meldung
             rate = "Eingabefehler"
 
+    # 🟢 HTML-Seite mit Ergebnis anzeigen
     return render_template("finanzierungbsp.html", rate=rate)
 
 
@@ -151,9 +162,22 @@ def finanzierung(autoid):
                 schlussrate_raw = request.form.get('schlussrate', '').strip()
                 schlussrate = float(schlussrate_raw) if schlussrate_raw else 0.0
 
-                kreditbetrag = fahrzeugpreis - anzahlung - schlussrate
-                zins = 0.02  # 2 %
-                rate = round((kreditbetrag * (1 + zins)) / laufzeit, 2)
+                # ✅ PRÜFUNGEN
+                if anzahlung < 0 or schlussrate < 0:
+                    flash("Anzahlung oder Schlussrate dürfen nicht negativ sein.")
+                elif anzahlung > fahrzeugpreis:
+                    flash("Die Anzahlung darf nicht höher sein als der Fahrzeugpreis.")
+                elif laufzeit <= 0 or laufzeit > 120:
+                    flash("Die Laufzeit muss zwischen 1 und 120 Monaten liegen (max. 10 Jahre).")
+                elif (fahrzeugpreis - anzahlung - schlussrate) < 0:
+                    flash("Die Kombination aus Anzahlung und Schlussrate ist zu hoch.")
+
+                else:
+                    # ✅ Berechnen nur wenn alles OK
+                    kreditbetrag = fahrzeugpreis - anzahlung - schlussrate
+
+                    # KEINE ZINSBERECHNUNG MEHR!
+                    rate = round(kreditbetrag / laufzeit, 2)
 
             except Exception as e:
                 print(f"Fehler bei Berechnung: {e}")
@@ -947,6 +971,7 @@ def anfrage_erstellen():
             auto_id = int(auto_id_input)
             cursor.execute("SELECT preis FROM auto WHERE autoid = %s", (auto_id,))
             result = cursor.fetchone()
+
             if result:
                 preis = float(result['preis'])
             else:
