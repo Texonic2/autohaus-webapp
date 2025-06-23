@@ -1503,10 +1503,10 @@ button {
   text-shadow: 0 0 2px rgba(0, 0, 0, 0.3); /* Leichter Schatteneffekt */
 }
 .kontakt-box {
-    max-width: 400px;
+    max-width: 600px;   /* ⬅️ Breiter gemacht */
     margin: 30px auto;
     padding: 20px;
     background: #f8f8f8;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
