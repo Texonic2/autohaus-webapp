@@ -563,18 +563,6 @@ def reviews():
     return render_template('reviews.html', reviews=reviews)
 
 
-
-@app.route('/termine')
-def termine_anzeigen():
-    cursor = g.cursor
-    # Holt alle Finanzierungsanfragen zusammen mit Auto-Marke und Modell,
-    # sortiert nach dem gewünschten Termin absteigend
-    cursor.execute("SELECT fa.*, a.marke, a.modell FROM finanzierungsanfrage fa JOIN auto a ON fa.Auto_ID = a.autoid ORDER BY fa.Terminwunsch DESC")
-    termine = cursor.fetchall()
-    # Übergibt die Termine an das Template zur Anzeige
-    return render_template('termine.html', termine=termine)
-
-
 @app.route("/benutzer_verwalten", methods=["GET", "POST"])
 def benutzer_verwalten():
     if 'user_role' not in session or session['user_role'] != 'admin':
