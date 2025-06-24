@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}📄 Anfrage erstellen{% endblock %}
+{% block title %} Anfrage erstellen{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/anfrage_erstellen.css') }}">
 
 <div class="anfrage-wrapper">
-    <h2>📄 Finanzierungs- oder Barkaufanfrage</h2>
+    <h2> Finanzierungs- oder Barkaufanfrage</h2>
     <form method="POST">
 
         <label class="anfrage-label">Fahrzeug auswählen:</label>
@@ -66,7 +66,7 @@
 
         <button type="submit" class="anfrage-button">
             {% if rate and preis %}
-                ✅ Anfrage abschicken
+                 Anfrage abschicken
             {% else %}
                 Weiter
             {% endif %}

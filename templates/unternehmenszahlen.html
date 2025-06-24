@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}📊 Unternehmenskennzahlen{% endblock %}
+{% block title %} Unternehmenskennzahlen{% endblock %}
 
 {% block content %}
-<h2 class="admin-title">📊  Unternehmenskennzahlen</h2>
+<h2 class="admin-title">  Unternehmenskennzahlen</h2>
 
 <div class="form-container">
 
 
 
-<h3 style="margin-top: 40px;">📊 Umsatzverteilung gesamt ({{ "{:,.0f}".format(gesamtumsatz).replace(",", ".") }} €)</h3>
+<h3 style="margin-top: 40px;"> Umsatzverteilung gesamt ({{ "{:,.0f}".format(gesamtumsatz).replace(",", ".") }} €)</h3>
 
 <div class="umsatz-balken-wrapper">
   <div class="umsatz-balken">
@@ -18,13 +18,13 @@
   </div>
 
   <div class="umsatz-legende">
-  <span class="barkauf-label">💶 Barkauf:</span>
+  <span class="barkauf-label"> Barkauf:</span>
   {{ "{:,.0f}".format(barkauf_umsatz).replace(",", ".") }} €
   ({{ "{:.1f}".format(barkauf_umsatz / gesamtumsatz * 100).replace(".", ",") if gesamtumsatz else 0 }}%)
 </div>
 
   <div class="umsatz-legende">
-  <span class="finanzierung-label">💳 Finanzierung:</span>
+  <span class="finanzierung-label"> Finanzierung:</span>
   {{ "{:,.0f}".format(finanzierungs_umsatz).replace(",", ".") }} €
   ({{ "{:.1f}".format(finanzierungs_umsatz / gesamtumsatz * 100).replace(".", ",") if gesamtumsatz else 0 }}%)
 </div>
@@ -32,46 +32,46 @@
 
 
   <div class="kpi-zeile">
-  <label>📈 Gesamtumsatz:</label>
-  <span>{{ "{:,.0f}".format(gesamtumsatz).replace(",", ".") }} €</span>
+  <label> Gesamtumsatz:</label>
+  <span>{{ "{:,.0f}".format(gesamtumsatz).replace(",", ".") }}€</span>
 </div>
 
 
   <div class="kpi-zeile">
-    <label>📊 Kreditanteil (vom Gesamtumsatz):</label>
-    <span>{{ kreditanteil_prozent }} %</span>
+    <label> Kreditanteil (vom Gesamtumsatz):</label>
+    <span>{{ kreditanteil_prozent }}%</span>
   </div>
 
   <div class="kpi-zeile">
-    <label>⏱ Durchschnittliche Laufzeit:</label>
+    <label> Durchschnittliche Laufzeit:</label>
     <span>{{ durchschnitt_laufzeit }} Monate</span>
   </div>
 </div>
 
-<h3 class="kpi-heading">👥 Nutzer- & Anfrage-Kennzahlen</h3>
+<h3 class="kpi-heading"> Nutzer- & Anfrage-Kennzahlen</h3>
 <div class="kpi-box">
   <div class="kpi-zeile">
-    <label>📄 Anzahl aller Kaufverträge:</label>
+    <label> Anzahl aller Kaufverträge:</label>
     <span>{{ anzahl_vertraege }}</span>
   </div>
   <div class="kpi-zeile">
-    <label>👥 Registrierte Kunden:</label>
+    <label> Registrierte Kunden:</label>
     <span>{{ kundenanzahl }}</span>
   </div>
   <div class="kpi-zeile">
-    <label>📋 Anzahl aller Finanzierungsanfragen:</label>
+    <label> Anzahl aller Finanzierungsanfragen:</label>
     <span>{{ gesamt_anfragen }}</span>
   </div>
   <div class="kpi-zeile">
-    <label>📥 Offene Finanzierungsanfragen:</label>
+    <label> Offene Finanzierungsanfragen:</label>
     <span>{{ offene_anfragen }}</span>
   </div>
   <div class="kpi-zeile">
-    <label>💸 Anteil Barkauf (Anfragen):</label>
-    <span>{{ barkauf_anteil }} %</span>
+    <label> Anteil Barkauf (Anfragen):</label>
+    <span>{{ barkauf_anteil }}%</span>
   </div>
   <div class="kpi-zeile">
-    <label>🏦 Anteil Finanzierung (Anfragen):</label>
-    <span>{{ finanzierungs_anteil }} %</span>
+    <label> Anteil Finanzierung (Anfragen):</label>
+    <span>{{ finanzierungs_anteil }}%</span>
   </div>
 {% endblock %}

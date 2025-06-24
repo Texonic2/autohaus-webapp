@@ -11,7 +11,7 @@
 <section class="finanz-section">
     <div class="finanz-container">
       <h1 class="finanz-title">Finanzierung berechnen</h1>
-      <p class="finanz-sub">Effektiver Jahreszins: <strong>0 % !!</strong> – fair & transparent bis zu 10 Jahre Finanzierung</p>
+      <p class="finanz-sub">Effektiver Jahreszins: <strong>0% !!</strong> – fair & transparent bis zu 10 Jahre Finanzierung</p>
 
 <form method="post" class="finanz-form">
 
@@ -46,7 +46,7 @@
   <div class="finanz-ergebnis-box">
     <div class="finanz-result">
       <span class="finanz-label">Monatliche Rate:</span>
-      <span class="finanz-value">{{ rate }} €</span>
+      <span class="finanz-value">{{ rate }}€</span>
     </div>
 
     <div class="finanz-summary">
@@ -55,12 +55,12 @@
     <li><strong>Fahrzeug:</strong> {{ fahrzeug.marke }} {{ fahrzeug.modell }}</li>
     <li><strong>Leistung:</strong> {{ fahrzeug.leistung or '–' }} PS</li>
     <li><strong>Fahrzeugpreis:</strong> {{ "{:,.0f}".format(fahrzeugpreis).replace(",", ".") }} €</li>
-    <li><strong>Anzahlung:</strong> {{ anzahlung }} €</li>
+    <li><strong>Anzahlung:</strong> {{ anzahlung }}€</li>
     <li><strong>Laufzeit:</strong> {{ laufzeit }} Monate</li>
     {% if schlussrate %}
-    <li><strong>Schlussrate:</strong> {{ schlussrate }} €</li>
+    <li><strong>Schlussrate:</strong> {{ schlussrate }}€</li>
     {% endif %}
-    <li>Bei einer Laufzeit von <strong>{{ laufzeit }}</strong> Monaten beträgt Ihre monatliche Rate <strong>{{ rate }} €</strong>.</li>
+    <li>Bei einer Laufzeit von <strong>{{ laufzeit }}</strong> Monaten beträgt Ihre monatliche Rate <strong>{{ rate }}€</strong>.</li>
   </ul>
 
   <div class="fahrzeug-vorteile">

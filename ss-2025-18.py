@@ -1,22 +1,22 @@
 from flask import Flask, render_template, g, request, redirect, url_for, session, flash
 import mysql.connector
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename  # 🔑 Neu für Upload
-import os  # 🔑 Neu für Upload
+from werkzeug.utils import secure_filename  #  Neu für Upload
+import os  #  Neu für Upload
 
 # Import der Verbindungsinformationen zur Datenbank
 from db.db_credentials import DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE
 
-# ✅ Flask-App erstellen (nur EINMAL!)
+#  Flask-App erstellen (nur EINMAL!)
 app = Flask(__name__)
 app.secret_key = 'dein_geheimes_schluessel'  # Geheimen Schlüssel für Sessions setzen
 
-# ✅ Upload-Konfiguration
+#  Upload-Konfiguration
 UPLOAD_FOLDER = os.path.join('static')  # Oder z.B. os.path.join('static', 'uploads')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER  # Speichert Upload-Ordner in der Config
 
-# ✅ Hilfsfunktion: Prüft, ob die Datei-Endung erlaubt ist
+#  Hilfsfunktion: Prüft, ob die Datei-Endung erlaubt ist
 def allowed_file(filename):
     """
     Prüft, ob Dateiname eine erlaubte Bild-Endung hat.
@@ -98,13 +98,13 @@ def finanzierungbsp():
 
     if request.method == "POST":
         try:
-            # 🟢 Werte aus dem Formular auslesen und in richtige Typen umwandeln
+            #  Werte aus dem Formular auslesen und in richtige Typen umwandeln
             fahrzeugpreis = float(request.form["fahrzeugpreis"])
             anzahlung = float(request.form["anzahlung"])
             laufzeit = int(request.form["laufzeit"])
             schlussrate = float(request.form["schlussrate"])
 
-            # 🟢 Plausibilitätsprüfungen (wie bei deiner Haupt-Route)
+            #  Plausibilitätsprüfungen (wie bei deiner Haupt-Route)
             if anzahlung < 0 or schlussrate < 0:
                 rate = "Anzahlung oder Schlussrate dürfen nicht negativ sein."
 
@@ -118,33 +118,33 @@ def finanzierungbsp():
                 rate = "Kombination aus Anzahlung und Schlussrate ist zu hoch."
 
             else:
-                # 🟢 ZINS = 0% → einfach Restbetrag durch Laufzeit teilen
+                #  ZINS = 0% → einfach Restbetrag durch Laufzeit teilen
                 kreditbetrag = fahrzeugpreis - anzahlung - schlussrate
                 rate = round(kreditbetrag / laufzeit, 2)
 
         except (ValueError, ZeroDivisionError):
-            # 🟢 Fehler beim Umwandeln oder Division durch 0 → klare Meldung
+            #  Fehler beim Umwandeln oder Division durch 0 → klare Meldung
             rate = "Eingabefehler"
 
-    # 🟢 HTML-Seite mit Ergebnis anzeigen
+    #  HTML-Seite mit Ergebnis anzeigen
     return render_template("finanzierungbsp.html", rate=rate)
 
 
 @app.route('/finanzierung/<int:autoid>', methods=['GET', 'POST'])
 def finanzierung(autoid):
-    # 👉 Prüfen, ob User eingeloggt ist
+    #  Prüfen, ob User eingeloggt ist
     if 'user_id' not in session:
         return redirect(url_for('Login'))
 
     cursor = g.cursor
 
-    # 👉 Fahrzeug aus DB laden
+    #  Fahrzeug aus DB laden
     cursor.execute("SELECT * FROM auto WHERE autoid = %s", (autoid,))
     fahrzeug = cursor.fetchone()
     if not fahrzeug:
         return "Fahrzeug nicht gefunden", 404
 
-    # 👉 Variablen initialisieren
+    #  Variablen initialisieren
     rate = None
     fahrzeugpreis = None
     anzahlung = None
@@ -162,7 +162,7 @@ def finanzierung(autoid):
                 schlussrate_raw = request.form.get('schlussrate', '').strip()
                 schlussrate = float(schlussrate_raw) if schlussrate_raw else 0.0
 
-                # ✅ PRÜFUNGEN
+                #  PRÜFUNGEN
                 if anzahlung < 0 or schlussrate < 0:
                     flash("Anzahlung oder Schlussrate dürfen nicht negativ sein.")
                 elif anzahlung > fahrzeugpreis:
@@ -173,7 +173,7 @@ def finanzierung(autoid):
                     flash("Die Kombination aus Anzahlung und Schlussrate ist zu hoch.")
 
                 else:
-                    # ✅ Berechnen nur wenn alles OK
+                    #  Berechnen nur wenn alles OK
                     kreditbetrag = fahrzeugpreis - anzahlung - schlussrate
 
                     # KEINE ZINSBERECHNUNG MEHR!
@@ -210,19 +210,19 @@ def finanzierung(autoid):
                 termin_uhrzeit = request.form['uhrzeit']
                 terminwunsch = f"{termin_datum} {termin_uhrzeit}"
 
-                # ✅ User-ID sicher aus Session holen & prüfen
+                #  User-ID sicher aus Session holen & prüfen
                 nutzer_id = session.get('user_id')
                 if not nutzer_id:
                     return redirect(url_for('Login'))
                 nutzer_id = int(nutzer_id)
 
-                # ✅ FK-Prüfung: Nutzer muss existieren
+                #  FK-Prüfung: Nutzer muss existieren
                 cursor.execute("SELECT User_ID FROM users WHERE User_ID = %s", (nutzer_id,))
                 check_user = cursor.fetchone()
                 if not check_user:
                     return "Benutzer existiert nicht mehr — bitte erneut einloggen.", 400
 
-                # ✅ FK-Prüfung: Auto muss existieren
+                #  FK-Prüfung: Auto muss existieren
                 cursor.execute("SELECT autoid FROM auto WHERE autoid = %s", (autoid,))
                 check_auto = cursor.fetchone()
                 if not check_auto:
@@ -230,7 +230,7 @@ def finanzierung(autoid):
 
                 info = "Barkauf" if laufzeit == 0 else "Finanzierungsanfrage"
 
-                # ✅ Anfrage speichern
+                #  Anfrage speichern
                 cursor.execute("""
                     INSERT INTO Finanzierungsanfrage 
                     (Nutzer_ID, Auto_ID, Monate, Anzahlung, Monatliche_Rate, Terminwunsch, Status, schlussrate, info)
@@ -263,7 +263,7 @@ def account():
     user_id = session['user_id']
     cursor = g.cursor
 
-    # 🔐 Benutzerinfos laden
+    #  Benutzerinfos laden
     cursor.execute("""
         SELECT vorname, nachname, email, role 
         FROM users 
@@ -271,7 +271,7 @@ def account():
     """, (user_id,))
     benutzer = cursor.fetchone()
 
-    # 📄 Kaufverträge inkl. Auto-Details
+    #  Kaufverträge inkl. Auto-Details
     cursor.execute("""
         SELECT k.*, a.marke, a.modell, a.url, a.autoid, a.baujahr, a.leistung, a.preis, a.hubraum,
                a.kraftstoffverbrauch, a.getriebeart, a.antriebsart, a.umweltplakette
@@ -282,7 +282,7 @@ def account():
     """, (user_id,))
     kaufvertraege = cursor.fetchall()
 
-    # 🚗 Finanzierungsanfragen
+    #  Finanzierungsanfragen
     cursor.execute("""
         SELECT f.*, a.marke, a.modell, a.url 
         FROM Finanzierungsanfrage f
@@ -578,7 +578,7 @@ def benutzer_verwalten():
             cursor.execute("DELETE FROM Finanzierungsanfrage WHERE Nutzer_ID = %s", (user_id,))
             cursor.execute("DELETE FROM Kaufvertrag WHERE kunde_id = %s", (user_id,))
             cursor.execute("DELETE FROM favorites WHERE User_ID = %s", (user_id,))
-            cursor.execute("DELETE FROM reviews WHERE user_id = %s", (user_id,))  # ✅ korrekt!
+            cursor.execute("DELETE FROM reviews WHERE user_id = %s", (user_id,))  #  korrekt!
             cursor.execute("DELETE FROM users WHERE User_ID = %s", (user_id,))
             g.con.commit()
 
@@ -747,7 +747,7 @@ def auto_hinzufuegen():
         return "Zugriff verweigert", 403
 
     if request.method == 'POST':
-        # 📋 Formulardaten auslesen
+        #  Formulardaten auslesen
         marke = request.form['marke']
         modell = request.form['modell']
         baujahr = request.form['baujahr']
@@ -759,7 +759,7 @@ def auto_hinzufuegen():
         antriebsart = request.form['antriebsart']
         umweltplakette = request.form['umweltplakette']
 
-        # 📸 Bilddatei verarbeiten
+        # Bilddatei verarbeiten
         if 'bilddatei' not in request.files:
             flash("Keine Bilddatei gefunden!")
             return redirect(request.url)
@@ -779,7 +779,7 @@ def auto_hinzufuegen():
             flash("Ungültiger Dateityp!")
             return redirect(request.url)
 
-        # ✅ ALLE Daten inkl. Bild-Dateiname in die DB eintragen
+        #  ALLE Daten inkl. Bild-Dateiname in die DB eintragen
         daten = (
             marke,
             modell,
@@ -829,7 +829,7 @@ def toggle_favorite(autoid):
     user_id = session['user_id']
     cursor = g.con.cursor()
 
-    # 🟡 Korrigierter Spaltenname: User_ID und autoid
+    #  Korrigierter Spaltenname: User_ID und autoid
     cursor.execute(
         "SELECT id FROM favorites WHERE User_ID = %s AND autoid = %s",
         (user_id, autoid)
@@ -859,7 +859,7 @@ def favorites():
     user_id = session['user_id']
     cursor = g.con.cursor(dictionary=True)
 
-    # ✅ Korrekt: User_ID (nicht ID)
+    #  Korrekt: User_ID (nicht ID)
     cursor.execute("SELECT * FROM users WHERE User_ID = %s", (user_id,))
     benutzer = cursor.fetchone()
 
@@ -901,7 +901,7 @@ def kaufvertrag_erstellen(anfrage_id):
         if not daten:
             return "Anfrage nicht gefunden", 404
 
-        # ⛔ Nur genehmigte Anfragen
+        #  Nur genehmigte Anfragen
         if daten['Status'] != 'genehmigt':
             flash("Kaufvertrag kann nur für genehmigte Anfragen erstellt werden.", "error")
             return redirect(url_for('admin'))
@@ -1087,7 +1087,7 @@ def anfrage_erstellen():
             try:
                 terminwunsch = terminwunsch_input.replace("T", " ") + ":00"
             except Exception:
-                fehler = "❌ Ungültiges Datumsformat beim Terminwunsch."
+                fehler = " Ungültiges Datumsformat beim Terminwunsch."
 
         # Berechnung der monatlichen Rate bei Finanzierungsanfrage
         try:
@@ -1102,9 +1102,9 @@ def anfrage_erstellen():
                         zinsen = finanzierungsbetrag * 0.02  # 2 % Zinsen
                         rate = round((finanzierungsbetrag + zinsen) / laufzeit, 2)
                     else:
-                        fehler = "❌ Laufzeit muss größer als 0 sein."
+                        fehler = " Laufzeit muss größer als 0 sein."
                 else:
-                    fehler = "❌ Bitte alle Finanzierungsfelder ausfüllen."
+                    fehler = " Bitte alle Finanzierungsfelder ausfüllen."
             else:
                 # Barkauf – keine Rate nötig
                 laufzeit = 0
@@ -1112,7 +1112,7 @@ def anfrage_erstellen():
                 schlussrate = preis
                 rate = 0.0
         except ValueError:
-            fehler = "❌ Ungültige Zahlen bei Laufzeit, Anzahlung oder Schlussrate."
+            fehler = " Ungültige Zahlen bei Laufzeit, Anzahlung oder Schlussrate."
 
         # Prüfung ob Kunde existiert, anhand der E-Mail-Adresse
         email = request.form.get("email")
@@ -1121,7 +1121,7 @@ def anfrage_erstellen():
             kunde = cursor.fetchone()
 
             if not kunde:
-                fehler = "❌ Kunde nicht gefunden. Bitte Kundenkonto erstellen."
+                fehler = " Kunde nicht gefunden. Bitte Kundenkonto erstellen."
             else:
                 benutzer_id = kunde['User_ID']
                 try:
@@ -1143,7 +1143,7 @@ def anfrage_erstellen():
                     g.con.commit()  # Änderungen speichern
                     return redirect(url_for("admin"))  # Weiterleitung zur Admin-Seite
                 except Exception as e:
-                    fehler = f"❌ Fehler beim Speichern: {e}"
+                    fehler = f" Fehler beim Speichern: {e}"
 
     # Rendern des Anfrageformulars mit allen benötigten Variablen
     return render_template("anfrage_erstellen.html",

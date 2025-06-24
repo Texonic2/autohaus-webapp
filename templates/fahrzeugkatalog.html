@@ -6,7 +6,7 @@
 
 <form class="search-bar-horizontal" action="#" method="get">
   <input type="text" value="Mercedes" readonly title="Marke">
-   <input type="text" name="modell" placeholder="Modell (z. B. C-Klasse)" value="{{ request.args.get('modell', '') }}">
+   <input type="text" name="modell" placeholder="Modell (z.B. C-Klasse)" value="{{ request.args.get('modell', '') }}">
   <input type="number" name="preis" placeholder="Maximalpreis (€)" value="{{ request.args.get('preis', '') }}">
   <input type="number" name="baujahr" placeholder="Baujahr ab" value="{{ request.args.get('baujahr', '') }}">
   <input type="number" name="ps" placeholder="Leistung ab (PS)" value="{{ request.args.get('ps', '') }}">

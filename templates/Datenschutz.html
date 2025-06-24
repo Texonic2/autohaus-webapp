@@ -1,10 +1,10 @@
-{# Verwendet das gemeinsame Grundlayout (z. B. Header, Footer, Navigation) #}
+{# Verwendet das gemeinsame Grundlayout (z.B. Header, Footer, Navigation) #}
 {% extends "base.html" %}
 
 {# Setzt den Seitentitel für den Browser-Tab #}
 {% block title %}Datenschutz – NovaDrive{% endblock %}
 
-{# Zusätzliche Inhalte im <head>-Bereich, z. B. Stylesheets #}
+{# Zusätzliche Inhalte im <head>-Bereich, z.B. Stylesheets #}
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 {% endblock %}

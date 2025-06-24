@@ -5,20 +5,20 @@
 {% block content %}
 <div class="konto-und-anfragen-container">
 
-    <!-- 👤 Benutzerkonto-Daten -->
+    <!--  Benutzerkonto-Daten -->
     <div class="konto-card">
-        <h2 class="konto-ueberschrift"><span class="emoji">👤</span> Meine Kontodaten</h2>
+        <h2 class="konto-ueberschrift"><span class="emoji"></span> Meine Kontodaten</h2>
         <p><strong>Vorname:</strong> {{ benutzer.vorname }}</p>
         <p><strong>Nachname:</strong> {{ benutzer.nachname }}</p>
         <p><strong>E-Mail:</strong> {{ benutzer.email }}</p>
         <p><strong>Rolle:</strong> {{ benutzer.role }}</p>
 
-        <a href="{{ url_for('passwort_aendern') }}" class="btn-passwort-aendern">🔑 Passwort ändern</a>
+        <a href="{{ url_for('passwort_aendern') }}" class="btn-passwort-aendern"> Passwort ändern</a>
     </div>
 
-    <!-- 🚗 Finanzierungsanfragen -->
+    <!--  Finanzierungsanfragen -->
     <div class="finanzierungsanfrage-container">
-        <h2>🚗 Meine Finanzierungsanfragen</h2>
+        <h2> Meine Finanzierungsanfragen</h2>
         {% for anfrage in finanzierungsanfragen %}
         <div class="finanzierungsanfrage-card">
             <!-- Fahrzeugbild -->
@@ -38,7 +38,7 @@
                 <!-- Anfrage löschen -->
                 <form action="{{ url_for('anfrage_loeschen', anfrage_id=anfrage.ID) }}" method="post"
                       onsubmit="return confirm('Willst du diese Anfrage wirklich löschen?');">
-                    <button type="submit" class="btn-anfrage-loeschen">🗑️ Anfrage löschen</button>
+                    <button type="submit" class="btn-anfrage-loeschen"> Anfrage löschen</button>
                 </form>
             </div>
         </div>
@@ -47,9 +47,9 @@
         {% endfor %}
     </div>
 
-    <!-- 📄 Kaufverträge -->
+    <!--  Kaufverträge -->
     <div class="finanzierungsanfrage-container">
-        <h2>📄 Meine Kaufverträge</h2>
+        <h2> Meine Kaufverträge</h2>
         {% for vertrag in kaufvertraege %}
         <div class="finanzierungsanfrage-card">
             <!-- Fahrzeugbild -->
@@ -59,9 +59,9 @@
             <div class="anfrage-details">
                 <h3>
                     {{ vertrag.marke }} {{ vertrag.modell }}
-                    <!-- ℹ️ Tooltip -->
+                    <!--  Tooltip -->
                     <span class="auto-info-tooltip">
-                        ℹ️
+
                         <span class="auto-info-tooltip-text">
                             <table>
                                 <tbody>

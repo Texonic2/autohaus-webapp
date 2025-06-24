@@ -10,16 +10,16 @@
 <div class="finanzierungsanfrage-container">
     <h2> Admin Verwaltung</h2>
     <div class="admin-button-row">
-  <a href="{{ url_for('benutzer_verwalten') }}" class="admin-button">👥 Benutzerverwaltung</a>
-  <a href="/auto_verwalten" class="admin-button">🚗 Autos verwalten</a>
+  <a href="{{ url_for('benutzer_verwalten') }}" class="admin-button">Benutzerverwaltung</a>
+  <a href="/auto_verwalten" class="admin-button"> Autos verwalten</a>
         <a href="/kaufvertraege" class="admin-button">Kaufverträge</a>
 
   <form method="post" action="{{ url_for('loesche_abgelehnte_anfragen') }}"
       onsubmit="return confirm('Willst du wirklich alle abgelehnten Anfragen löschen?');">
-  <button type="submit" class="admin-button">🗑️ Abgelehnte Anfragen löschen</button>
+  <button type="submit" class="admin-button"> Abgelehnte Anfragen löschen</button>
 </form>
 
-  <a href="{{ url_for('anfrage_erstellen') }}" class="admin-button">➕ Anfrage erstellen</a>
+  <a href="{{ url_for('anfrage_erstellen') }}" class="admin-button"> Anfrage erstellen</a>
 </div>
 {% if geloescht %}
   <div class="loesch-info">

@@ -1,38 +1,38 @@
 {% extends "base.html" %}
 
-{% block title %}📊 Unternehmenskennzahlen{% endblock %}
+{% block title %} Unternehmenskennzahlen{% endblock %}
 
 {% block content %}
-<h2 class="admin-title">📊 Übersicht der Unternehmenskennzahlen</h2>
+<h2 class="admin-title"> Übersicht der Unternehmenskennzahlen</h2>
 
 <div class="form-container">
   <div class="kpi-zeile">
-    <label>📈 Gesamtumsatz:</label>
-    <span>{{ gesamtumsatz }} €</span>
+    <label> Gesamtumsatz:</label>
+    <span>{{ gesamtumsatz }}€</span>
   </div>
 
   <div class="kpi-zeile">
-    <label>💶 Umsatz durch Barkäufe:</label>
-    <span>{{ barkauf_umsatz }} €</span>
+    <label> Umsatz durch Barkäufe:</label>
+    <span>{{ barkauf_umsatz }}€</span>
   </div>
 
   <div class="kpi-zeile">
-    <label>💳 Umsatz durch Finanzierungen:</label>
-    <span>{{ finanzierungs_umsatz }} €</span>
+    <label> Umsatz durch Finanzierungen:</label>
+    <span>{{ finanzierungs_umsatz }}€</span>
   </div>
 
   <div class="kpi-zeile">
-    <label>📊 Kreditanteil (vom Gesamtumsatz):</label>
-    <span>{{ kreditanteil_prozent }} %</span>
+    <label> Kreditanteil (vom Gesamtumsatz):</label>
+    <span>{{ kreditanteil_prozent }}%</span>
   </div>
 
   <div class="kpi-zeile">
-    <label>⏱ Durchschnittliche Laufzeit:</label>
+    <label> Durchschnittliche Laufzeit:</label>
     <span>{{ durchschnitt_laufzeit }} Monate</span>
   </div>
 
   <div class="kpi-zeile">
-    <label>📄 Anzahl aller Kaufverträge:</label>
+    <label> Anzahl aller Kaufverträge:</label>
     <span>{{ anzahl_vertraege }}</span>
   </div>
 </div>
