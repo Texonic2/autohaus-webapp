@@ -2059,3 +2059,61 @@ body.reg-page {
     font-weight: bold;
     cursor: pointer;
 }
+
+.profil-container {
+    max-width: 480px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.profil-heading {
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #800000;
+}
+
+.profil-label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+.profil-input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.profil-button {
+    margin-top: 20px;
+    background-color: #800000;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.success-message, .error-message {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+}
+
+.success-message {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}

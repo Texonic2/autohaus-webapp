@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Profil bearbeiten – Autohaus Heilbronn{% endblock %}
+
+{% block content %}
+<div class="profil-container">
+    <h2 class="profil-heading">📝 Profil bearbeiten</h2>
+
+    {% if success %}
+        <div class="success-message">{{ success }}</div>
+    {% elif error %}
+        <div class="error-message">{{ error }}</div>
+    {% endif %}
+
+    <form method="post">
+        <label for="vorname" class="profil-label">Vorname</label>
+        <input type="text" id="vorname" name="vorname" class="profil-input" value="{{ user.vorname }}" required>
+
+        <label for="nachname" class="profil-label">Nachname</label>
+        <input type="text" id="nachname" name="nachname" class="profil-input" value="{{ user.nachname }}" required>
+
+        <label for="email" class="profil-label">E-Mail</label>
+        <input type="email" id="email" name="email" class="profil-input" value="{{ user.email }}" required>
+
+        <button type="submit" class="profil-button">Änderungen speichern</button>
+    </form>
+</div>
+{% endblock %}

@@ -299,8 +299,6 @@ def account():
         finanzierungsanfragen=finanzierungsanfragen
     )
 
-
-
 @app.route("/passwort_aendern", methods=["GET", "POST"])
 def passwort_aendern():
     # Zugriffsschutz: Nur eingeloggte Benutzer dürfen ihr Passwort ändern
@@ -344,6 +342,38 @@ def passwort_aendern():
 
     # Seite rendern – mit möglicher Fehlermeldung oder Erfolgsmeldung
     return render_template("passwort_aendern.html", error=error, success=success)
+
+@app.route('/profil_aendern', methods=['GET', 'POST'])
+def profil_aendern():
+    if 'user_id' not in session:
+        return redirect(url_for('Login'))
+
+    user_id = session['user_id']
+    cursor = g.cursor
+
+    success = None
+    error = None
+
+    if request.method == 'POST':
+        vorname = request.form['vorname']
+        nachname = request.form['nachname']
+        email = request.form['email']
+
+        try:
+            cursor.execute("""
+                UPDATE users
+                SET vorname = %s, nachname = %s, email = %s
+                WHERE User_ID = %s
+            """, (vorname, nachname, email, user_id))
+            g.con.commit()
+            success = "Profil erfolgreich aktualisiert."
+        except Exception as e:
+            error = "Fehler beim Aktualisieren: " + str(e)
+
+    cursor.execute("SELECT vorname, nachname, email FROM users WHERE User_ID = %s", (user_id,))
+    user = cursor.fetchone()
+
+    return render_template("profil_aendern.html", user=user, success=success, error=error)
 
 
 @app.route('/')
