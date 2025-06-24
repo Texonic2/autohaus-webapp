@@ -2003,3 +2003,59 @@ body.reg-page {
   max-width: 1200px;
   margin: 0 auto;
 }
+
+.passwort-container {
+    max-width: 480px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.passwort-heading {
+    margin-bottom: 25px;
+    font-size: 1.6em;
+}
+
+.success-message {
+    padding: 10px;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 6px;
+    color: #155724;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    padding: 10px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 6px;
+    color: #721c24;
+    margin-bottom: 20px;
+}
+
+.passwort-label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.passwort-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 18px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.passwort-button {
+    background-color: #800000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}

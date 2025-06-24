@@ -3,58 +3,29 @@
 {% block title %}Passwort ändern – Autohaus Heilbronn{% endblock %}
 
 {% block content %}
-<div style="max-width: 480px; margin: 40px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+<div class="passwort-container">
 
-    <h2 style="margin-bottom: 25px; font-size: 1.6em;"> Passwort ändern</h2>
+    <h2 class="passwort-heading"> Passwort ändern</h2>
 
     {% if success %}
-        <div style="padding: 10px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 6px; color: #155724; margin-bottom: 20px;">
-            {{ success }}
-        </div>
+        <div class="success-message">{{ success }}</div>
     {% elif error %}
-        <div style="padding: 10px; background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 6px; color: #721c24; margin-bottom: 20px;">
-            {{ error }}
-        </div>
+        <div class="error-message">{{ error }}</div>
     {% endif %}
 
     <form method="post">
         {% for label, name in [('Altes Passwort:', 'old_password'), ('Neues Passwort:', 'new_password'), ('Neues Passwort bestätigen:', 'confirm_password')] %}
-            <label for="{{ name }}" style="display: block; margin-bottom: 6px;"><strong>{{ label }}</strong></label>
-            <div style="position: relative; margin-bottom: 18px;">
-                <input type="password" id="{{ name }}" name="{{ name }}" class="form-input"
-                       style="width: 100%; padding: 10px 38px 10px 10px; box-sizing: border-box; border-radius: 6px; border: 1px solid #ccc;" required>
-                <img src="{{ url_for('static', filename='augenzu.png') }}"
-                     alt="Passwort anzeigen"
-                     id="icon-{{ name }}"
-                     onclick="togglePassword('{{ name }}')"
-                     style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; width: 22px;">
-            </div>
+            <label for="{{ name }}" class="passwort-label"><strong>{{ label }}</strong></label>
+            <input type="password" id="{{ name }}" name="{{ name }}" class="passwort-input" required>
         {% endfor %}
 
-        <button type="submit" style="background-color: #800000; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
-             Speichern
+        <button type="submit" class="passwort-button">
+                Speichern
         </button>
     </form>
 </div>
-
-<script>
-    const openIcon = "{{ url_for('static', filename='augen.png') }}";
-    const closedIcon = "{{ url_for('static', filename='augenzu.png') }}";
-
-    function togglePassword(fieldId) {
-        const input = document.getElementById(fieldId);
-        const icon = document.getElementById("icon-" + fieldId);
-
-        if (input.type === "password") {
-            input.type = "text";
-            icon.src = openIcon;
-        } else {
-            input.type = "password";
-            icon.src = closedIcon;
-        }
-    }
-</script>
 {% endblock %}
+
 
 
 
