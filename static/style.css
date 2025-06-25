@@ -1836,13 +1836,14 @@ body.reg-page {
 
 /* Container, der alle Rezensionen beinhaltet */
 .review-list-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 60px; /* Abstand zwischen den Rezensionen */
   padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  max-width: 800px; /* Optional: Breite der Liste */
+  margin: 0 auto; /* Zentrierung der Liste */
 }
+
 
 /* Einzelne Rezension-Karte */
 .review-card-box {
