@@ -1,32 +1,26 @@
-# Webbasierte Systeme - Gruppe 18
+# NovaDrive – Autohaus Webanwendung (Flask, SQL, HTML/CSS)
 
-Entwicklung einer Flask-Anwendung mit Datenbankanbindung
+NovaDrive ist eine vollständige Webanwendung zur Verwaltung von Fahrzeugen, Nutzern und Finanzierungsanfragen.
+Die Anwendung wurde im Rahmen eines Softwareprojektes an der Hochschule Heilbronn entwickelt und umfasst
+ein vollständiges Login-System, Rollenverwaltung (User/Admin), Formularverarbeitung, Datenbankanbindung sowie
+ein responsives Web-Frontend.
 
-## Projektstruktur
+**Hauptfunktionen**
 
-Der Projektordner enthält standardmäßig folgende Dateien und Verzeichnisse:
+Nutzerregistrierung & Login
+Rollenverwaltung (Admin/User)
+Admin-Dashboard zur Nutzer- und Fahrzeugverwaltung
+Fahrzeugkatalog mit Bildern
+Finanzierungsanfragen
+Profilverwaltung & Passwortänderung
+CRUD-Funktionen (Create, Read, Update, Delete)
+Sicheres Session-Management 
+Image-Upload mit Dateiprüfung
 
-* **db**:
-  * **db_credentials.py**: enthält Verbindungsinformationen zur Datenbank
-  * **db_schema.sql**: enthält SQL-Befehle zur Erzeugung der Datenbank
-* **static**:
-  * enthält alle statischen Dateien wie CSS-Dateien und Bilder
-* **templates**:
-  * enthält alle HTML-Templates
-* **.gitignore**: enthält alle Dateien und Verzeichnisse, die nicht in die Versionskontrolle mit Git aufgenommen werden sollen
-* **LICENSE**: enthält Lizenzbedingungen für das gesamte Projekt
-* **README.md**: Diese Datei, enthält die Projektdokumentation im Markdown-Format
-* **ss-2025-18.py**: enthält die eigentliche Flask-Anwendung
+**Tech-Stack**
 
-## Projektanforderungen
-
-### Mindestanforderungen
-
-* [ ] Nutzer-Registration und Login
-* [ ] Admin-Bereich mit Daten- und Nutzerverwaltung
-* [ ] Einfügen, Ändern und Löschen von Daten: Jeder Nutzer sollte nur seine eigenen Daten, Admin alle Daten bearbeiten können
-* [ ] weitere Mindestanforderungen hier ergänzen ...
-
-### Optionale Anforderungen
-
-* [ ] Optionale Anforderungen hier ergänzen ...
+Backend: Python, Flask
+Datenbank: MySQL / MariaDB
+Frontend: HTML, CSS, Jinja2
+Security: Werkzeug Hashing, Sessions
+Weitere Tools: Git, PyCharm
