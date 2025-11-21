@@ -560,7 +560,7 @@ def reviews():
     # Wenn ein Formular abgeschickt wurde (POST-Methode)
     if request.method == 'POST':
         user_id = session.get('user_id')      # ID des eingeloggten Nutzers aus der Session
-        rating = request.form['rating']       # Bewertung (z. B. Sterne) aus dem Formular
+        rating = request.form['rating']       # Bewertung (z.B. Sterne) aus dem Formular
         comment = request.form['comment']     # Kommentartext aus dem Formular
 
         cursor = g.cursor  # Zugriff auf den Datenbank-Cursor
