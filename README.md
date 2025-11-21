@@ -96,9 +96,10 @@ Voraussetzungen:
 ### 1. Abhängigkeiten installieren
 pip install -r requirements.txt
 
-### 2. Datenbank einrichten  
-MySQL/MariaDB starten
-db/db_schema.sql in eine neue Datenbank importieren
+### 2. Datenbank einrichten
+- MySQL/MariaDB starten
+- Datei `db/db_schema.sql` in eine neue Datenbank importieren
+
 
 
 ### 3. Anwendung starten
