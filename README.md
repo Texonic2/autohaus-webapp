@@ -7,7 +7,7 @@ Finanzierungsanfragen mit Rollen- und Session-Management.
 
 ---
 
-## 🚀 Hauptfunktionen
+##  Hauptfunktionen
 
 - **Nutzerregistrierung & Login** (mit Passwort-Hashing & Session-Management)  
 - **Rollenverwaltung** (User / Admin)  
@@ -22,7 +22,7 @@ Finanzierungsanfragen mit Rollen- und Session-Management.
 
 ---
 
-## 🛠️ Tech-Stack
+##  Tech-Stack
 
 **Backend:**  
 - Python  
@@ -45,15 +45,15 @@ Finanzierungsanfragen mit Rollen- und Session-Management.
 
 ---
 
-## 📁 Projektstruktur
+##  Projektstruktur
 
 ---
 
-## 💡 Meine persönlichen Beiträge (Sipan Dölek)
+##  Meine persönlichen Beiträge (Sipan Dölek)
 
 Folgende Bereiche des Projekts habe ich eigenständig umgesetzt bzw. signifikant mitgestaltet:
 
-### 🔧 Backend / Flask
+### Backend / Flask
 - Login- & Registrierungslogik  
 - Session-Management  
 - Passwort-Hashing  
@@ -61,12 +61,12 @@ Folgende Bereiche des Projekts habe ich eigenständig umgesetzt bzw. signifikant
 - Fahrzeug-CRUD Funktionen  
 - Profiländerungen (Profil bearbeiten, Passwort ändern)
 
-### 🗄️ Datenbank
+###  Datenbank
 - SQL-Abfragen  
 - Tabellenlogik verstehen & integrieren  
 - Schnittstelle zwischen Flask und MySQL einrichten  
 
-### 🎨 Frontend / Templates
+###  Frontend / Templates
 - Gestaltung & Anpassung mehrerer HTML-Templates  
 - Responsive Layouts  
 - Einbindung von Formularen & Fehler-Feedback (Flash Messages)
@@ -85,7 +85,7 @@ Folgende Bereiche des Projekts habe ich eigenständig umgesetzt bzw. signifikant
 
 ---
 
-## 🔧 Installation & Start
+##  Installation & Start
 
 Voraussetzungen:  
 - Python 3.x  
@@ -107,7 +107,7 @@ http://localhost:5000
 
 ---
 
-## 📌 Projektstatus
+##  Projektstatus
 Abgeschlossen (Hochschulprojekt), dient als Demonstration praktischer Webentwicklung mit Flask und SQL.
 
 ---
