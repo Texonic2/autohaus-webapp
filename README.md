@@ -159,7 +159,7 @@ pip install -r requirements.txt
 
 python ss-2025-18.py
 
-
+Die Anwendung ist ein lokales Projekt und läuft nicht öffentlich, sondern ausschließlich über den lokalen Server (localhost).
 Die Anwendung läuft dann unter:
 http://localhost:5000
 
