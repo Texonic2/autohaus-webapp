@@ -47,6 +47,13 @@ Finanzierungsanfragen mit Rollen- und Session-Management.
 
 ##  Projektstruktur
 
+- `db/` – SQL-Schema & DB-Credentials (lokal)
+- `templates/` – Jinja2 HTML-Templates
+- `static/` – CSS, Bilder
+- `ss-2025-18.py` – Haupt-Flask-App
+- `README.md` – Projektdoku
+
+
 ---
 
 ##  Meine persönlichen Beiträge (Sipan Dölek)
@@ -71,12 +78,7 @@ Folgende Bereiche des Projekts habe ich eigenständig umgesetzt bzw. signifikant
 - Responsive Layouts  
 - Einbindung von Formularen & Fehler-Feedback (Flash Messages)
 
-### 🖼️ Bild-Upload
-- Upload-Funktion  
-- Dateiendungsvalidierung  
-- Speicherung der Bildpfade  
-
-### 🧩 Allgemein
+###  Allgemein
 - Debugging  
 - Code-Cleanup  
 - Verbesserung der Struktur & Dokumentation  
@@ -92,13 +94,16 @@ Voraussetzungen:
 - MySQL/MariaDB  
 
 ### 1. Abhängigkeiten installieren
-
+pip install -r requirements.txt
 
 ### 2. Datenbank einrichten  
-SQL-Schema importieren:
+MySQL/MariaDB starten
+db/db_schema.sql in eine neue Datenbank importieren
 
 
 ### 3. Anwendung starten
+
+python ss-2025-18.py
 
 
 Die Anwendung läuft dann unter:
@@ -112,7 +117,7 @@ Abgeschlossen (Hochschulprojekt), dient als Demonstration praktischer Webentwick
 
 ---
 
-## 📜 Lizenz
+##  Lizenz
 GNU GPLv3  
 
 
